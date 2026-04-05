@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GGT — Plans de compétition</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0f14;--surf:#161a23;--surf2:#1e2330;--brd:rgba(255,255,255,.08);--txt:#e8eaf0;--mut:#7a8099;--acc:#4f8ef7;--ora:#fc4c02;--grn:#22c55e;--amb:#f59e0b;--red:#ef4444}
+html,body{min-height:100%}
+body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--txt);background-image:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(79,142,247,.06),transparent 60%)}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:.5px solid var(--brd);background:rgba(22,26,35,.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;flex-wrap:wrap;gap:8px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:34px;height:34px;border-radius:8px;object-fit:contain}
+.logo h1{font-size:15px;font-weight:700}
+.logo p{font-size:10px;color:var(--mut)}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.user-badge{font-size:13px;color:var(--mut);padding:5px 10px;background:var(--surf2);border-radius:8px;border:.5px solid var(--brd)}
+.btn-h{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:6px 12px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+.btn-h:hover{color:var(--txt);border-color:var(--acc)}
+.btn-admin{background:rgba(79,142,247,.12);border:.5px solid rgba(79,142,247,.3);border-radius:8px;padding:6px 14px;color:var(--acc);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.main{max-width:1300px;margin:0 auto;padding:20px}
+
+/* LISTE COMPÉTITIONS */
+.comp-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:24px}
+.comp-card{background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s}
+.comp-card:hover{border-color:var(--acc);background:var(--surf2)}
+.comp-card-name{font-size:15px;font-weight:600;margin-bottom:4px}
+.comp-card-date{font-size:12px;color:var(--ora);margin-bottom:8px}
+.comp-card-dists{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.dist-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;border:.5px solid var(--brd)}
+.badge-pub{background:rgba(34,197,94,.15);color:var(--grn);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.badge-draft{background:rgba(245,158,11,.15);color:var(--amb);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+
+/* DÉTAIL COMPÉTITION */
+.detail-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.detail-name{font-size:20px;font-weight:700}
+.detail-date{font-size:13px;color:var(--ora)}
+.dist-chooser{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.dist-chooser label{font-size:13px;color:var(--mut)}
+.dbtn{padding:8px 20px;border-radius:10px;border:.5px solid var(--brd);background:var(--surf);color:var(--mut);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;transition:all .2s}
+.dbtn:hover{border-color:var(--acc);color:var(--txt)}
+.dbtn.on{background:rgba(79,142,247,.15);border-color:var(--acc);color:var(--acc)}
+
+/* ONGLETS */
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;border-bottom:.5px solid var(--brd);padding-bottom:0}
+.tbtn{padding:8px 16px;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;background:none;border:none;color:var(--mut);border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px}
+.tbtn.on{color:var(--acc);border-bottom-color:var(--acc)}
+.tpan{display:none}
+.tpan.on{display:block}
+
+/* PLAN */
+.ph-block{margin-bottom:24px}
+.ph-head{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:10px;margin-bottom:10px;border:.5px solid var(--brd)}
+.ph-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ph-title{font-size:14px;font-weight:600}
+.ph-period{font-size:11px;color:var(--mut);margin-left:auto}
+.wk-block{margin-bottom:12px}
+.wk-head{display:flex;align-items:center;gap:10px;padding:7px 12px;background:var(--surf);border-radius:8px 8px 0 0;border:.5px solid var(--brd);border-bottom:none}
+.wk-num{font-size:10px;font-weight:700;color:var(--ora);letter-spacing:.06em;text-transform:uppercase}
+.wk-title{font-size:12px;color:var(--txt)}
+.wk-dates{font-size:10px;color:var(--mut);margin-left:auto}
+.wk-grid{display:grid;grid-template-columns:repeat(7,1fr);border:.5px solid var(--brd);border-radius:0 0 8px 8px;overflow:hidden}
+.dc{border-right:.5px solid var(--brd)}
+.dc:last-child{border-right:none}
+.dh{background:var(--surf2);padding:5px 6px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);border-bottom:.5px solid var(--brd)}
+.dh span{font-size:8px;opacity:.6;font-weight:400;display:block}
+.dcell{background:var(--surf);padding:7px;font-size:11px;color:#a8b0c8;line-height:1.5;white-space:pre-line;min-height:55px;display:flex;align-items:center;justify-content:center;text-align:center}
+.dcell.repos{color:rgba(122,128,153,.35);font-style:italic}
+.dcell.course{background:rgba(252,76,2,.08);color:#fc7c42;font-weight:600}
+.dcell.recup{background:rgba(79,142,247,.05)}
+
+/* SUIVI */
+.sv-wrap{margin-bottom:18px}
+.sv-wktitle{font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px;padding:6px 10px;background:var(--surf);border-radius:8px}
+.sv-grid{display:grid;grid-template-columns:repeat(7,1fr);border:.5px solid var(--brd);border-radius:8px;overflow:hidden;margin-bottom:6px}
+.sv-day{border-right:.5px solid var(--brd);background:var(--surf)}
+.sv-day:last-child{border-right:none}
+.sv-dh{background:var(--surf2);padding:5px 3px;text-align:center;font-size:9px;font-weight:700;color:var(--mut);border-bottom:.5px solid var(--brd);text-transform:uppercase}
+.sv-dh span{font-size:7px;opacity:.6;font-weight:400;display:block}
+.sv-db{padding:4px 3px}
+.sv-sel{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:4px;padding:3px 2px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:10px;outline:none;margin-bottom:2px;cursor:pointer}
+.sv-inp{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:4px;padding:3px 4px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:10px;outline:none;margin-bottom:2px}
+.sv-inp::placeholder{color:var(--mut)}
+.sv-foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.cumul{background:var(--surf);border:.5px solid var(--brd);border-radius:7px;padding:6px 12px;font-size:12px;color:var(--mut)}
+.cumul .km{color:var(--acc);font-weight:700}
+.cumul .dp{color:var(--grn);font-weight:700}
+.btn-sv{padding:6px 16px;border-radius:7px;border:none;background:var(--acc);color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.cumul-total{margin-top:16px;padding:14px 20px;background:var(--surf2);border-radius:12px;border:.5px solid var(--brd);display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.cumul-total .label{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.cumul-total .val-km{font-size:18px;font-weight:700;color:var(--acc)}
+.cumul-total .val-dp{font-size:18px;font-weight:700;color:var(--grn)}
+
+/* CARRÉ 4 CASES (vue groupe & recap) */
+.cell-quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1px;background:var(--brd);border-radius:6px;overflow:hidden;width:100%;min-width:64px;aspect-ratio:1}
+.cq{background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:11px;padding:3px}
+.cq.sport{font-size:14px}
+.cq.sens{font-size:14px}
+.cq.km{color:var(--acc);font-weight:700;font-size:10px}
+.cq.dp{color:var(--grn);font-weight:700;font-size:10px}
+.cq.empty{color:rgba(122,128,153,.25);font-size:9px}
+
+/* RECAP TABLE */
+.rtw{overflow-x:auto;border-radius:8px;border:.5px solid var(--brd);margin-bottom:14px}
+.rt{width:100%;border-collapse:collapse;font-size:12px;background:var(--surf);min-width:600px}
+.rt th{background:var(--surf2);color:var(--mut);font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:8px;text-align:center;border-bottom:.5px solid var(--brd);white-space:nowrap}
+.rt td{padding:6px 8px;text-align:center;border-bottom:.5px solid rgba(255,255,255,.04);color:var(--txt)}
+.rt tr:last-child td{border-bottom:none}
+.tdn{text-align:left!important;font-weight:600}
+
+/* LEXIQUE */
+.lex-section{margin-bottom:16px}
+.lex-section h3{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ora);margin-bottom:10px}
+.lex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.lex-item{background:var(--surf2);border-radius:8px;padding:7px 11px;font-size:12px}
+.lex-item strong{color:var(--acc);display:block;margin-bottom:1px}
+.lex-item span{color:var(--mut)}
+.allures-wrap{overflow-x:auto;border-radius:10px;border:.5px solid var(--brd)}
+.allures-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surf)}
+.allures-table th{background:var(--surf2);color:var(--mut);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 8px;text-align:center;border-bottom:.5px solid var(--brd);white-space:nowrap}
+.allures-table td{padding:8px;text-align:center;border-bottom:.5px solid rgba(255,255,255,.04);font-size:12px;color:var(--txt)}
+.allures-table tr:last-child td{border-bottom:none}
+.zone-0,.zone-1,.zone-2,.zone-3{background:rgba(122,128,153,.06)}
+.zone-4,.zone-5{background:rgba(34,197,94,.06)}
+.zone-6,.zone-7{background:rgba(245,158,11,.08)}
+.zone-8,.zone-9{background:rgba(252,76,2,.07)}
+.zone-10{background:rgba(239,68,68,.10)}
+.seuil-row td{border-top:.5px solid rgba(79,142,247,.3)}
+.seuil-label{font-size:9px;color:var(--acc);font-weight:700;text-align:left!important;padding-left:6px!important}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surf2);border:.5px solid rgba(34,197,94,.4);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--grn);transition:transform .3s;z-index:100;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:rgba(224,0,32,.4);color:#ff6b6b}
+.loading{display:flex;align-items:center;justify-content:center;min-height:160px;color:var(--mut);font-size:14px;gap:10px}
+.spin{width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:50px 20px;color:var(--mut)}
+.empty-icon{font-size:36px;margin-bottom:12px}
+@media(max-width:800px){.wk-grid,.sv-grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="data:image/png;base64,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" alt="GGT">
+    <div><h1>Plans de compétition</h1><p>Génépi Groupe Trail</p></div>
+  </div>
+  <div class="header-right">
+    <span class="user-badge" id="user-name">...</span>
+    <a href="planning.html" class="btn-h">← Planning</a>
+    <a href="admin.html" class="btn-admin" id="btn-admin" style="display:none">⚙️ Admin</a>
+    <button class="btn-h" onclick="logout()">Déconnexion</button>
+  </div>
+</header>
+
+<div class="main">
+  <!-- Liste des compétitions -->
+  <div id="view-list">
+    <div class="loading" id="load-comps"><div class="spin"></div> Chargement...</div>
+    <div id="comps-grid" class="comp-list" style="display:none"></div>
+  </div>
+
+  <!-- Détail d'une compétition -->
+  <div id="view-detail" style="display:none">
+    <div class="detail-header">
+      <button class="btn-h" onclick="backToList()">← Toutes les compétitions</button>
+      <div>
+        <div class="detail-name" id="detail-name"></div>
+        <div class="detail-date" id="detail-date"></div>
+      </div>
+    </div>
+    <div class="dist-chooser">
+      <label>Ma distance :</label>
+      <div id="dist-buttons"></div>
+    </div>
+    <div class="tabs">
+      <button class="tbtn on" id="t-plan" onclick="switchTab('plan')">📋 Plan d'entraînement</button>
+      <button class="tbtn" id="t-suivi" onclick="switchTab('suivi')">📊 Mon suivi</button>
+      <button class="tbtn" id="t-groupe" onclick="switchTab('groupe')">👥 Suivi du groupe</button>
+      <button class="tbtn" id="t-lex" onclick="switchTab('lex')">📖 Lexique</button>
+      <button class="tbtn" id="t-allures" onclick="switchTab('allures')">⚡ Tableau des allures</button>
+      <a href="vma.html" class="tbtn" style="text-decoration:none;border-bottom:2px solid transparent">📊 Mon VMA/FCM</a>
+    </div>
+    <div class="tpan on" id="p-plan"><p style="color:var(--mut);font-size:14px;padding:40px 0;text-align:center">👆 Sélectionne ta distance</p></div>
+    <div class="tpan" id="p-suivi"><p style="color:var(--mut);font-size:13px;padding:30px 0;text-align:center">Sélectionne ta distance pour accéder au suivi</p></div>
+    <div class="tpan" id="p-groupe"><div class="loading"><div class="spin"></div> Chargement...</div></div>
+    <div class="tpan" id="p-lex">
+      <div style="padding:16px 0">
+        <div class="lex-section"><h3>🌍 Commun</h3><div class="lex-grid">
+          <div class="lex-item"><strong>TP</strong><span>Terrain Plat</span></div>
+          <div class="lex-item"><strong>TV</strong><span>Terrain Vallonné</span></div>
+          <div class="lex-item"><strong>S1</strong><span>75% VMA — allure marathon</span></div>
+          <div class="lex-item"><strong>S2</strong><span>85% VMA — allure 15km</span></div>
+          <div class="lex-item"><strong>EF</strong><span>Endurance Fondamentale</span></div>
+          <div class="lex-item"><strong>RAC</strong><span>Retour Au Calme</span></div>
+          <div class="lex-item"><strong>R</strong><span>Récupération active</span></div>
+          <div class="lex-item"><strong>VMA</strong><span>Vitesse Maximale Aérobie</span></div>
+          <div class="lex-item"><strong>D+</strong><span>Dénivelé positif</span></div>
+        </div></div>
+        <div class="lex-section"><h3>📍 Élancourt</h3><div class="lex-grid">
+          <div class="lex-item"><strong>CH</strong><span>Cimetière Haut — 120m</span></div>
+          <div class="lex-item"><strong>CB</strong><span>Cimetière Bas — 240m</span></div>
+          <div class="lex-item"><strong>CE</strong><span>Cimetière Entier — 360m</span></div>
+          <div class="lex-item"><strong>MB</strong><span>Muette Bas — 70m</span></div>
+          <div class="lex-item"><strong>ME</strong><span>Muette Entière — 160m</span></div>
+          <div class="lex-item"><strong>MBR</strong><span>Muette Bas + Rond-point</span></div>
+          <div class="lex-item"><strong>MER</strong><span>Muette Entière + Rond-point</span></div>
+          <div class="lex-item"><strong>CL</strong><span>Richarderie Longue — 800m</span></div>
+          <div class="lex-item"><strong>CR</strong><span>Côte Raide Maurepas — 170m</span></div>
+        </div></div>
+        <div class="lex-section"><h3>📍 Magny-les-Hameaux</h3><div class="lex-grid">
+          <div class="lex-item"><strong>CCE</strong><span>Courcelle Escalier — 490m</span></div>
+          <div class="lex-item"><strong>CCH</strong><span>Courcelle 1er virage — 140m</span></div>
+          <div class="lex-item"><strong>CCL</strong><span>Courcelle Longue — 700m</span></div>
+          <div class="lex-item"><strong>CCR</strong><span>Courcelle Raide — 260m</span></div>
+          <div class="lex-item"><strong>CB</strong><span>Carrière Bas — 150m</span></div>
+          <div class="lex-item"><strong>CH</strong><span>Carrière Haut — 80m</span></div>
+          <div class="lex-item"><strong>CE</strong><span>Carrière Entière — 230m</span></div>
+          <div class="lex-item"><strong>GOR</strong><span>Goutte d'Or — 220m</span></div>
+          <div class="lex-item"><strong>RE</strong><span>Rhodon 1er carrefour — 300m</span></div>
+          <div class="lex-item"><strong>RP</strong><span>Rhodon escalier — 170m</span></div>
+          <div class="lex-item"><strong>REE</strong><span>Rhodon complet — 600m</span></div>
+        </div></div>
+        <div class="lex-section"><h3>🏃 Gammes</h3><div class="lex-grid">
+          <div class="lex-item"><strong>1</strong><span>Footing 20'</span></div>
+          <div class="lex-item"><strong>2</strong><span>Étirements 2'</span></div>
+          <div class="lex-item"><strong>3</strong><span>Ouverture hanche 2×10</span></div>
+          <div class="lex-item"><strong>4</strong><span>Extension hanche 2×10</span></div>
+          <div class="lex-item"><strong>5</strong><span>Talon fesse 2×30m</span></div>
+          <div class="lex-item"><strong>6</strong><span>Jambes tendues griffées 2×30m</span></div>
+          <div class="lex-item"><strong>7</strong><span>Montées genoux 2×30m</span></div>
+          <div class="lex-item"><strong>8</strong><span>Foulées bondissantes 2×30m</span></div>
+          <div class="lex-item"><strong>9</strong><span>Pas chassés 2×30m</span></div>
+          <div class="lex-item"><strong>10</strong><span>Étirement dynamique 2×10</span></div>
+          <div class="lex-item"><strong>11</strong><span>Sprint souple 2×30m</span></div>
+        </div></div>
+      </div>
+    </div>
+    <div class="tpan" id="p-allures">
+      <div style="padding:16px 0">
+        <div class="allures-wrap">
+          <table class="allures-table">
+            <thead><tr><th>Échelle</th><th>Niveau</th><th>Exemple</th><th>Parole / Respiration</th><th>%FCM</th><th>%VMA</th></tr></thead>
+            <tbody>
+              <tr class="zone-0"><td>0</td><td>Inactif</td><td>Repos</td><td>Conversation facile · Normale</td><td>&lt;40%</td><td>—</td></tr>
+              <tr class="zone-1"><td>1</td><td>Imperceptible</td><td>Marche</td><td>Conversation facile · Normale</td><td>40–50%</td><td>—</td></tr>
+              <tr class="zone-2"><td>2</td><td>Très faible</td><td>Marche active</td><td>Conversation facile · Légère</td><td>50–55%</td><td>—</td></tr>
+              <tr class="zone-3"><td>3</td><td>Faible</td><td>Randonnée</td><td>Conversation facile · Modérée</td><td>55–60%</td><td>—</td></tr>
+              <tr class="zone-4"><td>4</td><td>Très modéré</td><td>Footing lent</td><td>Conversation facile · Accélérée</td><td>60–65%</td><td>50–55%</td></tr>
+              <tr class="zone-5"><td>5</td><td>Modéré</td><td>EF</td><td>Phrases courtes · Accélérée</td><td>65–75%</td><td>55–70%</td></tr>
+              <tr class="seuil-row zone-5"><td colspan="6" class="seuil-label">▲ SEUIL AÉROBIE</td></tr>
+              <tr class="zone-6"><td>6</td><td>Légèrement intense</td><td>Endurance active</td><td>Quelques mots · Forte</td><td>75–80%</td><td>70–75%</td></tr>
+              <tr class="zone-7"><td>7</td><td>Intense</td><td>Allure marathon</td><td>Difficile · Très forte</td><td>80–85%</td><td>75–80%</td></tr>
+              <tr class="seuil-row zone-7"><td colspan="6" class="seuil-label">▲ SEUIL ANAÉROBIE LACTIQUE</td></tr>
+              <tr class="zone-8"><td>8</td><td>Très intense</td><td>Semi-marathon</td><td>Quasi impossible · Quasi max</td><td>85–90%</td><td>80–85%</td></tr>
+              <tr class="zone-9"><td>9</td><td>Extrêmement intense</td><td>5–10km</td><td>Impossible · Maximale</td><td>90–95%</td><td>85–90%</td></tr>
+              <tr class="zone-10"><td>10</td><td>Maximal</td><td>Sprint</td><td>À bout de souffle · Max</td><td>95–100%</td><td>90–100%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function switchTab(name) {
+  ['plan','suivi','groupe','lex','allures'].forEach(n=>{
+    const p=document.getElementById('p-'+n);
+    const b=document.getElementById('t-'+n);
+    if(p) p.className='tpan'+(n===name?' on':'');
+    if(b) b.className='tbtn'+(n===name?' on':'');
+  });
+  if(name==='groupe') window._loadGroupe&&window._loadGroupe();
+}
+function showToast(msg,err) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(err?' err':'');
+  setTimeout(()=>t.className='toast'+(err?' err':''),3500);
+}
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {    apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
+    authDomain: "ggt-plan-entrainement.firebaseapp.com",
+    projectId: "ggt-plan-entrainement",
+    storageBucket: "ggt-plan-entrainement.firebasestorage.app",
+    messagingSenderId: "663631056543",
+    appId: "1:663631056543:web:d8cb50121fcf8d1c635caa"};
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  let uid=null, isAdmin=false, currentComp=null, currentDist=null;
+
+  const JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const DIST_COLORS=['#fc4c02','#4f8ef7','#22c55e','#f59e0b'];
+  const SENS=['','😊','🙂','😐','😓','😰'];
+  const SLBL=['— Repos','😊 Très facile','🙂 Facile','😐 Normal','😓 Difficile','😰 Très difficile'];
+  const SPORTS=[
+    {v:'',l:'— Sport'},
+    {v:'🏃',l:'🏃 Course / Trail'},
+    {v:'🚴',l:'🚴 Vélo'},
+    {v:'🚶',l:'🚶 Marche'},
+    {v:'🏊',l:'🏊 Natation'},
+    {v:'🏋️',l:'🏋️ Renforcement'},
+  ];
+  // Cumul uniquement pour ces sports
+  const SPORTS_CUMUL=['🏃','🚶'];
+
+  function formatDateFR(s) {
+    if(!s)return'?';
+    let d;
+    if(String(s).includes('T')||String(s).includes('GMT')){d=new Date(s);}
+    else{const p=String(s).split('/');if(p.length===3)d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));else return s;}
+    if(isNaN(d?.getTime()))return s;
+    return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  }
+
+  function getMondayDate(startDate,weekIndex) {
+    const d=new Date(startDate);d.setDate(d.getDate()+weekIndex*7);return d;
+  }
+  function fmtDate(d) { return d.getDate()+'/'+(d.getMonth()+1); }
+  function dayClass(t) {
+    if(!t||t.toLowerCase().startsWith('repos'))return'repos';
+    if(t.toLowerCase().includes('récup'))return'recup';
+    if(['🎯','🏆','course','compétition'].some(x=>t.toLowerCase().includes(x.toLowerCase())))return'course';
+    return'';
+  }
+
+  // ── Liste des compétitions ──
+  async function loadComps() {
+    document.getElementById('load-comps').style.display='flex';
+    document.getElementById('comps-grid').style.display='none';
+    try {
+      const snap=await getDocs(collection(db,'race_plans'));
+      const comps=[];
+      snap.forEach(d=>{const data=d.data();if(isAdmin||data.status==='published')comps.push({id:d.id,...data});});
+      comps.sort((a,b)=>new Date(a.date_course)-new Date(b.date_course));
+      const grid=document.getElementById('comps-grid');
+      if(!comps.length){grid.innerHTML='<div class="empty"><div class="empty-icon">🏁</div><p>Aucune compétition disponible.</p></div>';}
+      else{
+        grid.innerHTML=comps.map(c=>{
+          const badgeCls=c.status==='published'?'badge-pub':'badge-draft';
+          const badgeTxt=c.status==='published'?'✓ Publié':'📝 Brouillon';
+          const dists=(c.distances||[]).map((d,i)=>`<span class="dist-pill" style="color:${DIST_COLORS[i]};border-color:${DIST_COLORS[i]}">${d.label}</span>`).join('');
+          return `<div class="comp-card" onclick="selectComp('${c.id}')">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+              <div class="comp-card-name">${c.nom}</div>
+              <span class="${badgeCls}">${badgeTxt}</span>
+            </div>
+            <div class="comp-card-date">📅 ${formatDateFR(c.date_course)}${c.lieu?' · 📍 '+c.lieu:''}</div>
+            <div class="comp-card-dists">${dists}</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:6px">${c.semaines?.length||'?'} semaines · À partir du ${c.date_debut||'?'}</div>
+          </div>`;
+        }).join('');
+      }
+      document.getElementById('load-comps').style.display='none';
+      document.getElementById('comps-grid').style.display='grid';
+    } catch(e) {
+      document.getElementById('load-comps').style.display='none';
+      document.getElementById('comps-grid').innerHTML=`<p style="color:#ff6b6b;font-size:13px">Erreur : ${e.message}</p>`;
+      document.getElementById('comps-grid').style.display='block';
+    }
+  }
+
+  // ── Sélectionner une compétition ──
+  window.selectComp = async function(compId) {
+    document.getElementById('view-list').style.display='none';
+    document.getElementById('view-detail').style.display='block';
+    document.getElementById('p-plan').innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
+    const snap=await getDoc(doc(db,'race_plans',compId));
+    currentComp={id:compId,...snap.data()};
+    document.getElementById('detail-name').textContent=currentComp.nom;
+    document.getElementById('detail-date').textContent='📅 '+formatDateFR(currentComp.date_course)+(currentComp.lieu?' · 📍 '+currentComp.lieu:'');
+    const btns=document.getElementById('dist-buttons');
+    btns.innerHTML=(currentComp.distances||[]).map((d,i)=>
+      `<button class="dbtn" id="dbtn-${i}" onclick="chooseDist(${i})" style="border-color:${DIST_COLORS[i]}">${d.label}</button>`
+    ).join('');
+    // Charger distance précédente
+    if(uid){
+      try{
+        const sv=await getDoc(doc(db,'race_suivi',uid+'_'+compId));
+        if(sv.exists()&&sv.data()._dist!==undefined){await chooseDist(sv.data()._dist);return;}
+      }catch(e){}
+    }
+    document.getElementById('p-plan').innerHTML='<p style="color:var(--mut);font-size:14px;padding:40px 0;text-align:center">👆 Sélectionne ta distance ci-dessus</p>';
+  };
+
+  window.backToList = function() {
+    document.getElementById('view-list').style.display='block';
+    document.getElementById('view-detail').style.display='none';
+    currentComp=null;currentDist=null;
+  };
+
+  // ── Choisir une distance ──
+  window.chooseDist = async function(distIdx) {
+    if(!currentComp)return;
+    currentDist=distIdx;
+    (currentComp.distances||[]).forEach((_,i)=>{
+      const b=document.getElementById('dbtn-'+i);
+      if(b)b.className='dbtn'+(i===distIdx?' on':'');
+    });
+    document.getElementById('p-plan').innerHTML=buildPlan(currentComp,distIdx);
+    let saved={};
+    if(uid){
+      try{const s=await getDoc(doc(db,'race_suivi',uid+'_'+currentComp.id));if(s.exists())saved=s.data();}catch(e){}
+    }
+    document.getElementById('p-suivi').innerHTML=buildSuivi(currentComp,distIdx,saved);
+  };
+
+  // ── Construire le plan ──
+  function buildPlan(comp,distIdx) {
+    const weeks=comp.semaines||[];
+    const startDate=new Date(comp.date_debut_iso||Date.now());
+    const phases={};const phaseOrder=[];
+    weeks.forEach((w,wi)=>{
+      if(!phases[w.phase]){phases[w.phase]=[];phaseOrder.push(w.phase);}
+      phases[w.phase].push({...w,weekIndex:wi});
+    });
+    const phColors=['#22c55e','#f59e0b','#4f8ef7','#fc4c02'];
+    let h='';
+    phaseOrder.forEach((pname,pi)=>{
+      const col=phColors[pi%4],rgb=col.slice(1).match(/../g).map(x=>parseInt(x,16)).join(',');
+      h+=`<div class="ph-block"><div class="ph-head" style="background:rgba(${rgb},.06);border-color:rgba(${rgb},.25)"><div class="ph-dot" style="background:${col}"></div><span class="ph-title">${pname}</span></div>`;
+      phases[pname].forEach(w=>{
+        const monday=getMondayDate(startDate,w.weekIndex);
+        const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
+        const days=w.distances[String(distIdx)]||Array(7).fill('Repos');
+        const dates=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return fmtDate(d);});
+        h+=`<div class="wk-block"><div class="wk-head"><span class="wk-num">${w.num}</span><span class="wk-title">${w.titre}</span><span class="wk-dates">${fmtDate(monday)} → ${fmtDate(sunday)}</span></div><div class="wk-grid">`;
+        for(let i=0;i<7;i++){
+          const txt=days[i]||'Repos';
+          h+=`<div class="dc"><div class="dh">${JOURS[i]}<span>${dates[i]}</span></div><div class="dcell ${dayClass(txt)}">${txt}</div></div>`;
+        }
+        h+=`</div></div>`;
+      });
+      h+=`</div>`;
+    });
+    return h;
+  }
+
+  // ── Construire le suivi ──
+  function buildSuivi(comp,distIdx,saved) {
+    const weeks=comp.semaines||[];
+    const startDate=new Date(comp.date_debut_iso||Date.now());
+    let totalKm=0,totalDp=0;
+    let h='<p style="font-size:12px;color:var(--mut);margin-bottom:14px;">Remplis après chaque séance puis clique Sauvegarder.</p>';
+    weeks.forEach((w,wi)=>{
+      const wk='w_'+w.num;
+      let cumKm=0,cumDp=0;
+      for(let i=0;i<7;i++){
+        const sport=saved[wk+'_sport'+i]||'';
+        if(SPORTS_CUMUL.includes(sport)){
+          cumKm+=parseFloat(saved[wk+'_km'+i]||0);
+          cumDp+=parseFloat(saved[wk+'_dp'+i]||0);
+        }
+      }
+      totalKm+=cumKm;totalDp+=cumDp;
+      const monday=getMondayDate(startDate,wi);
+      const dates=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return fmtDate(d);});
+      h+=`<div class="sv-wrap"><div class="sv-wktitle">${w.num} — ${w.titre}</div><div class="sv-grid">`;
+      for(let i=0;i<7;i++){
+        const sport=saved[wk+'_sport'+i]||'';
+        const sv=saved[wk+'_sens'+i]||'';
+        const km=saved[wk+'_km'+i]||'';
+        const dp=saved[wk+'_dp'+i]||'';
+        const sportOpts=SPORTS.map(s=>`<option value="${s.v}" ${s.v===sport?'selected':''}>${s.l}</option>`).join('');
+        const sensOpts=SLBL.map((l,idx)=>`<option value="${SENS[idx]}" ${SENS[idx]===sv?'selected':''}>${l}</option>`).join('');
+        const showKm=!sport||['🏃','🚴','🚶'].includes(sport);
+        const showDp=!sport||['🏃','🚶'].includes(sport);
+        h+=`<div class="sv-day">
+          <div class="sv-dh">${JOURS[i]}<span>${dates[i]}</span></div>
+          <div class="sv-db">
+            <select class="sv-sel" id="${wk}_sport${i}" onchange="updateKmDpVisibility('${wk}',${i})">${sportOpts}</select>
+            <select class="sv-sel" id="${wk}_sens${i}">${sensOpts}</select>
+            <input class="sv-inp" type="number" step="0.1" min="0" placeholder="km" id="${wk}_km${i}" value="${km}" style="display:${showKm?'block':'none'}">
+            <input class="sv-inp" type="number" step="10" min="0" placeholder="D+" id="${wk}_dp${i}" value="${dp}" style="display:${showDp?'block':'none'}">
+          </div>
+        </div>`;
+      }
+      h+=`</div><div class="sv-foot">
+        <div class="cumul">Cumul : <span class="km">${cumKm.toFixed(1)} km</span> · <span class="dp">${Math.round(cumDp)} m D+</span></div>
+        <button class="btn-sv" onclick="saveSuivi('${wk}')">💾 Sauvegarder</button>
+      </div></div>`;
+    });
+    h+=`<div class="cumul-total">
+      <span class="label">📊 Cumul total</span>
+      <span class="val-km">${totalKm.toFixed(1)} km</span>
+      <span class="val-dp">${Math.round(totalDp)} m D+</span>
+    </div>`;
+    return h;
+  }
+
+  window.updateKmDpVisibility = function(wk,i) {
+    const sport=document.getElementById(wk+'_sport'+i)?.value||'';
+    const kmEl=document.getElementById(wk+'_km'+i);
+    const dpEl=document.getElementById(wk+'_dp'+i);
+    if(kmEl)kmEl.style.display=['🏃','🚴','🚶'].includes(sport)||!sport?'block':'none';
+    if(dpEl)dpEl.style.display=['🏃','🚶'].includes(sport)||!sport?'block':'none';
+  };
+
+  window.saveSuivi = async function(wk) {
+    if(!uid||!currentComp){showToast('Non connecté',true);return;}
+    const data={_dist:currentDist};
+    let cumKm=0,cumDp=0;
+    for(let i=0;i<7;i++){
+      const sport=document.getElementById(wk+'_sport'+i)?.value||'';
+      const km=document.getElementById(wk+'_km'+i)?.value||'';
+      const dp=document.getElementById(wk+'_dp'+i)?.value||'';
+      data[wk+'_sport'+i]=sport;
+      data[wk+'_sens'+i]=document.getElementById(wk+'_sens'+i)?.value||'';
+      data[wk+'_km'+i]=km;
+      data[wk+'_dp'+i]=dp;
+      if(SPORTS_CUMUL.includes(sport)){cumKm+=parseFloat(km||0);cumDp+=parseFloat(dp||0);}
+    }
+    data[wk+'_cumkm']=cumKm.toFixed(1);
+    data[wk+'_cumdp']=Math.round(cumDp);
+    try{
+      await setDoc(doc(db,'race_suivi',uid+'_'+currentComp.id),data,{merge:true});
+      showToast('✓ Suivi sauvegardé !');
+    }catch(e){showToast('Erreur : '+e.message,true);}
+  };
+
+  // ── Vue groupe (lecture seule) ──
+  window._loadGroupe = async function() {
+    if(!currentComp)return;
+    const div=document.getElementById('p-groupe');
+    div.innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
+    try{
+      const usersSnap=await getDocs(collection(db,'users'));
+      const allUsers=[];
+      usersSnap.forEach(d=>allUsers.push({uid:d.id,prenom:d.data().prenom||'',nom:d.data().nom||''}));
+      const users=[],suivis={};
+      for(const u of allUsers){
+        try{
+          const snap=await getDoc(doc(db,'race_suivi',u.uid+'_'+currentComp.id));
+          if(snap.exists()){
+            const sd=snap.data();suivis[u.uid]=sd;u.dist=sd._dist??null;
+            u.distLabel=u.dist!==null?(currentComp.distances[u.dist]?.label||'?'):'?';
+            if(Object.keys(sd).some(k=>(k.includes('_sens')||k.includes('_sport'))&&sd[k]))users.push(u);
+          }
+        }catch(e){}
+      }
+      if(!users.length){div.innerHTML='<p style="color:var(--mut);font-size:13px;padding:20px 0">Aucun athlète n&apos;a encore rempli son suivi pour cette compétition.</p>';return;}
+      const weeks=currentComp.semaines||[];
+      const startDate=new Date(currentComp.date_debut_iso||Date.now());
+      let html='';
+      weeks.forEach((w,wi)=>{
+        const wk='w_'+w.num;
+        const monday=getMondayDate(startDate,wi);
+        const dates=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return fmtDate(d);});
+        html+=`<h4 style="font-size:12px;color:var(--mut);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.05em">${w.num} — ${w.titre}</h4>`;
+        html+=`<div class="rtw"><table class="rt"><thead><tr><th style="text-align:left">Athlète</th><th>Distance</th>`;
+        for(let i=0;i<7;i++)html+=`<th>${JOURS[i]}<br><span style="font-size:8px;opacity:.7">${dates[i]}</span></th>`;
+        html+=`<th style="color:var(--acc)">km</th><th style="color:var(--grn)">D+</th></tr></thead><tbody>`;
+        users.forEach(u=>{
+          const sd=suivis[u.uid]||{};
+          const dc=u.dist!==null?DIST_COLORS[u.dist]:'var(--mut)';
+          html+=`<tr><td class="tdn">${u.prenom} ${u.nom}</td><td style="color:${dc};font-weight:600;font-size:11px">${u.distLabel}</td>`;
+          for(let i=0;i<7;i++){
+            const sport=sd[wk+'_sport'+i]||'';
+            const sens=sd[wk+'_sens'+i]||'';
+            const km=sd[wk+'_km'+i]||'';
+            const dp=sd[wk+'_dp'+i]||'';
+            const hasData=sport||sens||km||dp;
+            html+=`<td style="padding:4px">${hasData?`<div class="cell-quad">
+              <div class="cq sport">${sport||'—'}</div>
+              <div class="cq sens">${sens||'—'}</div>
+              <div class="cq km">${km?km+'km':'—'}</div>
+              <div class="cq dp">${dp?dp+'m':'—'}</div>
+            </div>`:'<div style="color:rgba(122,128,153,.3);font-size:11px">—</div>'}</td>`;
+          }
+          html+=`<td style="color:var(--acc);font-weight:700">${sd[wk+'_cumkm']||'0'}</td><td style="color:var(--grn);font-weight:700">${sd[wk+'_cumdp']||'0'}m</td></tr>`;
+        });
+        html+=`</tbody></table></div>`;
+      });
+      // Cumul total par athlète
+      html+=`<h4 style="font-size:12px;color:var(--mut);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.05em">📊 Cumul total saison</h4>`;
+      html+=`<div class="rtw"><table class="rt"><thead><tr><th style="text-align:left">Athlète</th><th>Distance</th><th style="color:var(--acc)">Total km</th><th style="color:var(--grn)">Total D+</th></tr></thead><tbody>`;
+      users.forEach(u=>{
+        const sd=suivis[u.uid]||{};
+        let tkm=0,tdp=0;
+        Object.keys(sd).forEach(k=>{if(k.endsWith('_cumkm'))tkm+=parseFloat(sd[k]||0);if(k.endsWith('_cumdp'))tdp+=parseFloat(sd[k]||0);});
+        const dc=u.dist!==null?DIST_COLORS[u.dist]:'var(--mut)';
+        html+=`<tr><td class="tdn">${u.prenom} ${u.nom}</td><td style="color:${dc};font-weight:600;font-size:11px">${u.distLabel}</td><td style="color:var(--acc);font-weight:700;font-size:14px">${tkm.toFixed(1)} km</td><td style="color:var(--grn);font-weight:700;font-size:14px">${Math.round(tdp)} m</td></tr>`;
+      });
+      html+=`</tbody></table></div>`;
+      div.innerHTML=html;
+    }catch(e){div.innerHTML=`<p style="color:#ff6b6b;font-size:13px">Erreur : ${e.message}</p>`;}
+  };
+
+  function showToast(msg,err){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.className='toast show'+(err?' err':'');
+    setTimeout(()=>t.className='toast'+(err?' err':''),3500);
+  }
+
+  window.logout=()=>signOut(auth).then(()=>window.location.href='index.html');
+
+  let redirecting=false;
+  onAuthStateChanged(auth,async(user)=>{
+    if(redirecting)return;
+    if(!user){redirecting=true;window.location.href='index.html';return;}
+    uid=user.uid;
+    const snap=await getDoc(doc(db,'users',uid));
+    const data=snap.exists()?snap.data():{};
+    document.getElementById('user-name').textContent=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
+    isAdmin=data.role==='admin';
+    if(isAdmin)document.getElementById('btn-admin').style.display='inline-flex';
+    loadComps();
+  });
+</script>
+</body>
+</html>

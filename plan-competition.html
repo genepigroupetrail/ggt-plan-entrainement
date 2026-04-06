@@ -187,7 +187,27 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
     </div>
     <div class="tpan on" id="p-plan"><p style="color:var(--mut);font-size:14px;padding:40px 0;text-align:center">👆 Sélectionne ta distance</p></div>
     <div class="tpan" id="p-suivi"><p style="color:var(--mut);font-size:13px;padding:30px 0;text-align:center">Sélectionne ta distance pour accéder au suivi</p></div>
-    <div class="tpan" id="p-groupe"><div class="loading"><div class="spin"></div> Chargement...</div></div>
+    <div class="tpan" id="p-groupe">
+      <div style="display:flex;flex-direction:column;gap:4px;padding:10px 0 14px;border-bottom:.5px solid var(--brd);margin-bottom:14px">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--mut)">
+          <span style="font-weight:600;color:var(--txt)">Activité :</span>
+          <span>🏃 Course / Trail</span>
+          <span>🚴 Vélo</span>
+          <span>🚶 Marche</span>
+          <span>🏊 Natation</span>
+          <span>🏋️ Renforcement</span>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--mut)">
+          <span style="font-weight:600;color:var(--txt)">Sensation :</span>
+          <span>😊 Très facile</span>
+          <span>🙂 Facile</span>
+          <span>😐 Normal</span>
+          <span>😓 Difficile</span>
+          <span>😰 Très difficile</span>
+        </div>
+      </div>
+      <div id="groupe-content"><div class="loading"><div class="spin"></div> Chargement...</div></div>
+    </div>
     <div class="tpan" id="p-lex">
       <div style="padding:16px 0">
         <div class="lex-section"><h3>🌍 Commun</h3><div class="lex-grid">
@@ -538,7 +558,8 @@ function showToast(msg,err) {
   // ── Vue groupe (lecture seule) ──
   window._loadGroupe = async function() {
     if(!currentComp)return;
-    const div=document.getElementById('p-groupe');
+    const div=document.getElementById('groupe-content');
+    if(!div)return;
     div.innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
     try{
       const usersSnap=await getDocs(collection(db,'users'));
@@ -589,7 +610,7 @@ function showToast(msg,err) {
         html+=`</tbody></table></div>`;
       });
       // Cumul total par athlète
-      html+=`<h4 style="font-size:12px;color:var(--mut);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.05em">📊 Cumul total saison</h4>`;
+      html+=`<h4 style="font-size:12px;color:var(--mut);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.05em">📊 Cumul total du plan</h4>`;
       html+=`<div class="rtw"><table class="rt"><thead><tr><th style="text-align:left">Athlète</th><th>Distance</th><th style="color:var(--acc)">Total km</th><th style="color:var(--grn)">Total D+</th></tr></thead><tbody>`;
       users.forEach(u=>{
         const sd=suivis[u.uid]||{};

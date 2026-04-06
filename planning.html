@@ -338,23 +338,28 @@ function toggleBTab(id, btn) {
         const isToday = date.getTime()===today.getTime();
         const jour = jours[i] || {};
         const plans = jour.plans || (jour.contenu ? [{location:'',type:jour.type||'repos',contenu:jour.contenu}] : [{location:'',type:'repos',contenu:''}]);
-        const mainType = plans[0]?.type || 'repos';
         const isRepos = plans.every(p=>!p.contenu||p.type==='repos');
-        const [badgeClass,badgeLabel] = getBadge(mainType);
         let plansHtml = '<div class="day-plans">';
-        plans.forEach(plan => {
+        plans.forEach((plan,pi) => {
+          const [badgeCls,badgeLbl] = getBadge(plan.type||'repos');
           const contenu = plan.contenu || (plan.type==='repos'?'Repos':'');
           plansHtml += `<div class="plan-block">`;
-          if (plan.location && plans.length>1) plansHtml += `<div class="plan-location">📍 ${plan.location}</div>`;
+          if (plans.length>1) {
+            plansHtml += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">`;
+            plansHtml += `<span class="day-badge ${badgeCls}" style="font-size:9px">${badgeLbl}</span>`;
+            if (plan.location) plansHtml += `<span class="plan-location">📍 ${plan.location}</span>`;
+            plansHtml += `</div>`;
+          }
           plansHtml += `<div class="day-content">${contenu}</div></div>`;
         });
         plansHtml += '</div>';
+        const [mainBadgeClass,mainBadgeLabel] = getBadge(plans[0]?.type||'repos');
         html += `<div class="day-card ${isToday?'today':''} ${isRepos?'repos':''}">
           <div>
             <div class="day-name">${JOURS[i]}</div>
             <div class="day-date">${date.getDate()}</div>
           </div>
-          <span class="day-badge ${badgeClass}">${badgeLabel}</span>
+          ${plans.length===1 ? `<span class="day-badge ${mainBadgeClass}">${mainBadgeLabel}</span>` : ''}
           ${plansHtml}
         </div>`;
       }

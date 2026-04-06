@@ -140,6 +140,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
       <button class="nav-btn" id="btn-next" onclick="changeWeek(1)">Suivante →</button>
     </div>
 
+    <!-- Statut + date en haut -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <span class="status-badge status-draft" id="status-badge">📝 Brouillon</span>
+      <span class="last-update" id="last-update" style="font-size:11px;color:var(--mut)"></span>
+    </div>
     <div class="msg-card">
       <div class="msg-card-label">💬 Message de la semaine</div>
       <div class="msg-card-hint">Visible par tous les adhérents en haut du planning · Laisse vide si rien à signaler</div>
@@ -151,11 +156,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
     </div>
 
     <div class="publish-bar">
-      <span class="status-badge status-draft" id="status-badge">📝 Brouillon</span>
       <button class="btn-success" onclick="savePlan(true)">▶ Publier</button>
       <button class="btn-warn" onclick="savePlan(false)">💾 Brouillon</button>
       <button class="btn-danger" onclick="depublish()">⏸ Dépublier</button>
-      <span class="last-update" id="last-update"></span>
     </div>
   </div>
 
@@ -253,8 +256,8 @@ function toast(msg,type) {
     {v:'sortie',l:'🌲 Sortie'},{v:'footing',l:'🏃 Footing'},{v:'course',l:'🏅 Course'},
     {v:'rm',l:'💪 Renforcement'},{v:'autre',l:'📋 Autre'}
   ];
-  const LOCS = ['','Élancourt','Magny-les-Hameaux'];
-  const ABBREVS = ['CB','CH','CE','MB','ME','CCE','CCH','CCL','CCR','RAC','EF','TV','TP','VMA','R','S1','S2','D+','×','R30s','R descente'];
+  const LOCS = ['','Élancourt','Magny-les-Hameaux','Le Manet','Autre...'];
+  const ABBREVS = ['CB','CH','CE','MB','ME','CCE','CCH','CCL','CCR','RAC','EF','TV','TP','VMA','R','S1','S2','D+','×','R30s','R descente','Footing','Gammes','Repos','RM'];
   const DIST_COLORS = ['#fc4c02','#4f8ef7','#22c55e','#f59e0b'];
 
   // ── PLANNING HEBDO ──
@@ -353,7 +356,7 @@ function toast(msg,type) {
     weekData.message=document.getElementById('message-semaine').value;
   };
 
-  async function loadWeek() {
+  window.loadWeek = async function() {
     const monday=getMondayOfWeek(currentWeekOffset);
     const weekKey=getWeekKey(monday);
     document.getElementById('days-list').innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
@@ -399,12 +402,12 @@ function toast(msg,type) {
     document.getElementById('status-badge').className='status-badge status-draft';
   }
 
-  window.changeWeek = (dir)=>{ currentWeekOffset+=dir; loadWeek(); };
+  window.changeWeek = (dir)=>{ currentWeekOffset+=dir; window.loadWeek(); };
   window.savePlan = savePlan;
   window.depublish = depublish;
 
   // ── COMPÉTITIONS ──
-  async function loadCompList() {
+  window.loadCompList = async function() {
     const div=document.getElementById('comp-list-container');
     div.innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
     try {
@@ -623,7 +626,7 @@ function toast(msg,type) {
     const data=snap.exists()?snap.data():{};
     if(data.role!=='admin'){window.location.href='planning.html';return;}
     document.getElementById('user-name').textContent=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
-    loadWeek();
+    window.loadWeek();
   });
 </script>
 </body>

@@ -80,8 +80,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .sv-dh{background:var(--surf2);padding:5px 3px;text-align:center;font-size:9px;font-weight:700;color:var(--mut);border-bottom:.5px solid var(--brd);text-transform:uppercase}
 .sv-dh span{font-size:7px;opacity:.6;font-weight:400;display:block}
 .sv-db{padding:4px 3px}
-.sv-sel{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:4px;padding:3px 2px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:10px;outline:none;margin-bottom:2px;cursor:pointer}
-.sv-inp{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:4px;padding:3px 4px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:10px;outline:none;margin-bottom:2px}
+.sv-row{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+.sv-sel{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:4px;padding:3px 2px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:10px;outline:none;cursor:pointer}
+.sv-inp{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:4px;padding:3px 4px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:10px;outline:none}
 .sv-inp::placeholder{color:var(--mut)}
 .sv-foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
 .cumul{background:var(--surf);border:.5px solid var(--brd);border-radius:7px;padding:6px 12px;font-size:12px;color:var(--mut)}
@@ -182,7 +183,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
       <button class="tbtn" id="t-groupe" onclick="switchTab('groupe')">👥 Suivi du groupe</button>
       <button class="tbtn" id="t-lex" onclick="switchTab('lex')">📖 Lexique</button>
       <button class="tbtn" id="t-allures" onclick="switchTab('allures')">⚡ Tableau des allures</button>
-      <a href="vma.html" class="tbtn" style="text-decoration:none;border-bottom:2px solid transparent">📊 Mon VMA/FCM</a>
+      <a href="vma.html" class="tbtn" style="text-decoration:none;border-bottom:2px solid transparent" onclick="saveCompState()">📊 Mon VMA/FCM</a>
     </div>
     <div class="tpan on" id="p-plan"><p style="color:var(--mut);font-size:14px;padding:40px 0;text-align:center">👆 Sélectionne ta distance</p></div>
     <div class="tpan" id="p-suivi"><p style="color:var(--mut);font-size:13px;padding:30px 0;text-align:center">Sélectionne ta distance pour accéder au suivi</p></div>
@@ -480,10 +481,14 @@ function showToast(msg,err) {
         h+=`<div class="sv-day">
           <div class="sv-dh">${JOURS[i]}<span>${dates[i]}</span></div>
           <div class="sv-db">
-            <select class="sv-sel" id="${wk}_sport${i}" onchange="updateKmDpVisibility('${wk}',${i})">${sportOpts}</select>
-            <select class="sv-sel" id="${wk}_sens${i}">${sensOpts}</select>
-            <input class="sv-inp" type="number" step="0.1" min="0" placeholder="km" id="${wk}_km${i}" value="${km}" style="display:${showKm?'block':'none'}">
-            <input class="sv-inp" type="number" step="10" min="0" placeholder="D+" id="${wk}_dp${i}" value="${dp}" style="display:${showDp?'block':'none'}">
+            <div class="sv-row">
+              <select class="sv-sel" id="${wk}_sport${i}" onchange="updateKmDpVisibility('${wk}',${i})">${sportOpts}</select>
+              <select class="sv-sel" id="${wk}_sens${i}">${sensOpts}</select>
+            </div>
+            <div class="sv-row">
+              <input class="sv-inp" type="number" step="0.1" min="0" placeholder="km" id="${wk}_km${i}" value="${km}" style="display:${showKm?'block':'none'}">
+              <input class="sv-inp" type="number" step="10" min="0" placeholder="D+" id="${wk}_dp${i}" value="${dp}" style="display:${showDp?'block':'none'}">
+            </div>
           </div>
         </div>`;
       }
@@ -616,7 +621,18 @@ function showToast(msg,err) {
     document.getElementById('user-name').textContent=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
     isAdmin=data.role==='admin';
     if(isAdmin)document.getElementById('btn-admin').style.display='inline-flex';
-    loadComps();
+    // Restaurer le plan si on revient depuis VMA
+    const savedCompId = sessionStorage.getItem('ggt_comp_id');
+    const savedDist = sessionStorage.getItem('ggt_comp_dist');
+    if(savedCompId) {{
+      sessionStorage.removeItem('ggt_comp_id');
+      sessionStorage.removeItem('ggt_comp_dist');
+      await loadComps();
+      await selectComp(savedCompId);
+      if(savedDist !== null) await chooseDist(parseInt(savedDist));
+    }} else {{
+      loadComps();
+    }}
   });
 </script>
 </body>

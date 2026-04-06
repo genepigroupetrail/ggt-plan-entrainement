@@ -344,22 +344,16 @@ function toggleBTab(id, btn) {
           const [badgeCls,badgeLbl] = getBadge(plan.type||'repos');
           const contenu = plan.contenu || (plan.type==='repos'?'Repos':'');
           plansHtml += `<div class="plan-block">`;
-          if (plans.length>1) {
-            plansHtml += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">`;
-            plansHtml += `<span class="day-badge ${badgeCls}" style="font-size:9px">${badgeLbl}</span>`;
-            if (plan.location) plansHtml += `<span class="plan-location">📍 ${plan.location}</span>`;
-            plansHtml += `</div>`;
-          }
+          if (plan.location) plansHtml += `<div class="plan-location">📍 ${plan.location}</div>`;
+          plansHtml += `<span class="day-badge ${badgeCls}" style="font-size:9px;margin-bottom:4px;display:inline-block">${badgeLbl}</span>`;
           plansHtml += `<div class="day-content">${contenu}</div></div>`;
         });
         plansHtml += '</div>';
-        const [mainBadgeClass,mainBadgeLabel] = getBadge(plans[0]?.type||'repos');
         html += `<div class="day-card ${isToday?'today':''} ${isRepos?'repos':''}">
           <div>
             <div class="day-name">${JOURS[i]}</div>
             <div class="day-date">${date.getDate()}</div>
           </div>
-          ${plans.length===1 ? `<span class="day-badge ${mainBadgeClass}">${mainBadgeLabel}</span>` : ''}
           ${plansHtml}
         </div>`;
       }

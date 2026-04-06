@@ -292,7 +292,7 @@ function toast(msg,type) {
         const pLocOpts=LOCS.map(l=>`<option value="${l}" ${plan.location===l?'selected':''}>${l||'— Lieu'}</option>`).join('');
         const pAbbrs=ABBREVS.map(a=>`<button class="abbr-btn" onclick="insertAbbr(${i},${pi},'${a}')">${a}</button>`).join('');
         plansHtml+=`<div id="plan-${i}-${pi}" style="margin-top:${pi>0?'12px':'0'}">
-          ${pi>0?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><hr style="flex:1;border:none;border-top:.5px solid var(--brd)"><button class="btn-remove-plan" onclick="removePlan(${i},${pi})">✕</button></div>`:''};
+          ${pi>0?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><hr style="flex:1;border:none;border-top:.5px solid var(--brd)"><button class="btn-remove-plan" onclick="removePlan(${i},${pi})">✕</button></div>`:''}
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <select class="type-select" id="type-${i}-${pi}" onchange="updateData()">${pTypeOpts}</select>
             <select class="loc-select" id="loc-${i}-${pi}" onchange="updateData()">${pLocOpts}</select>

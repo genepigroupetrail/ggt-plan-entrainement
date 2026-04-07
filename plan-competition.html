@@ -496,8 +496,8 @@ function showToast(msg,err) {
         const dp=saved[wk+'_dp'+i]||'';
         const sportOpts=SPORTS.map(s=>`<option value="${s.v}" ${s.v===sport?'selected':''}>${s.l}</option>`).join('');
         const sensOpts=SLBL.map((l,idx)=>`<option value="${SENS[idx]}" ${SENS[idx]===sv?'selected':''}>${l}</option>`).join('');
-        const showKm=!sport||['🏃','🚴','🚶'].includes(sport);
-        const showDp=!sport||['🏃','🚶'].includes(sport);
+        const showKm=!sport||['🏃','🚴','🚶','🏊'].includes(sport);
+        const showDp=!sport||['🏃','🚶','🚴'].includes(sport);
         h+=`<div class="sv-day">
           <div class="sv-dh">${JOURS[i]}<span>${dates[i]}</span></div>
           <div class="sv-db">
@@ -529,7 +529,7 @@ function showToast(msg,err) {
     const sport=document.getElementById(wk+'_sport'+i)?.value||'';
     const kmEl=document.getElementById(wk+'_km'+i);
     const dpEl=document.getElementById(wk+'_dp'+i);
-    if(kmEl)kmEl.style.display=['🏃','🚴','🚶'].includes(sport)||!sport?'block':'none';
+    if(kmEl)kmEl.style.display=['🏃','🚴','🚶','🏊'].includes(sport)||!sport?'block':'none';
     if(dpEl)dpEl.style.display=['🏃','🚶'].includes(sport)||!sport?'block':'none';
   };
 

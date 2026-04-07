@@ -183,7 +183,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
       <button class="tbtn" id="t-groupe" onclick="switchTab('groupe')">👥 Suivi du groupe</button>
       <button class="tbtn" id="t-lex" onclick="switchTab('lex')">📖 Lexique</button>
       <button class="tbtn" id="t-allures" onclick="switchTab('allures')">⚡ Tableau des allures</button>
-      <a href="vma.html" class="tbtn" style="text-decoration:none;border-bottom:2px solid transparent" onclick="saveCompState()">📊 Mon VMA/FCM</a>
+      <button class="tbtn" style="border-bottom:2px solid transparent" onclick="goToVma()">📊 Mon VMA/FCM</button>
     </div>
     <div class="tpan on" id="p-plan"><p style="color:var(--mut);font-size:14px;padding:40px 0;text-align:center">👆 Sélectionne ta distance</p></div>
     <div class="tpan" id="p-suivi"><p style="color:var(--mut);font-size:13px;padding:30px 0;text-align:center">Sélectionne ta distance pour accéder au suivi</p></div>
@@ -289,6 +289,13 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 <div class="toast" id="toast"></div>
 
 <script>
+function goToVma() {
+  if(window._currentCompId !== undefined && window._currentDist !== undefined) {
+    sessionStorage.setItem('ggt_comp_id', window._currentCompId);
+    sessionStorage.setItem('ggt_comp_dist', String(window._currentDist));
+  }
+  window.location.href = 'vma.html';
+}
 function switchTab(name) {
   ['plan','suivi','groupe','lex','allures'].forEach(n=>{
     const p=document.getElementById('p-'+n);
@@ -426,6 +433,8 @@ function showToast(msg,err) {
   window.chooseDist = async function(distIdx) {
     if(!currentComp)return;
     currentDist=distIdx;
+    window._currentCompId = currentComp.id;
+    window._currentDist = distIdx;
     (currentComp.distances||[]).forEach((_,i)=>{
       const b=document.getElementById('dbtn-'+i);
       if(b)b.className='dbtn'+(i===distIdx?' on':'');
@@ -513,7 +522,7 @@ function showToast(msg,err) {
         </div>`;
       }
       h+=`</div><div class="sv-foot">
-        <div class="cumul">Cumul : <span class="km">${cumKm.toFixed(1)} km</span> · <span class="dp">${Math.round(cumDp)} m D+</span></div>
+        <div class="cumul" data-cumul="${wk}">Cumul : <span class="km">${cumKm.toFixed(1)} km</span> · <span class="dp">${Math.round(cumDp)} m D+</span></div>
         <button class="btn-sv" onclick="saveSuivi('${wk}')">💾 Sauvegarder</button>
       </div></div>`;
     });
@@ -530,7 +539,7 @@ function showToast(msg,err) {
     const kmEl=document.getElementById(wk+'_km'+i);
     const dpEl=document.getElementById(wk+'_dp'+i);
     if(kmEl)kmEl.style.display=['🏃','🚴','🚶','🏊'].includes(sport)||!sport?'block':'none';
-    if(dpEl)dpEl.style.display=['🏃','🚶'].includes(sport)||!sport?'block':'none';
+    if(dpEl)dpEl.style.display=['🏃','🚶','🚴'].includes(sport)||!sport?'block':'none';
   };
 
   window.saveSuivi = async function(wk) {

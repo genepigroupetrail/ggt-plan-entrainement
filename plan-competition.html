@@ -480,7 +480,7 @@ function showToast(msg,err) {
       let cumKm=0,cumDp=0;
       for(let i=0;i<7;i++){
         const sport=saved[wk+'_sport'+i]||'';
-        if(SPORTS_CUMUL.includes(sport)){
+        if(['🏃','🚶'].includes(sport)){
           cumKm+=parseFloat(saved[wk+'_km'+i]||0);
           cumDp+=parseFloat(saved[wk+'_dp'+i]||0);
         }
@@ -545,13 +545,41 @@ function showToast(msg,err) {
       data[wk+'_sens'+i]=document.getElementById(wk+'_sens'+i)?.value||'';
       data[wk+'_km'+i]=km;
       data[wk+'_dp'+i]=dp;
-      if(SPORTS_CUMUL.includes(sport)){cumKm+=parseFloat(km||0);cumDp+=parseFloat(dp||0);}
+      if(['🏃','🚶'].includes(sport)){cumKm+=parseFloat(km||0);cumDp+=parseFloat(dp||0);}
     }
     data[wk+'_cumkm']=cumKm.toFixed(1);
     data[wk+'_cumdp']=Math.round(cumDp);
     try{
       await setDoc(doc(db,'race_suivi',uid+'_'+currentComp.id),data,{merge:true});
       showToast('✓ Suivi sauvegardé !');
+      // Mettre à jour l'affichage du cumul de cette semaine
+      const cumEl = document.querySelector(`[data-cumul="${wk}"]`);
+      if(cumEl) {
+        cumEl.innerHTML = `Cumul : <span class="km">${cumKm.toFixed(1)} km</span> · <span class="dp">${Math.round(cumDp)} m D+</span>`;
+      }
+      // Mettre à jour le cumul total
+      let totalKm=0, totalDp=0;
+      document.querySelectorAll('[data-cumkm]').forEach(el=>{totalKm+=parseFloat(el.dataset.cumkm||0);});
+      document.querySelectorAll('[data-cumdp]').forEach(el=>{totalDp+=parseFloat(el.dataset.cumdp||0);});
+      // recalculer depuis les inputs
+      let tk=0,td=0;
+      const weeks=currentComp.semaines||[];
+      weeks.forEach(w=>{
+        const wkey='w_'+w.num;
+        let wkm=0,wdp=0;
+        for(let i=0;i<7;i++){
+          const sp=document.getElementById(wkey+'_sport'+i)?.value||'';
+          if(['🏃','🚶'].includes(sp)){
+            wkm+=parseFloat(document.getElementById(wkey+'_km'+i)?.value||0);
+            wdp+=parseFloat(document.getElementById(wkey+'_dp'+i)?.value||0);
+          }
+        }
+        tk+=wkm;td+=wdp;
+      });
+      const totalEl=document.querySelector('.cumul-total');
+      if(totalEl){
+        totalEl.innerHTML=`<span class="label">📊 Cumul total</span><span class="val-km">${tk.toFixed(1)} km</span><span class="val-dp">${Math.round(td)} m D+</span>`;
+      }
     }catch(e){showToast('Erreur : '+e.message,true);}
   };
 

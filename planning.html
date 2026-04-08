@@ -307,10 +307,24 @@ function toggleBTab(id, btn) {
       cotes:   ['badge-cotes','🏔️ Côtes'],
       seuil:   ['badge-seuil','⚡ Seuil'],
       sortie:  ['badge-sortie','🌲 Sortie'],
-      footing: ['badge-seuil','🏃 Footing'],
+      footing: ['badge-footing','🏃 Footing'],
       course:  ['badge-course','🏅 Course'],
       rm:      ['badge-rm','💪 Renforcement'],
       autre:   ['badge-autre','📋 Séance'],
+    };
+    return map[type] || map['autre'];
+  }
+
+  function getCardStyle(type) {
+    const map = {
+      repos:   'rgba(237,234,228,0.08)',
+      cotes:   'rgba(255,192,0,0.10)',
+      seuil:   'rgba(184,204,228,0.10)',
+      sortie:  'rgba(196,215,155,0.10)',
+      footing: 'rgba(183,222,232,0.10)',
+      course:  'rgba(251,212,180,0.10)',
+      rm:      'rgba(228,223,236,0.10)',
+      autre:   'rgba(253,245,224,0.08)',
     };
     return map[type] || map['autre'];
   }

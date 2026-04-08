@@ -261,6 +261,20 @@ function showToast(msg,type){
   }
   function getWeekKey(monday){ return monday.toISOString().split('T')[0]; }
   function formatDate(d){ return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'}); }
+  function getTypeStyle(type) {
+    const map = {
+      repos:   'rgba(237,234,228,0.08)',
+      cotes:   'rgba(255,192,0,0.10)',
+      seuil:   'rgba(184,204,228,0.10)',
+      sortie:  'rgba(196,215,155,0.10)',
+      footing: 'rgba(183,222,232,0.10)',
+      course:  'rgba(251,212,180,0.10)',
+      rm:      'rgba(228,223,236,0.10)',
+      autre:   'rgba(253,245,224,0.08)',
+    };
+    return map[type] || map['autre'];
+  }
+
   function typeOptions(selected){
     return TYPES.map(t=>`<option value="${t.value}" ${t.value===selected?'selected':''}>${t.label}</option>`).join('');
   }

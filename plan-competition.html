@@ -67,9 +67,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .dh{background:var(--surf2);padding:5px 6px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);border-bottom:.5px solid var(--brd)}
 .dh span{font-size:8px;opacity:.6;font-weight:400;display:block}
 .dcell{background:var(--surf);padding:7px;font-size:11px;color:#a8b0c8;line-height:1.5;white-space:pre-line;min-height:55px;display:flex;align-items:center;justify-content:center;text-align:center}
-.dcell.repos{color:rgba(122,128,153,.35);font-style:italic}
-.dcell.course{background:rgba(252,76,2,.08);color:#fc7c42;font-weight:600}
-.dcell.recup{background:rgba(79,142,247,.05)}
+.dcell.repos{background:rgba(237,234,228,.06);color:rgba(156,163,175,.5);font-style:italic}
+.dcell.course{background:rgba(251,212,180,.12);color:#FBD4B4;font-weight:600}
+.dcell.recup{background:rgba(183,222,232,.08);color:#B7DEE8}
 
 /* SUIVI */
 .sv-wrap{margin-bottom:18px}
@@ -289,6 +289,22 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 <div class="toast" id="toast"></div>
 
 <script>
+function sportClass(s) {
+  if(s==='🏃') return 'cq-sport-run';
+  if(s==='🚴') return 'cq-sport-velo';
+  if(s==='🚶') return 'cq-sport-walk';
+  if(s==='🏊') return 'cq-sport-swim';
+  if(s==='🏋️') return 'cq-sport-rm';
+  return '';
+}
+function sensClass(s) {
+  if(s==='😊') return 'cq-sens-1';
+  if(s==='🙂') return 'cq-sens-2';
+  if(s==='😐') return 'cq-sens-3';
+  if(s==='😓') return 'cq-sens-4';
+  if(s==='😰') return 'cq-sens-5';
+  return '';
+}
 function goToVma() {
   if(window._currentCompId !== undefined && window._currentDist !== undefined) {
     sessionStorage.setItem('ggt_comp_id', window._currentCompId);
@@ -635,11 +651,12 @@ function showToast(msg,err) {
             const km=sd[wk+'_km'+i]||'';
             const dp=sd[wk+'_dp'+i]||'';
             const hasData=sport||sens||km||dp;
+            const sc=sportClass(sport), snc=sensClass(sens);
             html+=`<td style="padding:4px">${hasData?`<div class="cell-quad">
-              <div class="cq sport">${sport||'—'}</div>
-              <div class="cq sens">${sens||'—'}</div>
-              <div class="cq km">${km?km+'km':'—'}</div>
-              <div class="cq dp">${dp?dp+'m':'—'}</div>
+              <div class="cq sport ${sc}">${sport||'—'}</div>
+              <div class="cq sens ${snc}">${sens||'—'}</div>
+              <div class="cq km">${km?km+' km':'—'}</div>
+              <div class="cq dp">${dp?dp+' m':'—'}</div>
             </div>`:'<div style="color:rgba(122,128,153,.3);font-size:11px">—</div>'}</td>`;
           }
           html+=`<td style="color:var(--acc);font-weight:700">${sd[wk+'_cumkm']||'0'}</td><td style="color:var(--grn);font-weight:700">${sd[wk+'_cumdp']||'0'}m</td></tr>`;

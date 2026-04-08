@@ -269,10 +269,10 @@ function showToast(msg,type){
     const type=plan.type||'repos', contenu=plan.contenu||'', location=plan.location||'';
     const shortcuts=ABBREVS.map(a=>`<span class="shortcut" onclick="insertAbbrev(${dayIndex},${planIndex},'${a}')">${a}</span>`).join('');
     const removeBtn=planIndex>0?`<button class="btn-remove-plan" onclick="removePlan(${dayIndex},${planIndex})">✕ Supprimer</button>`:'';
-    return `<div class="plan-block" id="plan-${dayIndex}-${planIndex}">
+    return `<div class="plan-block" id="plan-${dayIndex}-${planIndex}" style="background:${getTypeStyle(type)}">
       ${removeBtn}
       <div class="plan-block-header">
-        <select class="select-type" onchange="updatePlanField(${dayIndex},${planIndex},'type',this.value)">${typeOptions(type)}</select>
+        <select class="select-type" onchange="updatePlanField(${dayIndex},${planIndex},'type',this.value);document.getElementById('plan-${dayIndex}-${planIndex}').style.background=getTypeStyle(this.value)">${typeOptions(type)}</select>
         <input type="text" class="input-location" placeholder="📍 Lieu (ex: Élancourt)" value="${location}" oninput="updatePlanField(${dayIndex},${planIndex},'location',this.value)">
       </div>
       <textarea id="ta-${dayIndex}-${planIndex}" placeholder="Détail de la séance..." oninput="updatePlanField(${dayIndex},${planIndex},'contenu',this.value)">${contenu}</textarea>

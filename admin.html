@@ -263,14 +263,14 @@ function showToast(msg,type){
   function formatDate(d){ return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'}); }
   function getTypeStyle(type) {
     const map = {
-      repos:   'rgba(237,234,228,0.08)',
-      cotes:   'rgba(255,192,0,0.10)',
-      seuil:   'rgba(184,204,228,0.10)',
-      sortie:  'rgba(196,215,155,0.10)',
-      footing: 'rgba(183,222,232,0.10)',
-      course:  'rgba(251,212,180,0.10)',
-      rm:      'rgba(228,223,236,0.10)',
-      autre:   'rgba(253,245,224,0.08)',
+      repos:   'rgba(156,163,175,0.13)',
+      cotes:   'rgba(255,192,0,0.26)',
+      seuil:   'rgba(119,181,254,0.26)',
+      sortie:  'rgba(120,170,60,0.26)',
+      footing: 'rgba(143,168,191,0.26)',
+      course:  'rgba(245,158,11,0.26)',
+      rm:      'rgba(168,116,255,0.26)',
+      autre:   'rgba(200,185,130,0.22)',
     };
     return map[type] || map['autre'];
   }

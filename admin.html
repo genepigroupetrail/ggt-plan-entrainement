@@ -19,8 +19,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:16p
 .btn-h{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:6px 12px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
 .btn-h:hover{color:var(--txt);border-color:var(--acc)}
 .main{max-width:960px;margin:0 auto;padding:24px}
-.main-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:.5px solid var(--brd)}
-.main-tab{padding:10px 20px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;background:none;border:none;color:var(--mut);border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px}
+.main-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:.5px solid var(--brd);flex-wrap:wrap}
+.main-tab{padding:10px 16px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:none;border:none;color:var(--mut);border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px;white-space:nowrap}
 .main-tab.on{color:var(--acc);border-bottom-color:var(--acc)}
 .tab-section{display:none}
 .tab-section.on{display:block}
@@ -49,7 +49,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:16p
 .day-label .dname{font-size:13px;font-weight:600}
 .day-label .ddate{font-size:11px;color:var(--mut);margin-top:2px}
 .plans-container{display:flex;flex-direction:column;gap:10px}
-.plan-block{background:var(--surf2);border:.5px solid var(--brd);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;position:relative}
+.plan-block{border:.5px solid var(--brd);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;position:relative}
 .plan-block-header{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 select{background:var(--bg);border:.5px solid var(--brd);border-radius:7px;padding:6px 10px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:12px;outline:none;cursor:pointer}
 select:focus{border-color:var(--acc)}
@@ -66,7 +66,7 @@ textarea::placeholder{color:var(--mut)}
 .shortcut:hover{color:var(--acc);border-color:var(--acc)}
 .btn-add-plan{background:transparent;border:.5px dashed var(--brd);border-radius:8px;padding:8px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:border-color .2s,color .2s;width:100%;text-align:center}
 .btn-add-plan:hover{border-color:var(--acc);color:var(--acc)}
-.btn-remove-plan{position:absolute;top:8px;right:8px;background:rgba(224,0,32,.1);border:none;border-radius:5px;padding:3px 8px;color:#ff6b6b;font-size:11px;cursor:pointer;transition:background .2s}
+.btn-remove-plan{position:absolute;top:8px;right:8px;background:rgba(224,0,32,.1);border:none;border-radius:5px;padding:3px 8px;color:#ff6b6b;font-size:11px;cursor:pointer}
 .btn-remove-plan:hover{background:rgba(224,0,32,.2)}
 .actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
 .btn-save{flex:1;padding:12px;border-radius:10px;background:var(--surf);border:.5px solid var(--brd);color:var(--mut);font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;transition:border-color .2s,color .2s}
@@ -74,7 +74,7 @@ textarea::placeholder{color:var(--mut)}
 .btn-publish{flex:2;padding:12px;border-radius:10px;border:none;background:var(--ora);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s}
 .btn-publish:hover{opacity:.9}
 .btn-publish:disabled{opacity:.5;cursor:not-allowed}
-.btn-unpublish{flex:1;padding:12px;border-radius:10px;background:transparent;border:.5px solid rgba(224,0,32,.3);color:#ff6b6b;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:background .2s}
+.btn-unpublish{flex:1;padding:12px;border-radius:10px;background:transparent;border:.5px solid rgba(224,0,32,.3);color:#ff6b6b;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer}
 .btn-unpublish:hover{background:rgba(224,0,32,.1)}
 .comp-item{background:var(--surf);border:.5px solid var(--brd);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
 .comp-item-info{flex:1;min-width:200px}
@@ -98,7 +98,6 @@ textarea::placeholder{color:var(--mut)}
 .preview-item span{font-size:13px;color:var(--txt)}
 .preview-dists{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .dist-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;border:.5px solid var(--brd)}
-.preview-actions{display:flex;gap:10px;flex-wrap:wrap}
 .rules-box{background:var(--surf);border:.5px solid var(--brd);border-radius:12px;padding:16px;margin-bottom:20px;font-size:12px;line-height:1.8}
 .rules-box-title{font-weight:700;color:var(--acc);margin-bottom:10px;font-size:13px}
 .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -129,6 +128,7 @@ textarea::placeholder{color:var(--mut)}
     <button class="btn-h" onclick="logout()">Déconnexion</button>
   </div>
 </header>
+
 <div class="main">
   <div class="main-tabs">
     <button class="main-tab on" id="tab-planning-btn" onclick="switchMain('planning')">📅 Planning hebdo</button>
@@ -136,11 +136,13 @@ textarea::placeholder{color:var(--mut)}
     <button class="main-tab" id="tab-export-btn" onclick="switchMain('export')">📥 Export Excel</button>
     <button class="main-tab" id="tab-lexique-btn" onclick="switchMain('lexique')">📖 Lexique du site</button>
   </div>
+
+  <!-- PLANNING HEBDO -->
   <div class="tab-section on" id="tab-planning">
     <div class="week-nav">
-      <button class="nav-btn" id="btn-prev" onclick="changeWeek(-1)">← Précédente</button>
+      <button class="nav-btn" id="btn-prev" onclick="changeWeek(-1)">&#8592; Précédente</button>
       <div class="week-info"><h2 id="week-label">Chargement...</h2><p id="week-dates"></p></div>
-      <button class="nav-btn" id="btn-next" onclick="changeWeek(1)">Suivante →</button>
+      <button class="nav-btn" id="btn-next" onclick="changeWeek(1)">Suivante &#8594;</button>
     </div>
     <div class="status-bar">
       <span class="status-badge status-empty" id="status-badge">● Vide</span>
@@ -159,10 +161,12 @@ textarea::placeholder{color:var(--mut)}
       <button class="btn-unpublish" id="btn-unpub" onclick="unpublish()" style="display:none">🔒 Dépublier</button>
     </div>
   </div>
+
+  <!-- COMPETITIONS -->
   <div class="tab-section" id="tab-comp">
     <div style="display:flex;border-bottom:.5px solid var(--brd);margin-bottom:16px">
-      <button class="main-tab on" id="subt-list-btn" onclick="switchSub('list')" style="font-size:13px;padding:7px 16px">📋 Gérer les plans</button>
-      <button class="main-tab" id="subt-new-btn" onclick="switchSub('new')" style="font-size:13px;padding:7px 16px">➕ Nouveau plan</button>
+      <button class="main-tab on" id="subt-list-btn" onclick="switchSub('list')">📋 Gérer les plans</button>
+      <button class="main-tab" id="subt-new-btn" onclick="switchSub('new')">➕ Nouveau plan</button>
     </div>
     <div class="tab-section on" id="subt-list">
       <div id="comp-list-container"><div class="loading"><div class="spin"></div> Chargement...</div></div>
@@ -190,11 +194,11 @@ textarea::placeholder{color:var(--mut)}
     </div>
   </div>
 
-  <!-- ══ EXPORT EXCEL ══ -->
+  <!-- EXPORT EXCEL -->
   <div class="tab-section" id="tab-export">
     <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px;margin-bottom:20px">
       <div style="font-size:14px;font-weight:600;margin-bottom:6px">📥 Exporter le planning en Excel</div>
-      <div style="font-size:12px;color:var(--mut);margin-bottom:20px">Choisis une plage de semaines à exporter. Le fichier Excel contiendra le détail de chaque jour avec le type de séance, le lieu et le contenu.</div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:20px">Choisis une plage de semaines à exporter pour créer une sauvegarde locale sur ton disque dur.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;max-width:500px">
         <div>
           <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Semaine de début</label>
@@ -211,37 +215,34 @@ textarea::placeholder{color:var(--mut)}
       </div>
     </div>
     <div style="background:rgba(79,142,247,.05);border:.5px solid rgba(79,142,247,.2);border-radius:12px;padding:14px 16px;font-size:12px;color:var(--mut);line-height:1.8">
-      💡 <strong style="color:var(--acc)">Astuce :</strong> Le fichier Excel exporté est une sauvegarde locale de ton planning. Il contient le détail complet de chaque semaine (type de séance, lieu, contenu, statut). Tu peux l'archiver sur ton disque dur ou l'imprimer en PDF depuis Excel via Fichier → Imprimer → Enregistrer en PDF.
+      💡 <strong style="color:var(--acc)">Note :</strong> Ce fichier est une sauvegarde en lecture. Tu peux l'archiver ou l'imprimer en PDF depuis Excel via Fichier → Imprimer → Enregistrer en PDF.
     </div>
   </div>
-  <!-- ══ LEXIQUE DU SITE ══ -->
+
+  <!-- LEXIQUE -->
   <div class="tab-section" id="tab-lexique">
     <div style="display:flex;flex-direction:column;gap:16px">
-
-      <!-- COULEURS -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🎨 Couleurs des types de séance</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(156,163,175,0.13)"><span style="font-size:16px">😴</span><div><div style="font-size:12px;font-weight:600">Repos</div><div style="font-size:10px;color:var(--mut)">rgba(156,163,175) · 0.13</div></div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.26)"><span style="font-size:16px">🏔️</span><div><div style="font-size:12px;font-weight:600;color:#FFC000">Côtes</div><div style="font-size:10px;color:var(--mut)">#FFC000 · rgba(255,192,0) · 0.26</div></div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(119,181,254,0.26)"><span style="font-size:16px">⚡</span><div><div style="font-size:12px;font-weight:600;color:#77B5FE">Seuil</div><div style="font-size:10px;color:var(--mut)">#77B5FE · rgba(119,181,254) · 0.26</div></div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(120,170,60,0.26)"><span style="font-size:16px">🌲</span><div><div style="font-size:12px;font-weight:600;color:#8fba3a">Sortie</div><div style="font-size:10px;color:var(--mut)">#8fba3a · rgba(120,170,60) · 0.26</div></div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(143,168,191,0.26)"><span style="font-size:16px">🏃</span><div><div style="font-size:12px;font-weight:600;color:#8FA8BF">Footing</div><div style="font-size:10px;color:var(--mut)">#8FA8BF · rgba(143,168,191) · 0.26</div></div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(245,158,11,0.26)"><span style="font-size:16px">🏅</span><div><div style="font-size:12px;font-weight:600;color:#f59e0b">Course</div><div style="font-size:10px;color:var(--mut)">#f59e0b · rgba(245,158,11) · 0.26</div></div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.26)"><span style="font-size:16px">💪</span><div><div style="font-size:12px;font-weight:600;color:#b08fff">Renforcement</div><div style="font-size:10px;color:var(--mut)">#b08fff · rgba(168,116,255) · 0.26</div></div></div>
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(200,185,130,0.22)"><span style="font-size:16px">📋</span><div><div style="font-size:12px;font-weight:600;color:#c8b870">Autre</div><div style="font-size:10px;color:var(--mut)">#c8b870 · rgba(200,185,130) · 0.22</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(156,163,175,0.13)"><span style="font-size:16px">😴</span><div><div style="font-size:12px;font-weight:600">Repos</div><div style="font-size:10px;color:var(--mut)">#D9D9D9 · rgba(156,163,175,0.13)</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.26)"><span style="font-size:16px">🏔️</span><div><div style="font-size:12px;font-weight:600;color:#FFC000">Côtes</div><div style="font-size:10px;color:var(--mut)">#FFC000 · rgba(255,192,0,0.26)</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(119,181,254,0.26)"><span style="font-size:16px">⚡</span><div><div style="font-size:12px;font-weight:600;color:#77B5FE">Seuil</div><div style="font-size:10px;color:var(--mut)">#77B5FE · rgba(119,181,254,0.26)</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(120,170,60,0.26)"><span style="font-size:16px">🌲</span><div><div style="font-size:12px;font-weight:600;color:#8fba3a">Sortie</div><div style="font-size:10px;color:var(--mut)">#8FBA3A · rgba(120,170,60,0.26)</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(143,168,191,0.26)"><span style="font-size:16px">🏃</span><div><div style="font-size:12px;font-weight:600;color:#8FA8BF">Footing</div><div style="font-size:10px;color:var(--mut)">#8FA8BF · rgba(143,168,191,0.26)</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(245,158,11,0.26)"><span style="font-size:16px">🏅</span><div><div style="font-size:12px;font-weight:600;color:#f59e0b">Course</div><div style="font-size:10px;color:var(--mut)">#F59E0B · rgba(245,158,11,0.26)</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.26)"><span style="font-size:16px">💪</span><div><div style="font-size:12px;font-weight:600;color:#b08fff">Renforcement</div><div style="font-size:10px;color:var(--mut)">#B08FFF · rgba(168,116,255,0.26)</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(200,185,130,0.22)"><span style="font-size:16px">📋</span><div><div style="font-size:12px;font-weight:600;color:#c8b870">Autre</div><div style="font-size:10px;color:var(--mut)">#C8B870 · rgba(200,185,130,0.22)</div></div></div>
         </div>
       </div>
-
-      <!-- EMOJIS SUIVI -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏃 Activités suivi — Couleurs carrés</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏃 Activités suivi</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px">
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(34,197,94,0.20)"><span style="font-size:14px">🏃</span> <strong>Course / Trail</strong><div style="font-size:10px;color:var(--mut)">rgba(34,197,94) · 0.20 · Cumul km+D+</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.20)"><span style="font-size:14px">🚴</span> <strong>Vélo</strong><div style="font-size:10px;color:var(--mut)">rgba(255,192,0) · 0.20 · km+D+ affichés</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(180,140,80,0.20)"><span style="font-size:14px">🚶</span> <strong>Marche</strong><div style="font-size:10px;color:var(--mut)">rgba(180,140,80) · 0.20 · Cumul km+D+</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(79,142,247,0.20)"><span style="font-size:14px">🏊</span> <strong>Natation</strong><div style="font-size:10px;color:var(--mut)">rgba(79,142,247) · 0.20 · km affiché</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.20)"><span style="font-size:14px">🏋️</span> <strong>Renforcement</strong><div style="font-size:10px;color:var(--mut)">rgba(168,116,255) · 0.20 · Sans mesure</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(34,197,94,0.20)"><span>🏃</span> <strong>Course / Trail</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.20)"><span>🚴</span> <strong>Vélo</strong><div style="font-size:10px;color:var(--mut)">km + D+ affichés</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(180,140,80,0.20)"><span>🚶</span> <strong>Marche</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(79,142,247,0.20)"><span>🏊</span> <strong>Natation</strong><div style="font-size:10px;color:var(--mut)">km affiché</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.20)"><span>🏋️</span> <strong>Renforcement</strong><div style="font-size:10px;color:var(--mut)">Sans mesure</div></div>
         </div>
         <div style="font-size:13px;font-weight:600;margin-bottom:8px">Sensations :</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -252,90 +253,62 @@ textarea::placeholder{color:var(--mut)}
           <div style="padding:6px 14px;border-radius:20px;background:rgba(239,68,68,0.22);font-size:13px">😰 Très difficile</div>
         </div>
       </div>
-
-      <!-- REGLES FIRESTORE -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔐 Règles Firestore</div>
         <div style="font-size:11px;color:var(--mut);margin-bottom:10px">À copier-coller dans Firebase → Firestore → Règles</div>
-        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:14px;font-size:11px;color:#a8b0c8;overflow-x:auto;line-height:1.7;white-space:pre">rules_version = '2';
+        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:14px;font-size:11px;color:#a8b0c8;overflow-x:auto;line-height:1.7">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /plannings/{weekId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null &&
+      allow write: if request.auth != null &amp;&amp;
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     match /users/{userId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null &&
+      allow write: if request.auth != null &amp;&amp;
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     match /vma_data/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null &amp;&amp; request.auth.uid == userId;
     }
     match /race_plans/{planId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null &&
+      allow write: if request.auth != null &amp;&amp;
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     match /race_suivi/{docId} {
-      allow read, write: if request.auth != null &&
+      allow read, write: if request.auth != null &amp;&amp;
         docId.matches(request.auth.uid + '_.*');
       allow read: if request.auth != null;
     }
   }
 }</pre>
       </div>
-
-      <!-- CHANGEMENT D'ANNEE -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">📅 Changement d'année — Navigation semaines</div>
-        <div style="font-size:12px;color:var(--mut);line-height:1.8;margin-bottom:12px">
-          La navigation est configurée sur <strong style="color:var(--txt)">±3120 semaines (60 ans)</strong> depuis aujourd'hui.<br>
-          Pour étendre à une nouvelle année, modifier la valeur dans <code style="background:var(--bg);padding:1px 6px;border-radius:4px;font-size:11px">planning.html</code> et <code style="background:var(--bg);padding:1px 6px;border-radius:4px;font-size:11px">admin.html</code> :
-        </div>
-        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:12px;font-size:11px;color:#a8b0c8;overflow-x:auto">// Ligne à modifier dans loadWeek() / renderWeek()
-document.getElementById('btn-prev').disabled = currentWeekOffset &lt;= -3120;
-document.getElementById('btn-next').disabled = currentWeekOffset &gt;= 3120;
-// Changer 3120 par 5200 pour 100 ans, etc.</pre>
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">📅 Navigation semaines</div>
+        <div style="font-size:12px;color:var(--mut);line-height:1.8;margin-bottom:12px">Configurée sur <strong style="color:var(--txt)">±3120 semaines (60 ans)</strong>. Pour modifier, chercher dans planning.html et admin.html :</div>
+        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:12px;font-size:11px;color:#a8b0c8;overflow-x:auto">currentWeekOffset &lt;= -3120  // changer pour ±5200 = 100 ans</pre>
       </div>
-
-      <!-- URLS -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔗 URLs et références</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;font-size:12px">
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
-            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Site GGT</div>
-            <a href="https://genepigroupetrail.github.io/ggt-plan-entrainement/" target="_blank" style="color:var(--acc)">genepigroupetrail.github.io/ggt-plan-entrainement/</a>
-          </div>
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
-            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase Console</div>
-            <a href="https://console.firebase.google.com/project/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">console.firebase.google.com</a>
-          </div>
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
-            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">GitHub</div>
-            <a href="https://github.com/genepigroupetrail/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">github.com/genepigroupetrail/ggt-plan-entrainement</a>
-          </div>
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
-            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase Project ID</div>
-            <code style="color:var(--txt)">ggt-plan-entrainement</code>
-          </div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Site GGT</div><a href="https://genepigroupetrail.github.io/ggt-plan-entrainement/" target="_blank" style="color:var(--acc)">genepigroupetrail.github.io/ggt-plan-entrainement/</a></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase</div><a href="https://console.firebase.google.com/project/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">console.firebase.google.com</a></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">GitHub</div><a href="https://github.com/genepigroupetrail/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">github.com/genepigroupetrail/ggt-plan-entrainement</a></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase Project ID</div><code style="color:var(--txt)">ggt-plan-entrainement</code></div>
         </div>
       </div>
-
-      <!-- TEMPLATE EXCEL -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--acc)">📂 Template Excel plan de compétition</div>
-        <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Fichier template à utiliser pour créer un plan de compétition et l'importer dans le site.</div>
-        <a href="GGT_Template_Plan_Course.xlsx" download class="btn-publish" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;flex:unset;padding:10px 20px;font-size:13px;border-radius:10px">
-          📥 Télécharger le template Excel
-        </a>
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--acc)">📂 Template Excel</div>
+        <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Fichier template pour créer un plan de compétition.</div>
+        <a href="GGT_Template_Plan_Course.xlsx" download class="btn-publish" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;flex:unset;padding:10px 20px;font-size:13px;border-radius:10px">📥 Télécharger le template Excel</a>
       </div>
-
     </div>
   </div>
-
 </div>
+
+<!-- Modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-title" id="modal-title">Confirmer</div>
@@ -347,33 +320,36 @@ document.getElementById('btn-next').disabled = currentWeekOffset &gt;= 3120;
   </div>
 </div>
 <div class="toast" id="toast"></div>
+
 <script>
-function switchMain(name){
-  ['planning','comp','export','lexique'].forEach(n=>{
-    document.getElementById('tab-'+n).className='tab-section'+(n===name?' on':'');
-    document.getElementById('tab-'+n+'-btn').className='main-tab'+(n===name?' on':'');
+function switchMain(name) {
+  ['planning','comp','export','lexique'].forEach(function(n) {
+    document.getElementById('tab-'+n).className = 'tab-section' + (n===name ? ' on' : '');
+    document.getElementById('tab-'+n+'-btn').className = 'main-tab' + (n===name ? ' on' : '');
   });
-  if(name==='comp') window.loadCompList&&window.loadCompList();
+  if (name === 'comp') window.loadCompList && window.loadCompList();
 }
-function switchSub(name){
-  ['list','new'].forEach(n=>{
-    document.getElementById('subt-'+n).className='tab-section'+(n===name?' on':'');
-    document.getElementById('subt-'+n+'-btn').className='main-tab'+(n===name?' on':'');
+function switchSub(name) {
+  ['list','new'].forEach(function(n) {
+    document.getElementById('subt-'+n).className = 'tab-section' + (n===name ? ' on' : '');
+    document.getElementById('subt-'+n+'-btn').className = 'main-tab' + (n===name ? ' on' : '');
   });
 }
-function closeModal(){ document.getElementById('modal').classList.remove('show'); }
-function showToast(msg,type){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(type==='err'?' error':type==='warn'?' warn':'');
-  setTimeout(()=>t.className='toast'+(type==='err'?' error':type==='warn'?' warn':''),3000);
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type==='err' ? ' error' : type==='warn' ? ' warn' : '');
+  setTimeout(function() { t.className = 'toast' + (type==='err' ? ' error' : type==='warn' ? ' warn' : ''); }, 3000);
 }
 </script>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = {
+  var firebaseConfig = {
     apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
     authDomain: "ggt-plan-entrainement.firebaseapp.com",
     projectId: "ggt-plan-entrainement",
@@ -381,221 +357,28 @@ function showToast(msg,type){
     messagingSenderId: "663631056543",
     appId: "1:663631056543:web:d8cb50121fcf8d1c635caa"
   };
-  const app=initializeApp(firebaseConfig);
-  const auth=getAuth(app);
-  const db=getFirestore(app);
+  var app  = initializeApp(firebaseConfig);
+  var auth = getAuth(app);
+  var db   = getFirestore(app);
 
-  let currentWeekOffset=0, weekData={}, parsedPlan=null;
-  const JOURS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
-  const TYPES=[
-    {value:'repos',label:'😴 Repos'},{value:'cotes',label:'🏔️ Côtes'},
-    {value:'seuil',label:'⚡ Seuil / Fractionné'},{value:'sortie',label:'🌲 Sortie longue'},
-    {value:'footing',label:'🏃 Footing'},{value:'course',label:'🏅 Course / Compét'},
-    {value:'rm',label:'💪 Renforcement Musculaire'},{value:'autre',label:'📋 Autre'},
+  var currentWeekOffset = 0;
+  var weekData = {};
+  var parsedPlan = null;
+
+  var JOURS   = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  var TYPES   = [
+    {value:'repos',  label:'😴 Repos'},
+    {value:'cotes',  label:'🏔️ Côtes'},
+    {value:'seuil',  label:'⚡ Seuil / Fractionné'},
+    {value:'sortie', label:'🌲 Sortie longue'},
+    {value:'footing',label:'🏃 Footing'},
+    {value:'course', label:'🏅 Course / Compét'},
+    {value:'rm',     label:'💪 Renforcement Musculaire'},
+    {value:'autre',  label:'📋 Autre'},
   ];
-  const ABBREVS=['CB','CH','CE','MB','ME','CCE','CCH','CCL','CCR','RAC','EF','TV','TP','VMA','R','S1','S2','D+','×','R30s','R descente','Footing','Gammes','Repos','Renforcement Musculaire'];
-  const DIST_COLORS=['#fc4c02','#4f8ef7','#22c55e','#f59e0b'];
+  var ABBREVS = ['CB','CH','CE','MB','ME','CCE','CCH','CCL','CCR','RAC','EF','TV','TP','VMA','R','S1','S2','D+','×','R30s','R descente','Footing','Gammes','Repos','Renforcement Musculaire'];
+  var DIST_COLORS = ['#fc4c02','#4f8ef7','#22c55e','#f59e0b'];
 
-  function getWeekNumber(date) {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-    return 'S' + String(Math.ceil((((d - yearStart) / 86400000) + 1)/7)).padStart(2,'0');
-  }
-  function getMondayOfWeek(offset=0){
-    const now=new Date(),day=now.getDay()||7,monday=new Date(now);
-    monday.setDate(now.getDate()-day+1+offset*7);monday.setHours(0,0,0,0);return monday;
-  }
-  function getWeekKey(monday){ return monday.toISOString().split('T')[0]; }
-  function formatDate(d){ return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'}); }
-  function getTypeStyle(type) {
-    const map = {
-      repos:   'rgba(156,163,175,0.13)',
-      cotes:   'rgba(255,192,0,0.26)',
-      seuil:   'rgba(119,181,254,0.26)',
-      sortie:  'rgba(120,170,60,0.26)',
-      footing: 'rgba(143,168,191,0.26)',
-      course:  'rgba(245,158,11,0.26)',
-      rm:      'rgba(168,116,255,0.26)',
-      autre:   'rgba(200,185,130,0.22)',
-    };
-    return map[type] || map['autre'];
-  }
-
-  function typeOptions(selected){
-    return TYPES.map(t=>`<option value="${t.value}" ${t.value===selected?'selected':''}>${t.label}</option>`).join('');
-  }
-
-  function renderPlanBlock(dayIndex,planIndex,plan={}){
-    const type=plan.type||'repos', contenu=plan.contenu||'', location=plan.location||'';
-    const shortcuts=ABBREVS.map(a=>`<span class="shortcut" onclick="insertAbbrev(${dayIndex},${planIndex},'${a}')">${a}</span>`).join('');
-    const removeBtn=planIndex>0?`<button class="btn-remove-plan" onclick="removePlan(${dayIndex},${planIndex})">✕ Supprimer</button>`:'';
-    return `<div class="plan-block" id="plan-${dayIndex}-${planIndex}" style="background:${getTypeStyle(type)}">
-      ${removeBtn}
-      <div class="plan-block-header">
-        <select class="select-type" onchange="updatePlanField(${dayIndex},${planIndex},'type',this.value);document.getElementById('plan-${dayIndex}-${planIndex}').style.background=getTypeStyle(this.value)">${typeOptions(type)}</select>
-        <input type="text" class="input-location" placeholder="📍 Lieu (ex: Élancourt)" value="${location}" oninput="updatePlanField(${dayIndex},${planIndex},'location',this.value)">
-      </div>
-      <textarea id="ta-${dayIndex}-${planIndex}" placeholder="Détail de la séance..." oninput="updatePlanField(${dayIndex},${planIndex},'contenu',this.value)">${contenu}</textarea>
-      <div class="shortcuts">${shortcuts}</div>
-    </div>`;
-  }
-
-  function renderDay(i,date,plans){
-    const today=new Date();today.setHours(0,0,0,0);
-    const isToday=date.getTime()===today.getTime();
-    const plansHtml=plans.map((p,pi)=>renderPlanBlock(i,pi,p)).join('');
-    return `<div class="day-row ${isToday?'today-row':''}" id="day-row-${i}">
-      <div class="day-label">
-        <div class="dname">${JOURS[i]}</div>
-        <div class="ddate">${date.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</div>
-      </div>
-      <div class="plans-container" id="plans-${i}">
-        ${plansHtml}
-        <button class="btn-add-plan" onclick="addPlan(${i})">+ Ajouter un 2ème plan (ex: autre commune)</button>
-      </div>
-    </div>`;
-  }
-
-  async function renderWeek(){
-    const monday=getMondayOfWeek(currentWeekOffset);
-    const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);
-    const weekKey=getWeekKey(monday);
-    const weekNum = getWeekNumber(monday);
-    const weekLabel = currentWeekOffset===0?'Cette semaine':currentWeekOffset===-1?'Semaine dernière':
-      currentWeekOffset===1?'Semaine prochaine':'Semaine';
-    document.getElementById('week-label').textContent=weekLabel;
-    document.getElementById('week-dates').textContent=`${weekNum} · ${formatDate(monday)} – ${formatDate(sunday)}`;
-    document.getElementById('btn-prev').disabled=currentWeekOffset<=-3120;
-    document.getElementById('btn-next').disabled=currentWeekOffset>=3120;
-    const snap=await getDoc(doc(db,'plannings',weekKey));
-    weekData=snap.exists()?snap.data():{};
-    const jours=weekData.jours||Array(7).fill(null).map(()=>({plans:[{type:'repos',contenu:'',location:''}]}));
-    const published=weekData.published||false;
-    const updatedAt=weekData.updatedAt?.toDate?.();
-    const normalizedJours=jours.map(j=>{
-      if(!j)return{plans:[{type:'repos',contenu:'',location:''}]};
-      if(!j.plans)return{plans:[{type:j.type||'repos',contenu:j.contenu||'',location:''}]};
-      return j;
-    });
-    weekData.jours=normalizedJours;
-    const badge=document.getElementById('status-badge');
-    const notice=document.getElementById('draft-notice');
-    const btnUnpub=document.getElementById('btn-unpub');
-    if(published){badge.className='status-badge status-published';badge.textContent='● Publié';notice.style.display='none';btnUnpub.style.display='block';}
-    else if(snap.exists()){badge.className='status-badge status-draft';badge.textContent='● Brouillon';notice.style.display='block';btnUnpub.style.display='none';}
-    else{badge.className='status-badge status-empty';badge.textContent='● Vide';notice.style.display='none';btnUnpub.style.display='none';}
-    document.getElementById('last-update').textContent=updatedAt?`Modifié le ${updatedAt.toLocaleString('fr-FR')}`:'' ;
-    const msgField=document.getElementById('message-semaine');
-    if(msgField)msgField.value=weekData.message||'';
-    let html='';
-    for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);html+=renderDay(i,date,normalizedJours[i].plans);}
-    document.getElementById('days-list').innerHTML=html;
-  }
-
-  window.updatePlanField=(di,pi,field,value)=>{if(weekData.jours)weekData.jours[di].plans[pi][field]=value;};
-  window.addPlan=(di)=>{
-    if(!weekData.jours)return;
-    const plans=weekData.jours[di].plans;
-    plans.push({type:'repos',contenu:'',location:''});
-    const container=document.getElementById(`plans-${di}`);
-    const btn=container.querySelector('.btn-add-plan');
-    const d=document.createElement('div');
-    d.innerHTML=renderPlanBlock(di,plans.length-1,plans[plans.length-1]);
-    container.insertBefore(d.firstElementChild,btn);
-  };
-  window.removePlan=(di,pi)=>{
-    if(!weekData.jours)return;
-    weekData.jours[di].plans.splice(pi,1);
-    const container=document.getElementById(`plans-${di}`);
-    const btn=container.querySelector('.btn-add-plan');
-    container.innerHTML=weekData.jours[di].plans.map((p,pii)=>renderPlanBlock(di,pii,p)).join('');
-    container.appendChild(btn);
-  };
-  window.insertAbbrev=(di,pi,abbrev)=>{
-    const ta=document.getElementById(`ta-${di}-${pi}`);
-    if(!ta)return;
-    const s=ta.selectionStart,e=ta.selectionEnd;
-    ta.value=ta.value.slice(0,s)+abbrev+ta.value.slice(e);
-    if(weekData.jours)weekData.jours[di].plans[pi].contenu=ta.value;
-    ta.focus();ta.selectionStart=ta.selectionEnd=s+abbrev.length;
-  };
-
-  async function save(published){
-    const weekKey=getWeekKey(getMondayOfWeek(currentWeekOffset));
-    const message=document.getElementById('message-semaine')?.value.trim()||'';
-    try{await setDoc(doc(db,'plannings',weekKey),{jours:weekData.jours,published,message,updatedAt:serverTimestamp()});return true;}
-    catch(e){showToast('Erreur de sauvegarde','err');return false;}
-  }
-  window.saveDraft=async()=>{if(await save(false)){showToast('💾 Brouillon enregistré');renderWeek();}};
-  window.publish=async()=>{
-    const btn=document.getElementById('btn-pub');btn.disabled=true;btn.textContent='Publication...';
-    if(await save(true)){showToast('✓ Planning publié !');renderWeek();}
-    btn.disabled=false;btn.textContent='📤 Publier la semaine';
-  };
-  window.unpublish=async()=>{if(await save(false)){showToast('🔒 Planning dépublié','warn');renderWeek();}};
-  window.changeWeek=(dir)=>{currentWeekOffset+=dir;renderWeek();};
-
-  window.loadCompList=async function(){
-    const div=document.getElementById('comp-list-container');
-    div.innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
-    try{
-      const snap=await getDocs(collection(db,'race_plans'));
-      const comps=[];snap.forEach(d=>comps.push({id:d.id,...d.data()}));
-      comps.sort((a,b)=>new Date(a.date_course)-new Date(b.date_course));
-      if(!comps.length){div.innerHTML='<p style="color:var(--mut);font-size:13px;padding:20px 0">Aucun plan créé. Clique sur "+ Nouveau plan".</p>';return;}
-      div.innerHTML=comps.map(c=>{
-        const bc=c.status==='published'?'status-published':'status-draft';
-        const bt=c.status==='published'?'● Publié':'● Brouillon';
-        return `<div class="comp-item">
-          <div class="comp-item-info">
-            <div class="comp-item-name">${c.nom} <span class="status-badge ${bc}" style="margin-left:8px">${bt}</span></div>
-            <div class="comp-item-meta">📅 ${c.date_course} · ${(c.distances||[]).map(d=>d.label).join(' / ')} · ${c.semaines?.length||'?'} semaines</div>
-          </div>
-          <div class="comp-item-actions">
-            ${c.status!=='published'?`<button class="btn-success" onclick="publishComp('${c.id}')">▶ Publier</button>`:`<button class="btn-warn" onclick="unpublishComp('${c.id}')">⏸ Dépublier</button>`}
-            <button class="btn-danger" onclick="confirmDelete('${c.id}','${c.nom}')">🗑 Supprimer</button>
-          </div>
-        </div>`;
-      }).join('');
-    }catch(e){div.innerHTML=`<p style="color:#ff6b6b;font-size:13px">Erreur : ${e.message}</p>`;}
-  };
-
-  window.publishComp=async(id)=>{await setDoc(doc(db,'race_plans',id),{status:'published'},{merge:true});showToast('✓ Plan publié !');window.loadCompList();};
-  window.unpublishComp=async(id)=>{await setDoc(doc(db,'race_plans',id),{status:'draft'},{merge:true});showToast('Plan dépublié','warn');window.loadCompList();};
-  window.confirmDelete=function(id,nom){
-    document.getElementById('modal-title').textContent='Supprimer ce plan ?';
-    document.getElementById('modal-body').textContent=`Le plan "${nom}" et tous les suivis seront supprimés définitivement.`;
-    document.getElementById('modal-confirm').onclick=()=>deleteComp(id);
-    document.getElementById('modal').classList.add('show');
-  };
-  async function deleteComp(id){
-    closeModal();
-    try{
-      await deleteDoc(doc(db,'race_plans',id));
-      const ss=await getDocs(collection(db,'race_suivi'));
-      const td=[];ss.forEach(d=>{if(d.id.includes('_'+id))td.push(d.id);});
-      await Promise.all(td.map(sid=>deleteDoc(doc(db,'race_suivi',sid))));
-      showToast(`Plan supprimé (${td.length} suivi(s) effacé(s))`);window.loadCompList();
-    }catch(e){showToast('Erreur : '+e.message,'err');}
-  }
-
-  window.handleDrop=function(e){e.preventDefault();document.getElementById('upload-zone').classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)readExcel(f);};
-  window.handleFile=function(e){const f=e.target.files[0];if(f)readExcel(f);};
-  function readExcel(file){
-    if(!file.name.endsWith('.xlsx')){showToast('Fichier .xlsx uniquement','err');return;}
-    const r=new FileReader();
-    r.onload=function(e){
-      try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true,cellStyles:true});parsedPlan=parseTemplate(wb);showPreview(parsedPlan);}
-      catch(err){showToast('Erreur : '+err.message,'err');}
-    };
-    r.readAsArrayBuffer(file);
-  }
-  function normDate(d){if(d instanceof Date)return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();return String(d);}
-  function isoDate(d){if(d instanceof Date)return d.toISOString().split('T')[0];const p=String(d).split('/');if(p.length===3)return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;return '';}
-  function formatDateFR(s){if(!s)return'?';let d;if(String(s).includes('T')){d=new Date(s);}else{const p=String(s).split('/');if(p.length===3)d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));else return s;}if(isNaN(d?.getTime()))return s;return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
-  // Table correspondance couleurs Excel → rgba site
   const CELL_COLOR_MAP = {
     'FFC000': 'rgba(255,192,0,0.26)',
     '77B5FE': 'rgba(119,181,254,0.26)',
@@ -608,275 +391,535 @@ function showToast(msg,type){
   const CELL_DEFAULT_BG = 'rgba(156,163,175,0.13)';
 
   function getCellBg(cell) {
-    if(!cell||!cell.s) return CELL_DEFAULT_BG;
-    const fill = cell.s.fgColor||cell.s.bgColor;
-    if(!fill) return CELL_DEFAULT_BG;
-    const rgb = String(fill.rgb||'').toUpperCase().replace(/^FF/,'');
-    if(!rgb||rgb.length!==6) return CELL_DEFAULT_BG;
+    if (!cell || !cell.s) return CELL_DEFAULT_BG;
+    var fill = cell.s.fgColor || cell.s.bgColor;
+    if (!fill) return CELL_DEFAULT_BG;
+    var rgb = String(fill.rgb || '').toUpperCase().replace(/^FF/, '');
+    if (!rgb || rgb.length !== 6) return CELL_DEFAULT_BG;
     return CELL_COLOR_MAP[rgb] || CELL_DEFAULT_BG;
   }
 
   function cellToHtml(cell) {
-    if(!cell) return 'Repos';
-    // Rich Text
-    if(cell.r) {
+    if (!cell) return 'Repos';
+    var txt = '', val = '', styles = [];
+    // Rich Text : cell.r contient le XML des runs
+    if (cell.r) {
       try {
-        const parser = new DOMParser();
-        const xmlStr = '<root xmlns:a="x">'+cell.r.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g,'&amp;')+'</root>';
-        const doc = parser.parseFromString(xmlStr,'text/xml');
-        const runs = doc.querySelectorAll('r');
-        if(runs.length>0) {
-          let html='';
-          runs.forEach(run=>{
-            const rPr=run.querySelector('rPr');
-            const t=run.querySelector('t');
-            if(!t)return;
-            const txt=(t.textContent||'').replace(/
-/g,'<br>');
-            if(!txt.trim()&&txt!=='<br>')return;
-            const styles=[];
-            if(rPr){
-              const color=rPr.querySelector('color');
-              if(color&&color.getAttribute('rgb')){
-                const rgb=color.getAttribute('rgb').replace(/^FF/i,'').toUpperCase();
-                if(rgb&&rgb!=='333333'&&rgb!=='000000') styles.push('color:#'+rgb);
+        var parser = new DOMParser();
+        var safe = cell.r.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g, '&amp;');
+        var xmlDoc = parser.parseFromString('<root>' + safe + '</root>', 'text/xml');
+        var runs = xmlDoc.querySelectorAll('r');
+        if (runs.length > 0) {
+          var html = '';
+          runs.forEach(function(run) {
+            var rPr = run.querySelector('rPr');
+            var t = run.querySelector('t');
+            if (!t) return;
+            var runTxt = (t.textContent || '').replace(/\n/g, '<br>');
+            var runStyles = [];
+            if (rPr) {
+              var color = rPr.querySelector('color');
+              if (color && color.getAttribute('rgb')) {
+                var rgb = color.getAttribute('rgb').replace(/^FF/i, '').toUpperCase();
+                if (rgb && rgb !== '333333' && rgb !== '000000') {
+                  runStyles.push('color:#' + rgb);
+                }
               }
-              if(rPr.querySelector('b')) styles.push('font-weight:bold');
-              if(rPr.querySelector('i')) styles.push('font-style:italic');
+              if (rPr.querySelector('b')) runStyles.push('font-weight:bold');
+              if (rPr.querySelector('i')) runStyles.push('font-style:italic');
             }
-            html+=styles.length?`<span style="${styles.join(';')}">${txt}</span>`:txt;
+            if (runStyles.length) {
+              html += '<span style="' + runStyles.join(';') + '">' + runTxt + '</span>';
+            } else {
+              html += runTxt;
+            }
           });
-          if(html.trim()) return html;
+          if (html.trim()) return html;
         }
-      } catch(e){}
+      } catch(e) {}
     }
     // Cellule simple
-    const val=String(cell.v||'').replace(/
-/g,'<br>');
-    if(!val) return 'Repos';
-    const styles=[];
-    if(cell.s){
-      const fc=cell.s.fgColor||(cell.s.font&&cell.s.font.color);
-      if(fc&&fc.rgb){const rgb=String(fc.rgb).replace(/^FF/i,'').toUpperCase();if(rgb&&rgb!=='333333'&&rgb!=='E8EAF0')styles.push('color:#'+rgb);}
-      if(cell.s.bold||(cell.s.font&&cell.s.font.bold))styles.push('font-weight:bold');
-      if(cell.s.italic||(cell.s.font&&cell.s.font.italic))styles.push('font-style:italic');
+    val = String(cell.v || '').replace(/\n/g, '<br>');
+    if (!val) return 'Repos';
+    if (cell.s) {
+      var fc = cell.s.fgColor || (cell.s.font && cell.s.font.color);
+      if (fc && fc.rgb) {
+        var frgb = String(fc.rgb).replace(/^FF/i, '').toUpperCase();
+        if (frgb && frgb !== '333333' && frgb !== 'E8EAF0') styles.push('color:#' + frgb);
+      }
+      if (cell.s.bold || (cell.s.font && cell.s.font.bold)) styles.push('font-weight:bold');
+      if (cell.s.italic || (cell.s.font && cell.s.font.italic)) styles.push('font-style:italic');
     }
-    return styles.length?`<span style="${styles.join(';')}">${val}</span>`:val;
+    if (styles.length) return '<span style="' + styles.join(';') + '">' + val + '</span>';
+    return val;
   }
 
-  function parseTemplate(wb){
-    const ws1=wb.Sheets['INFOS COURSE'];if(!ws1)throw new Error('Feuille "INFOS COURSE" introuvable');
-    const nom=ws1['B5']?.v||'';if(!nom)throw new Error('Nom manquant (B5)');
-    const distances=[];
-    for(let r=14;r<=17;r++){const label=ws1[`B${r}`]?.v,dist=ws1[`A${r}`]?.v;if(label&&String(label).trim())distances.push({dist:String(dist||'').trim(),label:String(label).trim()});}
-    if(!distances.length)throw new Error('Aucune distance (B14 à B17)');
-    const ws2=wb.Sheets['PLAN'];if(!ws2)throw new Error('Feuille "PLAN" introuvable');
-    const rows=XLSX.utils.sheet_to_json(ws2,{header:1,defval:''});
-    const dataRows=rows.slice(3).filter(r=>/^S\d+$/.test(String(r[0]||'').trim()));
-    const COLS=['E','F','G','H','I','J','K'];
-    const weeksMap={},weekOrder=[];
-    // Construire un index ligne→adresse pour retrouver les cellules avec style
-    const allAddrs=Object.keys(ws2).filter(k=>!k.startsWith('!'));
-    dataRows.forEach(r=>{
-      const num=String(r[0]||'').trim(),phase=String(r[1]||'').trim(),titre=String(r[2]||'').trim(),dist=String(r[3]||'').trim();
-      if(!num)return;
-      if(!weeksMap[num]){weeksMap[num]={num,phase,titre,distances:{}};weekOrder.push(num);}
+  function getTypeStyle(type) {
+    var map = {
+      repos:'rgba(156,163,175,0.13)', cotes:'rgba(255,192,0,0.26)',
+      seuil:'rgba(119,181,254,0.26)', sortie:'rgba(120,170,60,0.26)',
+      footing:'rgba(143,168,191,0.26)', course:'rgba(245,158,11,0.26)',
+      rm:'rgba(168,116,255,0.26)', autre:'rgba(200,185,130,0.22)',
+    };
+    return map[type] || map['autre'];
+  }
+
+  function getMondayOfWeek(offset) {
+    var now = new Date(), day = now.getDay() || 7;
+    var monday = new Date(now);
+    monday.setDate(now.getDate() - day + 1 + (offset||0) * 7);
+    monday.setHours(0,0,0,0);
+    return monday;
+  }
+  function getWeekKey(monday) { return monday.toISOString().split('T')[0]; }
+  function formatDate(d) { return d.toLocaleDateString('fr-FR', {day:'numeric', month:'long'}); }
+  function getWeekNumber(date) {
+    var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    var dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return 'S' + String(Math.ceil((((d - yearStart) / 86400000) + 1)/7)).padStart(2,'0');
+  }
+
+  function typeOptions(selected) {
+    return TYPES.map(function(t) {
+      return '<option value="' + t.value + '"' + (t.value===selected?' selected':'') + '>' + t.label + '</option>';
+    }).join('');
+  }
+
+  function renderPlanBlock(dayIndex, planIndex, plan) {
+    plan = plan || {};
+    var type     = plan.type || 'repos';
+    var contenu  = plan.contenu || '';
+    var location = plan.location || '';
+    var bg       = getTypeStyle(type);
+    var shortcuts = ABBREVS.map(function(a) {
+      return '<span class="shortcut" onclick="insertAbbrev(' + dayIndex + ',' + planIndex + ',\'' + a + '\')">' + a + '</span>';
+    }).join('');
+    var removeBtn = planIndex > 0
+      ? '<button class="btn-remove-plan" onclick="removePlan(' + dayIndex + ',' + planIndex + ')">✕ Supprimer</button>'
+      : '';
+    return '<div class="plan-block" id="plan-' + dayIndex + '-' + planIndex + '" style="background:' + bg + '">'
+      + removeBtn
+      + '<div class="plan-block-header">'
+      + '<select class="select-type" onchange="updatePlanField(' + dayIndex + ',' + planIndex + ','type',this.value);document.getElementById('plan-' + dayIndex + '-' + planIndex + '').style.background=getTypeStyle(this.value)">' + typeOptions(type) + '</select>'
+      + '<input type="text" class="input-location" placeholder="📍 Lieu" value="' + location + '" oninput="updatePlanField(' + dayIndex + ',' + planIndex + ','location',this.value)">'
+      + '</div>'
+      + '<textarea id="ta-' + dayIndex + '-' + planIndex + '" placeholder="Détail de la séance..." oninput="updatePlanField(' + dayIndex + ',' + planIndex + ','contenu',this.value)">' + contenu + '</textarea>'
+      + '<div class="shortcuts">' + shortcuts + '</div>'
+      + '</div>';
+  }
+
+  function renderDay(i, date, plans) {
+    var today = new Date(); today.setHours(0,0,0,0);
+    var isToday = date.getTime() === today.getTime();
+    var plansHtml = plans.map(function(p, pi) { return renderPlanBlock(i, pi, p); }).join('');
+    return '<div class="day-row' + (isToday ? ' today-row' : '') + '" id="day-row-' + i + '">'
+      + '<div class="day-label"><div class="dname">' + JOURS[i] + '</div><div class="ddate">' + date.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) + '</div></div>'
+      + '<div class="plans-container" id="plans-' + i + '">'
+      + plansHtml
+      + '<button class="btn-add-plan" onclick="addPlan(' + i + ')">+ Ajouter un 2ème plan</button>'
+      + '</div></div>';
+  }
+
+  async function renderWeek() {
+    var monday  = getMondayOfWeek(currentWeekOffset);
+    var sunday  = new Date(monday); sunday.setDate(monday.getDate()+6);
+    var weekKey = getWeekKey(monday);
+    var weekNum = getWeekNumber(monday);
+    var label   = currentWeekOffset===0 ? 'Cette semaine'
+                : currentWeekOffset===-1 ? 'Semaine dernière'
+                : currentWeekOffset===1  ? 'Semaine prochaine' : 'Semaine';
+    document.getElementById('week-label').textContent = label;
+    document.getElementById('week-dates').textContent = weekNum + ' · ' + formatDate(monday) + ' – ' + formatDate(sunday);
+    document.getElementById('btn-prev').disabled = currentWeekOffset <= -3120;
+    document.getElementById('btn-next').disabled = currentWeekOffset >= 3120;
+
+    var snap = await getDoc(doc(db, 'plannings', weekKey));
+    weekData = snap.exists() ? snap.data() : {};
+    var jours = weekData.jours || Array(7).fill(null).map(function() {
+      return { plans: [{type:'repos', contenu:'', location:''}] };
+    });
+    var published  = weekData.published || false;
+    var updatedAt  = weekData.updatedAt && weekData.updatedAt.toDate ? weekData.updatedAt.toDate() : null;
+
+    var normalizedJours = jours.map(function(j) {
+      if (!j) return { plans: [{type:'repos', contenu:'', location:''}] };
+      if (!j.plans) return { plans: [{type: j.type||'repos', contenu: j.contenu||'', location:''}] };
+      return j;
+    });
+    weekData.jours = normalizedJours;
+
+    var badge    = document.getElementById('status-badge');
+    var notice   = document.getElementById('draft-notice');
+    var btnUnpub = document.getElementById('btn-unpub');
+    if (published) {
+      badge.className = 'status-badge status-published'; badge.textContent = '● Publié';
+      notice.style.display = 'none'; btnUnpub.style.display = 'block';
+    } else if (snap.exists()) {
+      badge.className = 'status-badge status-draft'; badge.textContent = '● Brouillon';
+      notice.style.display = 'block'; btnUnpub.style.display = 'none';
+    } else {
+      badge.className = 'status-badge status-empty'; badge.textContent = '● Vide';
+      notice.style.display = 'none'; btnUnpub.style.display = 'none';
+    }
+    document.getElementById('last-update').textContent = updatedAt ? 'Modifié le ' + updatedAt.toLocaleString('fr-FR') : '';
+    var msgField = document.getElementById('message-semaine');
+    if (msgField) msgField.value = weekData.message || '';
+
+    var html = '';
+    for (var i = 0; i < 7; i++) {
+      var date = new Date(monday); date.setDate(monday.getDate()+i);
+      html += renderDay(i, date, normalizedJours[i].plans);
+    }
+    document.getElementById('days-list').innerHTML = html;
+  }
+
+  window.updatePlanField = function(di, pi, field, value) {
+    if (weekData.jours) weekData.jours[di].plans[pi][field] = value;
+  };
+  window.addPlan = function(di) {
+    if (!weekData.jours) return;
+    weekData.jours[di].plans.push({type:'repos', contenu:'', location:''});
+    var container = document.getElementById('plans-'+di);
+    var btn = container.querySelector('.btn-add-plan');
+    var d = document.createElement('div');
+    d.innerHTML = renderPlanBlock(di, weekData.jours[di].plans.length-1, weekData.jours[di].plans[weekData.jours[di].plans.length-1]);
+    container.insertBefore(d.firstElementChild, btn);
+  };
+  window.removePlan = function(di, pi) {
+    if (!weekData.jours) return;
+    weekData.jours[di].plans.splice(pi, 1);
+    var container = document.getElementById('plans-'+di);
+    var btn = container.querySelector('.btn-add-plan');
+    container.innerHTML = weekData.jours[di].plans.map(function(p,pii) { return renderPlanBlock(di,pii,p); }).join('');
+    container.appendChild(btn);
+  };
+  window.insertAbbrev = function(di, pi, abbrev) {
+    var ta = document.getElementById('ta-'+di+'-'+pi);
+    if (!ta) return;
+    var s = ta.selectionStart, e = ta.selectionEnd;
+    ta.value = ta.value.slice(0,s) + abbrev + ta.value.slice(e);
+    if (weekData.jours) weekData.jours[di].plans[pi].contenu = ta.value;
+    ta.focus(); ta.selectionStart = ta.selectionEnd = s + abbrev.length;
+  };
+
+  async function save(published) {
+    var weekKey = getWeekKey(getMondayOfWeek(currentWeekOffset));
+    var message = (document.getElementById('message-semaine').value || '').trim();
+    try {
+      await setDoc(doc(db,'plannings',weekKey), {jours: weekData.jours, published: published, message: message, updatedAt: serverTimestamp()});
+      return true;
+    } catch(e) { showToast('Erreur de sauvegarde', 'err'); return false; }
+  }
+  window.saveDraft  = async function() { if (await save(false)) { showToast('💾 Brouillon enregistré'); renderWeek(); } };
+  window.publish    = async function() {
+    var btn = document.getElementById('btn-pub'); btn.disabled = true; btn.textContent = 'Publication...';
+    if (await save(true)) { showToast('✓ Planning publié !'); renderWeek(); }
+    btn.disabled = false; btn.textContent = '📤 Publier la semaine';
+  };
+  window.unpublish  = async function() { if (await save(false)) { showToast('🔒 Planning dépublié','warn'); renderWeek(); } };
+  window.changeWeek = function(dir) { currentWeekOffset += dir; renderWeek(); };
+
+  window.loadCompList = async function() {
+    var div = document.getElementById('comp-list-container');
+    div.innerHTML = '<div class="loading"><div class="spin"></div> Chargement...</div>';
+    try {
+      var snap = await getDocs(collection(db,'race_plans'));
+      var comps = [];
+      snap.forEach(function(d) { comps.push(Object.assign({id:d.id}, d.data())); });
+      comps.sort(function(a,b) { return new Date(a.date_course) - new Date(b.date_course); });
+      if (!comps.length) { div.innerHTML = '<p style="color:var(--mut);font-size:13px;padding:20px 0">Aucun plan créé.</p>'; return; }
+      div.innerHTML = comps.map(function(c) {
+        var bc = c.status==='published' ? 'status-published' : 'status-draft';
+        var bt = c.status==='published' ? '● Publié' : '● Brouillon';
+        return '<div class="comp-item">'
+          + '<div class="comp-item-info"><div class="comp-item-name">' + c.nom + ' <span class="status-badge ' + bc + '" style="margin-left:8px">' + bt + '</span></div>'
+          + '<div class="comp-item-meta">📅 ' + c.date_course + ' · ' + (c.distances||[]).map(function(d){return d.label;}).join(' / ') + ' · ' + (c.semaines ? c.semaines.length : '?') + ' semaines</div></div>'
+          + '<div class="comp-item-actions">'
+          + (c.status!=='published'
+              ? '<button class="btn-success" onclick="publishComp(''+c.id+'')">▶ Publier</button>'
+              : '<button class="btn-warn" onclick="unpublishComp(''+c.id+'')">⏸ Dépublier</button>')
+          + '<button class="btn-danger" onclick="confirmDelete(''+c.id+'',''+c.nom.replace(/'/g,"\'") +'')">🗑 Supprimer</button>'
+          + '</div></div>';
+      }).join('');
+    } catch(e) { div.innerHTML = '<p style="color:#ff6b6b;font-size:13px">Erreur : ' + e.message + '</p>'; }
+  };
+
+  window.publishComp   = async function(id) { await setDoc(doc(db,'race_plans',id),{status:'published'},{merge:true}); showToast('✓ Plan publié !'); window.loadCompList(); };
+  window.unpublishComp = async function(id) { await setDoc(doc(db,'race_plans',id),{status:'draft'},{merge:true}); showToast('Plan dépublié','warn'); window.loadCompList(); };
+  window.confirmDelete = function(id, nom) {
+    document.getElementById('modal-title').textContent = 'Supprimer ce plan ?';
+    document.getElementById('modal-body').textContent  = 'Le plan "' + nom + '" et tous les suivis seront supprimés définitivement.';
+    document.getElementById('modal-confirm').onclick   = function() { deleteComp(id); };
+    document.getElementById('modal').classList.add('show');
+  };
+  async function deleteComp(id) {
+    closeModal();
+    try {
+      await deleteDoc(doc(db,'race_plans',id));
+      var ss = await getDocs(collection(db,'race_suivi'));
+      var td = [];
+      ss.forEach(function(d) { if (d.id.indexOf('_'+id) >= 0) td.push(d.id); });
+      await Promise.all(td.map(function(sid) { return deleteDoc(doc(db,'race_suivi',sid)); }));
+      showToast('Plan supprimé (' + td.length + ' suivi(s) effacé(s))');
+      window.loadCompList();
+    } catch(e) { showToast('Erreur : '+e.message,'err'); }
+  }
+
+  window.handleDrop = function(e) {
+    e.preventDefault();
+    document.getElementById('upload-zone').classList.remove('dragover');
+    var f = e.dataTransfer.files[0]; if (f) readExcel(f);
+  };
+  window.handleFile = function(e) { var f = e.target.files[0]; if (f) readExcel(f); };
+
+  function readExcel(file) {
+    if (!file.name.endsWith('.xlsx')) { showToast('Fichier .xlsx uniquement','err'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var wb = XLSX.read(e.target.result, {type:'array', cellDates:true, cellStyles:true});
+        parsedPlan = parseTemplate(wb);
+        showPreview(parsedPlan);
+      } catch(err) { showToast('Erreur : '+err.message,'err'); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function normDate(d) {
+    if (d instanceof Date) return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+    return String(d||'');
+  }
+  function isoDate(d) {
+    if (d instanceof Date) return d.toISOString().split('T')[0];
+    var p = String(d||'').split('/');
+    if (p.length===3) return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');
+    return '';
+  }
+  function formatDateFR(s) {
+    if (!s) return '?';
+    var d;
+    if (String(s).indexOf('T')>=0) { d=new Date(s); }
+    else { var p=String(s).split('/'); if(p.length===3) d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0])); else return s; }
+    if (isNaN(d.getTime())) return s;
+    return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  }
+
+  function parseTemplate(wb) {
+    var ws1 = wb.Sheets['INFOS COURSE'];
+    if (!ws1) throw new Error('Feuille "INFOS COURSE" introuvable');
+    var nom = ws1['B5'] ? ws1['B5'].v : '';
+    if (!nom) throw new Error('Nom manquant (B5)');
+    var distances = [];
+    for (var r = 14; r <= 17; r++) {
+      var label = ws1['B' + r] ? ws1['B' + r].v : null;
+      var dist  = ws1['A' + r] ? ws1['A' + r].v : null;
+      if (label && String(label).trim()) {
+        distances.push({ dist: String(dist || '').trim(), label: String(label).trim() });
+      }
+    }
+    if (!distances.length) throw new Error('Aucune distance (B14 à B17)');
+    var ws2 = wb.Sheets['PLAN'];
+    if (!ws2) throw new Error('Feuille "PLAN" introuvable');
+    var rows = XLSX.utils.sheet_to_json(ws2, { header: 1, defval: '' });
+    var dataRows = rows.slice(3).filter(function(r) {
+      return /^S\d+$/.test(String(r[0] || '').trim());
+    });
+    var COLS = ['E','F','G','H','I','J','K'];
+    var weeksMap = {}, weekOrder = [];
+    var allAddrs = Object.keys(ws2).filter(function(k) { return !k.startsWith('!'); });
+    dataRows.forEach(function(r) {
+      var num   = String(r[0] || '').trim();
+      var phase = String(r[1] || '').trim();
+      var titre = String(r[2] || '').trim();
+      var dist  = String(r[3] || '').trim();
+      if (!num) return;
+      if (!weeksMap[num]) { weeksMap[num] = { num: num, phase: phase, titre: titre, distances: {} }; weekOrder.push(num); }
       // Trouver la ligne exacte dans ws2 pour col A=num ET col D=dist
-      let realRow=null;
-      allAddrs.forEach(addr=>{
-        const col=addr.replace(/[0-9]/g,'');
-        const row=parseInt(addr.replace(/[A-Z]/gi,''));
-        if(col==='A'&&String(ws2[addr]?.v||'').trim()===num&&realRow===null){
-          const dCell=ws2['D'+row];
-          if(dCell&&String(dCell.v||'').trim()===dist) realRow=row;
+      var realRow = null;
+      allAddrs.forEach(function(addr) {
+        var col = addr.replace(/[0-9]/g, '');
+        var row = parseInt(addr.replace(/[A-Z]/gi, ''));
+        if (col === 'A' && String((ws2[addr] || {}).v || '').trim() === num && realRow === null) {
+          var dCell = ws2['D' + row];
+          if (dCell && String(dCell.v || '').trim() === dist) realRow = row;
         }
       });
-      if(realRow===null) return;
-      const days=COLS.map(col=>{
-        const cell=ws2[col+realRow]||null;
-        return {html:cellToHtml(cell), bg:getCellBg(cell)};
+      if (realRow === null) return;
+      var days = COLS.map(function(col) {
+        var cell = ws2[col + realRow] || null;
+        return { html: cellToHtml(cell), bg: getCellBg(cell) };
       });
-      const di=distances.findIndex(d=>d.dist===dist||d.label.includes(dist)||dist.includes(d.dist));
-      if(di>=0)weeksMap[num].distances[String(di)]=days;
+      var di = distances.findIndex(function(d) {
+        return d.dist === dist || d.label.indexOf(dist) >= 0 || dist.indexOf(d.dist) >= 0;
+      });
+      if (di >= 0) weeksMap[num].distances[String(di)] = days;
     });
-    return {nom,date_course:normDate(ws1['B6']?.v||''),lieu:String(ws1['B7']?.v||''),notes:String(ws1['B10']?.v||''),
-            nb_semaines:parseInt(ws1['B20']?.v)||0,date_debut:normDate(ws1['B21']?.v||''),
-            date_debut_iso:isoDate(ws1['B21']?.v||''),distances,semaines:weekOrder.map(n=>weeksMap[n]),
-            status:'draft',created_at:new Date().toISOString()};
+    return {
+      nom: nom,
+      date_course: normDate(ws1['B6'] ? ws1['B6'].v : ''),
+      lieu: String((ws1['B7'] ? ws1['B7'].v : '') || ''),
+      notes: String((ws1['B10'] ? ws1['B10'].v : '') || ''),
+      nb_semaines: parseInt((ws1['B20'] ? ws1['B20'].v : '') || 0) || 0,
+      date_debut: normDate(ws1['B21'] ? ws1['B21'].v : ''),
+      date_debut_iso: isoDate(ws1['B21'] ? ws1['B21'].v : ''),
+      distances: distances,
+      semaines: weekOrder.map(function(n) { return weeksMap[n]; }),
+      status: 'draft',
+      created_at: new Date().toISOString()
+    };
   }
-  function showPreview(plan){
-    const area=document.getElementById('preview-area');
-    const dists=plan.distances.map((d,i)=>`<span class="dist-pill" style="color:${DIST_COLORS[i]};border-color:${DIST_COLORS[i]}">${d.label}</span>`).join('');
-    area.innerHTML=`<div class="preview-card">
-      <div class="preview-title">✅ Fichier lu — Vérifie avant d'importer</div>
-      <div class="preview-grid">
-        <div class="preview-item"><label>Nom</label><span>${plan.nom}</span></div>
-        <div class="preview-item"><label>Date course</label><span>${formatDateFR(plan.date_course)}</span></div>
-        <div class="preview-item"><label>Lieu</label><span>${plan.lieu||'—'}</span></div>
-        <div class="preview-item"><label>Début</label><span>${plan.date_debut}</span></div>
-        <div class="preview-item"><label>Semaines lues</label><span>${plan.semaines.length}</span></div>
-      </div>
-      <div style="margin-bottom:8px;font-size:12px;color:var(--mut)">Distances :</div>
-      <div class="preview-dists">${dists}</div>
-      <div style="font-size:11px;color:var(--mut);margin-bottom:12px;padding:8px;background:var(--surf2);border-radius:8px">
-        <strong style="color:var(--txt)">Vérif S1 :</strong> ${plan.semaines[0]?Object.entries(plan.semaines[0].distances).map(([k,v])=>{const txt=Array.isArray(v)&&v[1]?(typeof v[1]==='object'?v[1].html.replace(/<[^>]+>/g,''):v[1]):'';
-return `Dist.${k} : ${txt.substring(0,40)||'vide'}...`;}).join(' · '):'Aucune semaine'}
-      </div>
-      <div id="preview-actions-area"><div class="loading"><div class="spin"></div> Vérification...</div></div>
-    </div>`;
-    area.style.display='block';document.getElementById('upload-zone').style.display='none';
+
+  function showPreview(plan) {
+    var area  = document.getElementById('preview-area');
+    var dists = plan.distances.map(function(d,i) {
+      return '<span class="dist-pill" style="color:'+DIST_COLORS[i]+';border-color:'+DIST_COLORS[i]+'">'+d.label+'</span>';
+    }).join('');
+    var verif = '';
+    if (plan.semaines[0]) {
+      verif = Object.entries(plan.semaines[0].distances).map(function(entry) {
+        var k=entry[0], v=entry[1];
+        var txt = Array.isArray(v) && v[1] ? (typeof v[1]==='object' ? v[1].html.replace(/<[^>]+>/g,'') : String(v[1])) : '';
+        return 'Dist.'+k+' : '+txt.substring(0,40)+'...';
+      }).join(' · ');
+    } else { verif = 'Aucune semaine'; }
+    area.innerHTML = '<div class="preview-card">'
+      + '<div class="preview-title">✅ Fichier lu — Vérifie avant d'importer</div>'
+      + '<div class="preview-grid">'
+      + '<div class="preview-item"><label>Nom</label><span>'+plan.nom+'</span></div>'
+      + '<div class="preview-item"><label>Date course</label><span>'+formatDateFR(plan.date_course)+'</span></div>'
+      + '<div class="preview-item"><label>Lieu</label><span>'+(plan.lieu||'—')+'</span></div>'
+      + '<div class="preview-item"><label>Début</label><span>'+plan.date_debut+'</span></div>'
+      + '<div class="preview-item"><label>Semaines</label><span>'+plan.semaines.length+'</span></div>'
+      + '</div>'
+      + '<div style="margin-bottom:8px;font-size:12px;color:var(--mut)">Distances :</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'+dists+'</div>'
+      + '<div style="font-size:11px;color:var(--mut);margin-bottom:12px;padding:8px;background:var(--surf2);border-radius:8px"><strong style="color:var(--txt)">Vérif S1 :</strong> '+verif+'</div>'
+      + '<div id="preview-actions-area"><div class="loading"><div class="spin"></div> Vérification...</div></div>'
+      + '</div>';
+    area.style.display = 'block';
+    document.getElementById('upload-zone').style.display = 'none';
     checkExisting(plan.nom);
   }
-  async function checkExisting(nom){
-    const div=document.getElementById('preview-actions-area');
-    try{
-      const snap=await getDocs(collection(db,'race_plans'));
-      let eid=null;snap.forEach(d=>{if(d.data().nom===nom)eid=d.id;});
-      if(eid){
-        div.innerHTML=`<div style="background:rgba(245,158,11,.1);border:.5px solid rgba(245,158,11,.3);border-radius:10px;padding:12px;margin-bottom:12px">
-          <div style="color:var(--amb);font-weight:600;margin-bottom:6px">⚠ Un plan "${nom}" existe déjà</div>
-          <div style="font-size:12px;color:var(--mut)">"Mettre à jour" remplace les séances et conserve les suivis.</div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn-warn" onclick="importPlan('update','${eid}')">🔄 Mettre à jour</button>
-          <button class="btn-success" onclick="importPlan('draft')">💾 Nouveau brouillon</button>
-          <button class="btn-h" onclick="cancelImport()">✕ Annuler</button>
-        </div>`;
-      }else{
-        div.innerHTML=`<div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn-success" onclick="importPlan('draft')">💾 Brouillon</button>
-          <button class="btn-publish" style="flex:unset;padding:7px 16px;font-size:12px" onclick="importPlan('published')">▶ Publier directement</button>
-          <button class="btn-h" onclick="cancelImport()">✕ Annuler</button>
-        </div>`;
+
+  async function checkExisting(nom) {
+    var div = document.getElementById('preview-actions-area');
+    try {
+      var snap = await getDocs(collection(db,'race_plans'));
+      var eid = null;
+      snap.forEach(function(d) { if (d.data().nom===nom) eid=d.id; });
+      if (eid) {
+        div.innerHTML = '<div style="background:rgba(245,158,11,.1);border:.5px solid rgba(245,158,11,.3);border-radius:10px;padding:12px;margin-bottom:12px">'
+          + '<div style="color:var(--amb);font-weight:600;margin-bottom:6px">⚠ Un plan "'+nom+'" existe déjà</div>'
+          + '<div style="font-size:12px;color:var(--mut)">"Mettre à jour" remplace les séances et conserve les suivis.</div></div>'
+          + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+          + '<button class="btn-warn" onclick="importPlan('update',''+eid+'')">🔄 Mettre à jour</button>'
+          + '<button class="btn-success" onclick="importPlan('draft')">💾 Nouveau brouillon</button>'
+          + '<button class="btn-h" onclick="cancelImport()">✕ Annuler</button></div>';
+      } else {
+        div.innerHTML = '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+          + '<button class="btn-success" onclick="importPlan('draft')">💾 Brouillon</button>'
+          + '<button class="btn-publish" style="flex:unset;padding:7px 16px;font-size:12px" onclick="importPlan('published')">▶ Publier</button>'
+          + '<button class="btn-h" onclick="cancelImport()">✕ Annuler</button></div>';
       }
-    }catch(e){div.innerHTML=`<div style="display:flex;gap:10px"><button class="btn-success" onclick="importPlan('draft')">💾 Brouillon</button><button class="btn-h" onclick="cancelImport()">✕</button></div>`;}
+    } catch(e) {
+      div.innerHTML = '<div style="display:flex;gap:10px">'
+        + '<button class="btn-success" onclick="importPlan('draft')">💾 Brouillon</button>'
+        + '<button class="btn-h" onclick="cancelImport()">✕</button></div>';
+    }
   }
-  window.importPlan=async function(status,eid){
-    if(!parsedPlan)return;
-    try{
-      if(status==='update'&&eid){const ex=await getDoc(doc(db,'race_plans',eid));parsedPlan.status=ex.exists()?ex.data().status:'draft';await setDoc(doc(db,'race_plans',eid),parsedPlan);showToast('✓ Plan mis à jour — suivis conservés !');}
-      else{parsedPlan.status=status;await setDoc(doc(db,'race_plans','plan_'+Date.now()),parsedPlan);showToast(status==='published'?'✓ Plan publié !':'✓ Brouillon sauvegardé !');}
-      parsedPlan=null;cancelImport();switchSub('list');window.loadCompList();
-    }catch(e){showToast('Erreur : '+e.message,'err');}
+
+  window.importPlan = async function(status, eid) {
+    if (!parsedPlan) return;
+    try {
+      if (status==='update' && eid) {
+        var ex = await getDoc(doc(db,'race_plans',eid));
+        parsedPlan.status = ex.exists() ? ex.data().status : 'draft';
+        await setDoc(doc(db,'race_plans',eid), parsedPlan);
+        showToast('✓ Plan mis à jour — suivis conservés !');
+      } else {
+        parsedPlan.status = status;
+        await setDoc(doc(db,'race_plans','plan_'+Date.now()), parsedPlan);
+        showToast(status==='published' ? '✓ Plan publié !' : '✓ Brouillon sauvegardé !');
+      }
+      parsedPlan = null; cancelImport(); switchSub('list'); window.loadCompList();
+    } catch(e) { showToast('Erreur : '+e.message,'err'); }
   };
-  window.cancelImport=function(){
-    document.getElementById('preview-area').style.display='none';
-    document.getElementById('preview-area').innerHTML='';
-    document.getElementById('upload-zone').style.display='block';
-    document.getElementById('file-input').value='';parsedPlan=null;
+
+  window.cancelImport = function() {
+    document.getElementById('preview-area').style.display = 'none';
+    document.getElementById('preview-area').innerHTML = '';
+    document.getElementById('upload-zone').style.display = 'block';
+    document.getElementById('file-input').value = '';
+    parsedPlan = null;
   };
+
   window.exportPlanning = async function() {
-    const startVal = document.getElementById('export-date-start').value;
-    const endVal   = document.getElementById('export-date-end').value;
-    const status   = document.getElementById('export-status');
+    var startVal = document.getElementById('export-date-start').value;
+    var endVal   = document.getElementById('export-date-end').value;
+    var status   = document.getElementById('export-status');
     if (!startVal || !endVal) { status.textContent = '⚠ Choisis les deux dates.'; return; }
-
-    const startDate = new Date(startVal);
-    const endDate   = new Date(endVal);
-    if (startDate > endDate) { status.textContent = '⚠ La date de début doit être avant la fin.'; return; }
-
-    status.textContent = '⏳ Chargement des données...';
-
-    const JOURS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
-    const TYPES = {repos:'Repos',cotes:'Côtes',seuil:'Seuil',sortie:'Sortie longue',
-                   footing:'Footing',course:'Course',rm:'Renforcement',autre:'Autre'};
-
-    // Calculer tous les lundis entre les 2 dates
-    function getMonday(d) {
-      const day = d.getDay() || 7;
-      const m = new Date(d);
-      m.setDate(d.getDate() - day + 1);
-      m.setHours(0,0,0,0);
-      return m;
+    var startDate = new Date(startVal), endDate = new Date(endVal);
+    if (startDate > endDate) { status.textContent = '⚠ Date de début après la fin.'; return; }
+    status.textContent = '⏳ Chargement...';
+    var TYPES_LABELS = {repos:'Repos',cotes:'Côtes',seuil:'Seuil',sortie:'Sortie longue',footing:'Footing',course:'Course',rm:'Renforcement',autre:'Autre'};
+    function getMonday(d) { var day=d.getDay()||7,m=new Date(d); m.setDate(d.getDate()-day+1); m.setHours(0,0,0,0); return m; }
+    function wKey(m) { return m.toISOString().split('T')[0]; }
+    function wNum(date) {
+      var d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())),dn=d.getUTCDay()||7;
+      d.setUTCDate(d.getUTCDate()+4-dn);
+      var ys=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      return 'S'+String(Math.ceil((((d-ys)/86400000)+1)/7)).padStart(2,'0');
     }
-    function getWeekKey(monday) { return monday.toISOString().split('T')[0]; }
-    function getWeekNum(date) {
-      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-      const dayNum = d.getUTCDay() || 7;
-      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-      const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-      return 'S' + String(Math.ceil((((d - yearStart) / 86400000) + 1)/7)).padStart(2,'0');
-    }
-
-    const mondays = [];
-    let cur = getMonday(startDate);
-    const end = getMonday(endDate);
-    while (cur <= end) {
-      mondays.push(new Date(cur));
-      cur.setDate(cur.getDate() + 7);
-    }
-
-    // Charger les données Firebase
-    const rows = [];
-    for (const monday of mondays) {
-      const weekKey = getWeekKey(monday);
-      const weekNum = getWeekNum(monday);
+    var mondays=[], cur=getMonday(startDate), end=getMonday(endDate);
+    while(cur<=end){ mondays.push(new Date(cur)); cur.setDate(cur.getDate()+7); }
+    var rows=[];
+    for(var mi=0;mi<mondays.length;mi++){
+      var monday=mondays[mi], weekKey=wKey(monday), weekNum=wNum(monday);
+      var sunday=new Date(monday); sunday.setDate(monday.getDate()+6);
       try {
-        const snap = await getDoc(doc(db,'plannings',weekKey));
-        const data = snap.exists() ? snap.data() : {};
-        const jours = data.jours || Array(7).fill(null).map(()=>({plans:[{type:'repos',contenu:'',location:''}]}));
-        const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
-        const label = weekNum + ' · ' + monday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})
-                    + ' – ' + sunday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-        const statut = data.published ? 'Publié' : snap.exists() ? 'Brouillon' : 'Vide';
-        const message = data.message || '';
-
-        // Ligne de titre de semaine
-        rows.push([label, '', '', '', statut, message]);
+        var snap=await getDoc(doc(db,'plannings',weekKey));
+        var data=snap.exists()?snap.data():{};
+        var jours=data.jours||Array(7).fill(null).map(function(){return{plans:[{type:'repos',contenu:'',location:''}]};});
+        var statut=data.published?'Publié':snap.exists()?'Brouillon':'Vide';
+        var lbl=weekNum+' · '+monday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' – '+sunday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+        rows.push([lbl,'','','',statut,data.message||'']);
         rows.push(['Jour','Date','Type','Lieu','Contenu','']);
-
-        for (let i=0;i<7;i++) {
-          const date = new Date(monday); date.setDate(monday.getDate()+i);
-          const jour = jours[i] || {};
-          const plans = jour.plans || [{type:'repos',contenu:'',location:''}];
-          plans.forEach((plan,pi) => {
-            rows.push([
-              pi===0 ? JOURS[i] : '',
-              pi===0 ? date.toLocaleDateString('fr-FR') : '',
-              TYPES[plan.type] || plan.type,
-              plan.location || '',
-              plan.contenu || '',
-              ''
-            ]);
+        var normalJ=jours.map(function(j){if(!j)return{plans:[{type:'repos',contenu:'',location:''}]};if(!j.plans)return{plans:[{type:j.type||'repos',contenu:j.contenu||'',location:''}]};return j;});
+        for(var i=0;i<7;i++){
+          var date=new Date(monday); date.setDate(monday.getDate()+i);
+          var plans=normalJ[i].plans;
+          plans.forEach(function(plan,pi){
+            rows.push([pi===0?JOURS[i]:'', pi===0?date.toLocaleDateString('fr-FR'):'', TYPES_LABELS[plan.type]||plan.type, plan.location||'', plan.contenu||'','']);
           });
         }
-        rows.push(['','','','','','']); // ligne vide entre semaines
-      } catch(e) {
-        rows.push([weekNum, 'Erreur de chargement','','','','']);
-      }
+        rows.push(['','','','','','']);
+      } catch(e) { rows.push([weekNum,'Erreur','','','','']); }
     }
-
-    status.textContent = '📊 Génération du fichier...';
-
-    // Créer le fichier Excel avec SheetJS
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-
-    // Largeurs colonnes
-    ws['!cols'] = [
-      {wch:12},{wch:14},{wch:22},{wch:20},{wch:60},{wch:10}
-    ];
-
-    XLSX.utils.book_append_sheet(wb, ws, 'Planning GGT');
-
-    const startFmt = startDate.toLocaleDateString('fr-FR').replace(/\//g,'-');
-    const endFmt   = endDate.toLocaleDateString('fr-FR').replace(/\//g,'-');
-    XLSX.writeFile(wb, 'GGT_Planning_' + startFmt + '_' + endFmt + '.xlsx');
-    status.textContent = '✓ Fichier téléchargé !';
-    setTimeout(()=>status.textContent='', 3000);
+    status.textContent = '📊 Génération...';
+    var wb2=XLSX.utils.book_new(), ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:12},{wch:14},{wch:22},{wch:20},{wch:60},{wch:10}];
+    XLSX.utils.book_append_sheet(wb2,ws,'Planning GGT');
+    var sf=startDate.toLocaleDateString('fr-FR').replace(/\//g,'-');
+    var ef=endDate.toLocaleDateString('fr-FR').replace(/\//g,'-');
+    XLSX.writeFile(wb2,'GGT_Planning_'+sf+'_'+ef+'.xlsx');
+    status.textContent='✓ Téléchargé !';
+    setTimeout(function(){status.textContent='';},3000);
   };
 
-  window.logout=()=>signOut(auth).then(()=>window.location.href='index.html');
-  let redirecting=false;
-  onAuthStateChanged(auth,async(user)=>{
-    if(redirecting)return;
-    if(!user){redirecting=true;window.location.href='index.html';return;}
-    try{
-      const snap=await getDoc(doc(db,'users',user.uid));
-      if(!snap.exists()||snap.data().role!=='admin'){redirecting=true;window.location.href='planning.html';return;}
-      document.getElementById('user-name').textContent=[snap.data().prenom||'',snap.data().nom||''].filter(Boolean).join(' ')||user.email;
+  window.logout = function() { signOut(auth).then(function() { window.location.href='index.html'; }); };
+
+  var redirecting = false;
+  onAuthStateChanged(auth, async function(user) {
+    if (redirecting) return;
+    if (!user) { redirecting=true; window.location.href='index.html'; return; }
+    try {
+      var snap = await getDoc(doc(db,'users',user.uid));
+      if (!snap.exists() || snap.data().role !== 'admin') { redirecting=true; window.location.href='planning.html'; return; }
+      document.getElementById('user-name').textContent = [snap.data().prenom||'',snap.data().nom||''].filter(Boolean).join(' ') || user.email;
       renderWeek();
-    }catch(e){console.error('Erreur auth:',e);}
+    } catch(e) { console.error('Erreur auth:', e); }
   });
 </script>
 </body>

@@ -133,6 +133,8 @@ textarea::placeholder{color:var(--mut)}
   <div class="main-tabs">
     <button class="main-tab on" id="tab-planning-btn" onclick="switchMain('planning')">📅 Planning hebdo</button>
     <button class="main-tab" id="tab-comp-btn" onclick="switchMain('comp')">🏅 Plans de compétition</button>
+    <button class="main-tab" id="tab-export-btn" onclick="switchMain('export')">📥 Export Excel</button>
+    <button class="main-tab" id="tab-lexique-btn" onclick="switchMain('lexique')">📖 Lexique du site</button>
   </div>
   <div class="tab-section on" id="tab-planning">
     <div class="week-nav">
@@ -187,6 +189,152 @@ textarea::placeholder{color:var(--mut)}
       <div id="preview-area" style="display:none"></div>
     </div>
   </div>
+
+  <!-- ══ EXPORT EXCEL ══ -->
+  <div class="tab-section" id="tab-export">
+    <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px;margin-bottom:20px">
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px">📥 Exporter le planning en Excel</div>
+      <div style="font-size:12px;color:var(--mut);margin-bottom:20px">Choisis une plage de semaines à exporter. Le fichier Excel contiendra le détail de chaque jour avec le type de séance, le lieu et le contenu.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;max-width:500px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Semaine de début</label>
+          <input type="date" id="export-date-start" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Semaine de fin</label>
+          <input type="date" id="export-date-end" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn-publish" style="flex:unset;padding:10px 24px;font-size:13px" onclick="exportPlanning()">📥 Télécharger Excel</button>
+        <span id="export-status" style="font-size:12px;color:var(--mut)"></span>
+      </div>
+    </div>
+    <div style="background:rgba(79,142,247,.05);border:.5px solid rgba(79,142,247,.2);border-radius:12px;padding:14px 16px;font-size:12px;color:var(--mut);line-height:1.8">
+      💡 <strong style="color:var(--acc)">Astuce :</strong> Le fichier Excel exporté peut être réimporté et modifié. Il contient une feuille par semaine avec le détail complet de chaque séance. Tu peux l'imprimer en PDF depuis Excel via Fichier → Imprimer → Enregistrer en PDF.
+    </div>
+  </div>
+  <!-- ══ LEXIQUE DU SITE ══ -->
+  <div class="tab-section" id="tab-lexique">
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- COULEURS -->
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🎨 Couleurs des types de séance</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(156,163,175,0.13)"><span style="font-size:16px">😴</span><div><div style="font-size:12px;font-weight:600">Repos</div><div style="font-size:10px;color:var(--mut)">rgba(156,163,175) · 0.13</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.26)"><span style="font-size:16px">🏔️</span><div><div style="font-size:12px;font-weight:600;color:#FFC000">Côtes</div><div style="font-size:10px;color:var(--mut)">#FFC000 · rgba(255,192,0) · 0.26</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(119,181,254,0.26)"><span style="font-size:16px">⚡</span><div><div style="font-size:12px;font-weight:600;color:#77B5FE">Seuil</div><div style="font-size:10px;color:var(--mut)">#77B5FE · rgba(119,181,254) · 0.26</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(120,170,60,0.26)"><span style="font-size:16px">🌲</span><div><div style="font-size:12px;font-weight:600;color:#8fba3a">Sortie</div><div style="font-size:10px;color:var(--mut)">#8fba3a · rgba(120,170,60) · 0.26</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(143,168,191,0.26)"><span style="font-size:16px">🏃</span><div><div style="font-size:12px;font-weight:600;color:#8FA8BF">Footing</div><div style="font-size:10px;color:var(--mut)">#8FA8BF · rgba(143,168,191) · 0.26</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(245,158,11,0.26)"><span style="font-size:16px">🏅</span><div><div style="font-size:12px;font-weight:600;color:#f59e0b">Course</div><div style="font-size:10px;color:var(--mut)">#f59e0b · rgba(245,158,11) · 0.26</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.26)"><span style="font-size:16px">💪</span><div><div style="font-size:12px;font-weight:600;color:#b08fff">Renforcement</div><div style="font-size:10px;color:var(--mut)">#b08fff · rgba(168,116,255) · 0.26</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:rgba(200,185,130,0.22)"><span style="font-size:16px">📋</span><div><div style="font-size:12px;font-weight:600;color:#c8b870">Autre</div><div style="font-size:10px;color:var(--mut)">#c8b870 · rgba(200,185,130) · 0.22</div></div></div>
+        </div>
+      </div>
+
+      <!-- EMOJIS SUIVI -->
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏃 Activités suivi — Couleurs carrés</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px">
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(34,197,94,0.20)"><span style="font-size:14px">🏃</span> <strong>Course / Trail</strong><div style="font-size:10px;color:var(--mut)">rgba(34,197,94) · 0.20 · Cumul km+D+</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.20)"><span style="font-size:14px">🚴</span> <strong>Vélo</strong><div style="font-size:10px;color:var(--mut)">rgba(255,192,0) · 0.20 · km+D+ affichés</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(180,140,80,0.20)"><span style="font-size:14px">🚶</span> <strong>Marche</strong><div style="font-size:10px;color:var(--mut)">rgba(180,140,80) · 0.20 · Cumul km+D+</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(79,142,247,0.20)"><span style="font-size:14px">🏊</span> <strong>Natation</strong><div style="font-size:10px;color:var(--mut)">rgba(79,142,247) · 0.20 · km affiché</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.20)"><span style="font-size:14px">🏋️</span> <strong>Renforcement</strong><div style="font-size:10px;color:var(--mut)">rgba(168,116,255) · 0.20 · Sans mesure</div></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Sensations :</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(34,197,94,0.22);font-size:13px">😊 Très facile</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(134,239,172,0.22);font-size:13px">🙂 Facile</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(251,191,36,0.22);font-size:13px">😐 Normal</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(252,165,165,0.22);font-size:13px">😓 Difficile</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(239,68,68,0.22);font-size:13px">😰 Très difficile</div>
+        </div>
+      </div>
+
+      <!-- REGLES FIRESTORE -->
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔐 Règles Firestore</div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:10px">À copier-coller dans Firebase → Firestore → Règles</div>
+        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:14px;font-size:11px;color:#a8b0c8;overflow-x:auto;line-height:1.7;white-space:pre">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /plannings/{weekId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    match /vma_data/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /race_plans/{planId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    match /race_suivi/{docId} {
+      allow read, write: if request.auth != null &&
+        docId.matches(request.auth.uid + '_.*');
+      allow read: if request.auth != null;
+    }
+  }
+}</pre>
+      </div>
+
+      <!-- CHANGEMENT D'ANNEE -->
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">📅 Changement d'année — Navigation semaines</div>
+        <div style="font-size:12px;color:var(--mut);line-height:1.8;margin-bottom:12px">
+          La navigation est actuellement limitée à <strong style="color:var(--txt)">±52 semaines</strong> depuis aujourd'hui.<br>
+          Pour étendre à une nouvelle année, modifier la valeur dans <code style="background:var(--bg);padding:1px 6px;border-radius:4px;font-size:11px">planning.html</code> et <code style="background:var(--bg);padding:1px 6px;border-radius:4px;font-size:11px">admin.html</code> :
+        </div>
+        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:12px;font-size:11px;color:#a8b0c8;overflow-x:auto">// Ligne à modifier dans loadWeek() / renderWeek()
+document.getElementById('btn-prev').disabled = currentWeekOffset &lt;= -52;
+document.getElementById('btn-next').disabled = currentWeekOffset &gt;= 52;
+// Changer 52 par 104 pour 2 ans, 156 pour 3 ans, etc.</pre>
+      </div>
+
+      <!-- URLS -->
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔗 URLs et références</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;font-size:12px">
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
+            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Site GGT</div>
+            <a href="https://genepigroupetrail.github.io/ggt-plan-entrainement/" target="_blank" style="color:var(--acc)">genepigroupetrail.github.io/ggt-plan-entrainement/</a>
+          </div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
+            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase Console</div>
+            <a href="https://console.firebase.google.com/project/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">console.firebase.google.com</a>
+          </div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
+            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">GitHub</div>
+            <a href="https://github.com/genepigroupetrail/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">github.com/genepigroupetrail/ggt-plan-entrainement</a>
+          </div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px">
+            <div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase Project ID</div>
+            <code style="color:var(--txt)">ggt-plan-entrainement</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMPLATE EXCEL -->
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--acc)">📂 Template Excel plan de compétition</div>
+        <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Fichier template à utiliser pour créer un plan de compétition et l'importer dans le site.</div>
+        <a href="GGT_Template_Plan_Course.xlsx" download class="btn-publish" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;flex:unset;padding:10px 20px;font-size:13px;border-radius:10px">
+          📥 Télécharger le template Excel
+        </a>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 <div class="modal-overlay" id="modal">
   <div class="modal">
@@ -201,7 +349,7 @@ textarea::placeholder{color:var(--mut)}
 <div class="toast" id="toast"></div>
 <script>
 function switchMain(name){
-  ['planning','comp'].forEach(n=>{
+  ['planning','comp','export','lexique'].forEach(n=>{
     document.getElementById('tab-'+n).className='tab-section'+(n===name?' on':'');
     document.getElementById('tab-'+n+'-btn').className='main-tab'+(n===name?' on':'');
   });
@@ -530,6 +678,107 @@ function showToast(msg,type){
     document.getElementById('upload-zone').style.display='block';
     document.getElementById('file-input').value='';parsedPlan=null;
   };
+  window.exportPlanning = async function() {
+    const startVal = document.getElementById('export-date-start').value;
+    const endVal   = document.getElementById('export-date-end').value;
+    const status   = document.getElementById('export-status');
+    if (!startVal || !endVal) { status.textContent = '⚠ Choisis les deux dates.'; return; }
+
+    const startDate = new Date(startVal);
+    const endDate   = new Date(endVal);
+    if (startDate > endDate) { status.textContent = '⚠ La date de début doit être avant la fin.'; return; }
+
+    status.textContent = '⏳ Chargement des données...';
+
+    const JOURS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+    const TYPES = {repos:'Repos',cotes:'Côtes',seuil:'Seuil',sortie:'Sortie longue',
+                   footing:'Footing',course:'Course',rm:'Renforcement',autre:'Autre'};
+
+    // Calculer tous les lundis entre les 2 dates
+    function getMonday(d) {
+      const day = d.getDay() || 7;
+      const m = new Date(d);
+      m.setDate(d.getDate() - day + 1);
+      m.setHours(0,0,0,0);
+      return m;
+    }
+    function getWeekKey(monday) { return monday.toISOString().split('T')[0]; }
+    function getWeekNum(date) {
+      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      return 'S' + String(Math.ceil((((d - yearStart) / 86400000) + 1)/7)).padStart(2,'0');
+    }
+
+    const mondays = [];
+    let cur = getMonday(startDate);
+    const end = getMonday(endDate);
+    while (cur <= end) {
+      mondays.push(new Date(cur));
+      cur.setDate(cur.getDate() + 7);
+    }
+
+    // Charger les données Firebase
+    const rows = [];
+    for (const monday of mondays) {
+      const weekKey = getWeekKey(monday);
+      const weekNum = getWeekNum(monday);
+      try {
+        const snap = await getDoc(doc(db,'plannings',weekKey));
+        const data = snap.exists() ? snap.data() : {};
+        const jours = data.jours || Array(7).fill(null).map(()=>({plans:[{type:'repos',contenu:'',location:''}]}));
+        const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+        const label = weekNum + ' · ' + monday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})
+                    + ' – ' + sunday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+        const statut = data.published ? 'Publié' : snap.exists() ? 'Brouillon' : 'Vide';
+        const message = data.message || '';
+
+        // Ligne de titre de semaine
+        rows.push([label, '', '', '', statut, message]);
+        rows.push(['Jour','Date','Type','Lieu','Contenu','']);
+
+        for (let i=0;i<7;i++) {
+          const date = new Date(monday); date.setDate(monday.getDate()+i);
+          const jour = jours[i] || {};
+          const plans = jour.plans || [{type:'repos',contenu:'',location:''}];
+          plans.forEach((plan,pi) => {
+            rows.push([
+              pi===0 ? JOURS[i] : '',
+              pi===0 ? date.toLocaleDateString('fr-FR') : '',
+              TYPES[plan.type] || plan.type,
+              plan.location || '',
+              plan.contenu || '',
+              ''
+            ]);
+          });
+        }
+        rows.push(['','','','','','']); // ligne vide entre semaines
+      } catch(e) {
+        rows.push([weekNum, 'Erreur de chargement','','','','']);
+      }
+    }
+
+    status.textContent = '📊 Génération du fichier...';
+
+    // Créer le fichier Excel avec SheetJS
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+
+    // Largeurs colonnes
+    ws['!cols'] = [
+      {wch:12},{wch:14},{wch:22},{wch:20},{wch:60},{wch:10}
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Planning GGT');
+
+    const startFmt = startDate.toLocaleDateString('fr-FR').replace(/\//g,'-');
+    const endFmt   = endDate.toLocaleDateString('fr-FR').replace(/\//g,'-');
+    XLSX.writeFile(wb, 'GGT_Planning_' + startFmt + '_' + endFmt + '.xlsx');
+    status.textContent = '✓ Fichier téléchargé !';
+    setTimeout(()=>status.textContent='', 3000);
+  };
+
   window.logout=()=>signOut(auth).then(()=>window.location.href='index.html');
   let redirecting=false;
   onAuthStateChanged(auth,async(user)=>{

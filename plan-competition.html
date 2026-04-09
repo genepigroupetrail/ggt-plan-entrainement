@@ -496,8 +496,12 @@ function showToast(msg,err) {
         const dates=Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return fmtDate(d);});
         h+=`<div class="wk-block"><div class="wk-head"><span class="wk-num">${w.num}</span><span class="wk-title">${w.titre}</span><span class="wk-dates">${fmtDate(monday)} → ${fmtDate(sunday)}</span></div><div class="wk-grid">`;
         for(let i=0;i<7;i++){
-          const txt=days[i]||'Repos';
-          h+=`<div class="dc"><div class="dh">${JOURS[i]}<span>${dates[i]}</span></div><div class="dcell ${dayClass(txt)}">${txt}</div></div>`;
+          const day=days[i];
+          // Supporter ancien format (string) et nouveau format ({html,bg})
+          const html = day&&typeof day==='object' ? day.html : String(day||'Repos');
+          const bg   = day&&typeof day==='object' ? day.bg   : null;
+          const bgStyle = bg ? `background:${bg}` : '';
+          h+=`<div class="dc"><div class="dh">${JOURS[i]}<span>${dates[i]}</span></div><div class="dcell" style="${bgStyle}">${html}</div></div>`;
         }
         h+=`</div></div>`;
       });

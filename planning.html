@@ -341,8 +341,8 @@ function toggleBTab(id, btn) {
       'Semaine';
     document.getElementById('week-label').textContent = weekLabel;
     document.getElementById('week-dates').textContent = `${weekNum} · ${formatDate(monday)} – ${formatDate(sunday)}`;
-    document.getElementById('btn-prev').disabled = currentWeekOffset <= -52;
-    document.getElementById('btn-next').disabled = currentWeekOffset >= 52;
+    document.getElementById('btn-prev').disabled = currentWeekOffset <= -3120;
+    document.getElementById('btn-next').disabled = currentWeekOffset >= 3120;
     document.getElementById('content').innerHTML = '<div class="loading"><div class="spin"></div> Chargement...</div>';
 
     try {

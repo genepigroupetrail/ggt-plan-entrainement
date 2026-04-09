@@ -211,7 +211,7 @@ textarea::placeholder{color:var(--mut)}
       </div>
     </div>
     <div style="background:rgba(79,142,247,.05);border:.5px solid rgba(79,142,247,.2);border-radius:12px;padding:14px 16px;font-size:12px;color:var(--mut);line-height:1.8">
-      💡 <strong style="color:var(--acc)">Astuce :</strong> Le fichier Excel exporté peut être réimporté et modifié. Il contient une feuille par semaine avec le détail complet de chaque séance. Tu peux l'imprimer en PDF depuis Excel via Fichier → Imprimer → Enregistrer en PDF.
+      💡 <strong style="color:var(--acc)">Astuce :</strong> Le fichier Excel exporté est une sauvegarde locale de ton planning. Il contient le détail complet de chaque semaine (type de séance, lieu, contenu, statut). Tu peux l'archiver sur ton disque dur ou l'imprimer en PDF depuis Excel via Fichier → Imprimer → Enregistrer en PDF.
     </div>
   </div>
   <!-- ══ LEXIQUE DU SITE ══ -->
@@ -291,13 +291,13 @@ service cloud.firestore {
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">📅 Changement d'année — Navigation semaines</div>
         <div style="font-size:12px;color:var(--mut);line-height:1.8;margin-bottom:12px">
-          La navigation est actuellement limitée à <strong style="color:var(--txt)">±52 semaines</strong> depuis aujourd'hui.<br>
+          La navigation est configurée sur <strong style="color:var(--txt)">±3120 semaines (60 ans)</strong> depuis aujourd'hui.<br>
           Pour étendre à une nouvelle année, modifier la valeur dans <code style="background:var(--bg);padding:1px 6px;border-radius:4px;font-size:11px">planning.html</code> et <code style="background:var(--bg);padding:1px 6px;border-radius:4px;font-size:11px">admin.html</code> :
         </div>
         <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:12px;font-size:11px;color:#a8b0c8;overflow-x:auto">// Ligne à modifier dans loadWeek() / renderWeek()
-document.getElementById('btn-prev').disabled = currentWeekOffset &lt;= -52;
-document.getElementById('btn-next').disabled = currentWeekOffset &gt;= 52;
-// Changer 52 par 104 pour 2 ans, 156 pour 3 ans, etc.</pre>
+document.getElementById('btn-prev').disabled = currentWeekOffset &lt;= -3120;
+document.getElementById('btn-next').disabled = currentWeekOffset &gt;= 3120;
+// Changer 3120 par 5200 pour 100 ans, etc.</pre>
       </div>
 
       <!-- URLS -->
@@ -467,8 +467,8 @@ function showToast(msg,type){
       currentWeekOffset===1?'Semaine prochaine':'Semaine';
     document.getElementById('week-label').textContent=weekLabel;
     document.getElementById('week-dates').textContent=`${weekNum} · ${formatDate(monday)} – ${formatDate(sunday)}`;
-    document.getElementById('btn-prev').disabled=currentWeekOffset<=-52;
-    document.getElementById('btn-next').disabled=currentWeekOffset>=52;
+    document.getElementById('btn-prev').disabled=currentWeekOffset<=-3120;
+    document.getElementById('btn-next').disabled=currentWeekOffset>=3120;
     const snap=await getDoc(doc(db,'plannings',weekKey));
     weekData=snap.exists()?snap.data():{};
     const jours=weekData.jours||Array(7).fill(null).map(()=>({plans:[{type:'repos',contenu:'',location:''}]}));
@@ -587,7 +587,7 @@ function showToast(msg,type){
     if(!file.name.endsWith('.xlsx')){showToast('Fichier .xlsx uniquement','err');return;}
     const r=new FileReader();
     r.onload=function(e){
-      try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});parsedPlan=parseTemplate(wb);showPreview(parsedPlan);}
+      try{const wb=XLSX.read(e.target.result,{type:'array',cellDates:true,cellStyles:true});parsedPlan=parseTemplate(wb);showPreview(parsedPlan);}
       catch(err){showToast('Erreur : '+err.message,'err');}
     };
     r.readAsArrayBuffer(file);
@@ -595,6 +595,75 @@ function showToast(msg,type){
   function normDate(d){if(d instanceof Date)return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();return String(d);}
   function isoDate(d){if(d instanceof Date)return d.toISOString().split('T')[0];const p=String(d).split('/');if(p.length===3)return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;return '';}
   function formatDateFR(s){if(!s)return'?';let d;if(String(s).includes('T')){d=new Date(s);}else{const p=String(s).split('/');if(p.length===3)d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));else return s;}if(isNaN(d?.getTime()))return s;return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+  // Table correspondance couleurs Excel → rgba site
+  const CELL_COLOR_MAP = {
+    'FFC000': 'rgba(255,192,0,0.26)',
+    '77B5FE': 'rgba(119,181,254,0.26)',
+    '8FBA3A': 'rgba(120,170,60,0.26)',
+    '8FA8BF': 'rgba(143,168,191,0.26)',
+    'F59E0B': 'rgba(245,158,11,0.26)',
+    'B08FFF': 'rgba(168,116,255,0.26)',
+    'C8B870': 'rgba(200,185,130,0.22)',
+  };
+  const CELL_DEFAULT_BG = 'rgba(156,163,175,0.13)';
+
+  function getCellBg(cell) {
+    if(!cell||!cell.s) return CELL_DEFAULT_BG;
+    const fill = cell.s.fgColor||cell.s.bgColor;
+    if(!fill) return CELL_DEFAULT_BG;
+    const rgb = String(fill.rgb||'').toUpperCase().replace(/^FF/,'');
+    if(!rgb||rgb.length!==6) return CELL_DEFAULT_BG;
+    return CELL_COLOR_MAP[rgb] || CELL_DEFAULT_BG;
+  }
+
+  function cellToHtml(cell) {
+    if(!cell) return 'Repos';
+    // Rich Text
+    if(cell.r) {
+      try {
+        const parser = new DOMParser();
+        const xmlStr = '<root xmlns:a="x">'+cell.r.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g,'&amp;')+'</root>';
+        const doc = parser.parseFromString(xmlStr,'text/xml');
+        const runs = doc.querySelectorAll('r');
+        if(runs.length>0) {
+          let html='';
+          runs.forEach(run=>{
+            const rPr=run.querySelector('rPr');
+            const t=run.querySelector('t');
+            if(!t)return;
+            const txt=(t.textContent||'').replace(/
+/g,'<br>');
+            if(!txt.trim()&&txt!=='<br>')return;
+            const styles=[];
+            if(rPr){
+              const color=rPr.querySelector('color');
+              if(color&&color.getAttribute('rgb')){
+                const rgb=color.getAttribute('rgb').replace(/^FF/i,'').toUpperCase();
+                if(rgb&&rgb!=='333333'&&rgb!=='000000') styles.push('color:#'+rgb);
+              }
+              if(rPr.querySelector('b')) styles.push('font-weight:bold');
+              if(rPr.querySelector('i')) styles.push('font-style:italic');
+            }
+            html+=styles.length?`<span style="${styles.join(';')}">${txt}</span>`:txt;
+          });
+          if(html.trim()) return html;
+        }
+      } catch(e){}
+    }
+    // Cellule simple
+    const val=String(cell.v||'').replace(/
+/g,'<br>');
+    if(!val) return 'Repos';
+    const styles=[];
+    if(cell.s){
+      const fc=cell.s.fgColor||(cell.s.font&&cell.s.font.color);
+      if(fc&&fc.rgb){const rgb=String(fc.rgb).replace(/^FF/i,'').toUpperCase();if(rgb&&rgb!=='333333'&&rgb!=='E8EAF0')styles.push('color:#'+rgb);}
+      if(cell.s.bold||(cell.s.font&&cell.s.font.bold))styles.push('font-weight:bold');
+      if(cell.s.italic||(cell.s.font&&cell.s.font.italic))styles.push('font-style:italic');
+    }
+    return styles.length?`<span style="${styles.join(';')}">${val}</span>`:val;
+  }
+
   function parseTemplate(wb){
     const ws1=wb.Sheets['INFOS COURSE'];if(!ws1)throw new Error('Feuille "INFOS COURSE" introuvable');
     const nom=ws1['B5']?.v||'';if(!nom)throw new Error('Nom manquant (B5)');
@@ -604,12 +673,29 @@ function showToast(msg,type){
     const ws2=wb.Sheets['PLAN'];if(!ws2)throw new Error('Feuille "PLAN" introuvable');
     const rows=XLSX.utils.sheet_to_json(ws2,{header:1,defval:''});
     const dataRows=rows.slice(3).filter(r=>/^S\d+$/.test(String(r[0]||'').trim()));
+    const COLS=['E','F','G','H','I','J','K'];
     const weeksMap={},weekOrder=[];
+    // Construire un index ligne→adresse pour retrouver les cellules avec style
+    const allAddrs=Object.keys(ws2).filter(k=>!k.startsWith('!'));
     dataRows.forEach(r=>{
       const num=String(r[0]||'').trim(),phase=String(r[1]||'').trim(),titre=String(r[2]||'').trim(),dist=String(r[3]||'').trim();
-      const days=[r[4],r[5],r[6],r[7],r[8],r[9],r[10]].map(d=>String(d||'Repos').trim());
       if(!num)return;
       if(!weeksMap[num]){weeksMap[num]={num,phase,titre,distances:{}};weekOrder.push(num);}
+      // Trouver la ligne exacte dans ws2 pour col A=num ET col D=dist
+      let realRow=null;
+      allAddrs.forEach(addr=>{
+        const col=addr.replace(/[0-9]/g,'');
+        const row=parseInt(addr.replace(/[A-Z]/gi,''));
+        if(col==='A'&&String(ws2[addr]?.v||'').trim()===num&&realRow===null){
+          const dCell=ws2['D'+row];
+          if(dCell&&String(dCell.v||'').trim()===dist) realRow=row;
+        }
+      });
+      if(realRow===null) return;
+      const days=COLS.map(col=>{
+        const cell=ws2[col+realRow]||null;
+        return {html:cellToHtml(cell), bg:getCellBg(cell)};
+      });
       const di=distances.findIndex(d=>d.dist===dist||d.label.includes(dist)||dist.includes(d.dist));
       if(di>=0)weeksMap[num].distances[String(di)]=days;
     });
@@ -633,7 +719,8 @@ function showToast(msg,type){
       <div style="margin-bottom:8px;font-size:12px;color:var(--mut)">Distances :</div>
       <div class="preview-dists">${dists}</div>
       <div style="font-size:11px;color:var(--mut);margin-bottom:12px;padding:8px;background:var(--surf2);border-radius:8px">
-        <strong style="color:var(--txt)">Vérif S1 :</strong> ${plan.semaines[0]?Object.entries(plan.semaines[0].distances).map(([k,v])=>`Dist.${k} : ${v[1]?.substring(0,40)||'vide'}...`).join(' · '):'Aucune semaine'}
+        <strong style="color:var(--txt)">Vérif S1 :</strong> ${plan.semaines[0]?Object.entries(plan.semaines[0].distances).map(([k,v])=>{const txt=Array.isArray(v)&&v[1]?(typeof v[1]==='object'?v[1].html.replace(/<[^>]+>/g,''):v[1]):'';
+return `Dist.${k} : ${txt.substring(0,40)||'vide'}...`;}).join(' · '):'Aucune semaine'}
       </div>
       <div id="preview-actions-area"><div class="loading"><div class="spin"></div> Vérification...</div></div>
     </div>`;

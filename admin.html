@@ -497,15 +497,18 @@ function showToast(msg, type) {
       return '<span class="shortcut" onclick="insertAbbrev(' + dayIndex + ',' + planIndex + ',\'' + a + '\')">' + a + '</span>';
     }).join('');
     var removeBtn = planIndex > 0
-      ? '<button class="btn-remove-plan" onclick="removePlan(' + dayIndex + ',' + planIndex + ')">✕ Supprimer</button>'
+      ? '<button class="btn-remove-plan" onclick="removePlan(' + dayIndex + ',' + planIndex + ')">&#x2715; Supprimer</button>'
       : '';
+    var onchangeType = 'updatePlanField(' + dayIndex + ',' + planIndex + ',\'type\',this.value);document.getElementById(\'plan-' + dayIndex + '-' + planIndex + '\').style.background=getTypeStyle(this.value)';
+    var oninputLoc  = 'updatePlanField(' + dayIndex + ',' + planIndex + ',\'location\',this.value)';
+    var oninputCont = 'updatePlanField(' + dayIndex + ',' + planIndex + ',\'contenu\',this.value)';
     return '<div class="plan-block" id="plan-' + dayIndex + '-' + planIndex + '" style="background:' + bg + '">'
       + removeBtn
       + '<div class="plan-block-header">'
-      + '<select class="select-type" onchange="updatePlanField(' + dayIndex + ',' + planIndex + ','type',this.value);document.getElementById('plan-' + dayIndex + '-' + planIndex + '').style.background=getTypeStyle(this.value)">' + typeOptions(type) + '</select>'
-      + '<input type="text" class="input-location" placeholder="📍 Lieu" value="' + location + '" oninput="updatePlanField(' + dayIndex + ',' + planIndex + ','location',this.value)">'
+      + '<select class="select-type" onchange="' + onchangeType + '">' + typeOptions(type) + '</select>'
+      + '<input type="text" class="input-location" placeholder="📍 Lieu" value="' + location + '" oninput="' + oninputLoc + '">'
       + '</div>'
-      + '<textarea id="ta-' + dayIndex + '-' + planIndex + '" placeholder="Détail de la séance..." oninput="updatePlanField(' + dayIndex + ',' + planIndex + ','contenu',this.value)">' + contenu + '</textarea>'
+      + '<textarea id="ta-' + dayIndex + '-' + planIndex + '" placeholder="Détail de la séance..." oninput="' + oninputCont + '">' + contenu + '</textarea>'
       + '<div class="shortcuts">' + shortcuts + '</div>'
       + '</div>';
   }

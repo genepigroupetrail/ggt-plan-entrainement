@@ -390,19 +390,28 @@ function showToast(msg, type) {
   };
   const CELL_DEFAULT_BG = 'rgba(156,163,175,0.13)';
 
+  function normalizeRgb(raw) {
+    // SheetJS peut retourner 6 chars (RRGGBB) ou 8 chars (FFRRGGBB)
+    // On extrait toujours les 6 derniers chars significatifs
+    var s = String(raw || '').toUpperCase().replace(/[^0-9A-F]/g, '');
+    if (s.length === 8) return s.slice(2); // enlever le canal alpha FF
+    if (s.length === 6) return s;
+    return '';
+  }
   function getCellBg(cell) {
     if (!cell || !cell.s) return CELL_DEFAULT_BG;
     var fill = cell.s.fgColor || cell.s.bgColor;
-    if (!fill) return CELL_DEFAULT_BG;
-    var rgb = String(fill.rgb || '').toUpperCase().replace(/^FF/, '');
+    if (!fill || fill.theme !== undefined) return CELL_DEFAULT_BG; // ignorer couleurs de thème
+    var rgb = normalizeRgb(fill.rgb);
     if (!rgb || rgb.length !== 6) return CELL_DEFAULT_BG;
+    if (rgb === '000000' || rgb === 'FFFFFF') return CELL_DEFAULT_BG; // noir/blanc = pas de couleur
     return CELL_COLOR_MAP[rgb] || CELL_DEFAULT_BG;
   }
 
   function cellToHtml(cell) {
     if (!cell) return 'Repos';
-    var txt = '', val = '', styles = [];
-    // Rich Text : cell.r contient le XML des runs
+    var val = '', styles = [];
+    // ── Rich Text : cell.r contient le XML des runs ──
     if (cell.r) {
       try {
         var parser = new DOMParser();
@@ -413,42 +422,46 @@ function showToast(msg, type) {
           var html = '';
           runs.forEach(function(run) {
             var rPr = run.querySelector('rPr');
-            var t = run.querySelector('t');
+            var t   = run.querySelector('t');
             if (!t) return;
             var runTxt = (t.textContent || '').replace(/\n/g, '<br>');
             var runStyles = [];
             if (rPr) {
-              var color = rPr.querySelector('color');
-              if (color && color.getAttribute('rgb')) {
-                var rgb = color.getAttribute('rgb').replace(/^FF/i, '').toUpperCase();
-                if (rgb && rgb !== '333333' && rgb !== '000000') {
+              var colorEl = rPr.querySelector('color');
+              if (colorEl && colorEl.getAttribute('rgb')) {
+                var rgb = normalizeRgb(colorEl.getAttribute('rgb'));
+                if (rgb && rgb !== '333333' && rgb !== '000000' && rgb !== 'FFFFFF') {
                   runStyles.push('color:#' + rgb);
                 }
               }
-              if (rPr.querySelector('b')) runStyles.push('font-weight:bold');
-              if (rPr.querySelector('i')) runStyles.push('font-style:italic');
+              if (rPr.querySelector('b'))  runStyles.push('font-weight:bold');
+              if (rPr.querySelector('i'))  runStyles.push('font-style:italic');
             }
-            if (runStyles.length) {
-              html += '<span style="' + runStyles.join(';') + '">' + runTxt + '</span>';
-            } else {
-              html += runTxt;
-            }
+            html += runStyles.length
+              ? '<span style="' + runStyles.join(';') + '">' + runTxt + '</span>'
+              : runTxt;
           });
           if (html.trim()) return html;
         }
       } catch(e) {}
     }
-    // Cellule simple
+    // ── Cellule simple ──
     val = String(cell.v || '').replace(/\n/g, '<br>');
     if (!val) return 'Repos';
     if (cell.s) {
-      var fc = cell.s.fgColor || (cell.s.font && cell.s.font.color);
-      if (fc && fc.rgb) {
-        var frgb = String(fc.rgb).replace(/^FF/i, '').toUpperCase();
-        if (frgb && frgb !== '333333' && frgb !== 'E8EAF0') styles.push('color:#' + frgb);
+      // Couleur du texte : cell.s.font.color (SheetJS 0.18)
+      var fontColor = cell.s.font && cell.s.font.color ? cell.s.font.color : null;
+      if (fontColor && fontColor.rgb) {
+        var frgb = normalizeRgb(fontColor.rgb);
+        if (frgb && frgb !== '333333' && frgb !== '000000' && frgb !== 'E8EAF0') {
+          styles.push('color:#' + frgb);
+        }
       }
-      if (cell.s.bold || (cell.s.font && cell.s.font.bold)) styles.push('font-weight:bold');
-      if (cell.s.italic || (cell.s.font && cell.s.font.italic)) styles.push('font-style:italic');
+      // Gras / italique
+      if (cell.s.font) {
+        if (cell.s.font.bold)   styles.push('font-weight:bold');
+        if (cell.s.font.italic) styles.push('font-style:italic');
+      }
     }
     if (styles.length) return '<span style="' + styles.join(';') + '">' + val + '</span>';
     return val;

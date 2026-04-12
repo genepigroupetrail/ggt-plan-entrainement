@@ -633,18 +633,24 @@ function showToast(msg, type) {
       snap.forEach(function(d) { comps.push(Object.assign({id:d.id}, d.data())); });
       comps.sort(function(a,b) { return new Date(a.date_course) - new Date(b.date_course); });
       if (!comps.length) { div.innerHTML = '<p style="color:var(--mut);font-size:13px;padding:20px 0">Aucun plan créé.</p>'; return; }
-      div.innerHTML = comps.map(function(c) {
-        var bc = c.status==='published' ? 'status-published' : 'status-draft';
-        var bt = c.status==='published' ? '● Publié' : '● Brouillon';
+      div.innerHTML = comps.map(function(comp) {
+        var bc  = comp.status==='published' ? 'status-published' : 'status-draft';
+        var bt  = comp.status==='published' ? '&#9679; Publié' : '&#9679; Brouillon';
+        var cid = comp.id;
+        var cnom = (comp.nom||'').replace(/'/g, "\\'");
+        var dists = (comp.distances||[]).map(function(d){return d.label;}).join(' / ');
+        var nbSem = comp.semaines ? comp.semaines.length : '?';
+        var pubBtn = comp.status!=='published'
+          ? '<button class="btn-success" onclick="publishComp(\'' + cid + '\')">&#9654; Publier</button>'
+          : '<button class="btn-warn" onclick="unpublishComp(\'' + cid + '\')">&#9646;&#9646; Dépublier</button>';
+        var delBtn = '<button class="btn-danger" onclick="confirmDelete(\'' + cid + '\', \'' + cnom + '\')">&#128465; Supprimer</button>';
         return '<div class="comp-item">'
-          + '<div class="comp-item-info"><div class="comp-item-name">' + c.nom + ' <span class="status-badge ' + bc + '" style="margin-left:8px">' + bt + '</span></div>'
-          + '<div class="comp-item-meta">📅 ' + c.date_course + ' · ' + (c.distances||[]).map(function(d){return d.label;}).join(' / ') + ' · ' + (c.semaines ? c.semaines.length : '?') + ' semaines</div></div>'
-          + '<div class="comp-item-actions">'
-          + (c.status!=='published'
-              ? '<button class="btn-success" onclick="publishComp(''+c.id+'')">▶ Publier</button>'
-              : '<button class="btn-warn" onclick="unpublishComp(''+c.id+'')">⏸ Dépublier</button>')
-          + '<button class="btn-danger" onclick="confirmDelete(''+c.id+'',''+c.nom.replace(/'/g,"\'") +'')">🗑 Supprimer</button>'
-          + '</div></div>';
+          + '<div class="comp-item-info">'
+          + '<div class="comp-item-name">' + comp.nom + ' <span class="status-badge ' + bc + '" style="margin-left:8px">' + bt + '</span></div>'
+          + '<div class="comp-item-meta">&#128197; ' + comp.date_course + ' &middot; ' + dists + ' &middot; ' + nbSem + ' semaines</div>'
+          + '</div>'
+          + '<div class="comp-item-actions">' + pubBtn + delBtn + '</div>'
+          + '</div>';
       }).join('');
     } catch(e) { div.innerHTML = '<p style="color:#ff6b6b;font-size:13px">Erreur : ' + e.message + '</p>'; }
   };
@@ -788,7 +794,7 @@ function showToast(msg, type) {
       }).join(' · ');
     } else { verif = 'Aucune semaine'; }
     area.innerHTML = '<div class="preview-card">'
-      + '<div class="preview-title">✅ Fichier lu — Vérifie avant d'importer</div>'
+      + '<div class="preview-title">✅ Fichier lu — Vérifie avant d\'importer</div>'
       + '<div class="preview-grid">'
       + '<div class="preview-item"><label>Nom</label><span>'+plan.nom+'</span></div>'
       + '<div class="preview-item"><label>Date course</label><span>'+formatDateFR(plan.date_course)+'</span></div>'
@@ -817,18 +823,18 @@ function showToast(msg, type) {
           + '<div style="color:var(--amb);font-weight:600;margin-bottom:6px">⚠ Un plan "'+nom+'" existe déjà</div>'
           + '<div style="font-size:12px;color:var(--mut)">"Mettre à jour" remplace les séances et conserve les suivis.</div></div>'
           + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
-          + '<button class="btn-warn" onclick="importPlan('update',''+eid+'')">🔄 Mettre à jour</button>'
-          + '<button class="btn-success" onclick="importPlan('draft')">💾 Nouveau brouillon</button>'
+          + '<button class="btn-warn" onclick="importPlan(\'update\',\'' + eid + '\')">🔄 Mettre à jour</button>'
+          + '<button class="btn-success" onclick="importPlan(\'draft\')">💾 Nouveau brouillon</button>'
           + '<button class="btn-h" onclick="cancelImport()">✕ Annuler</button></div>';
       } else {
         div.innerHTML = '<div style="display:flex;gap:10px;flex-wrap:wrap">'
-          + '<button class="btn-success" onclick="importPlan('draft')">💾 Brouillon</button>'
-          + '<button class="btn-publish" style="flex:unset;padding:7px 16px;font-size:12px" onclick="importPlan('published')">▶ Publier</button>'
+          + '<button class="btn-success" onclick="importPlan(\'draft\')">💾 Brouillon</button>'
+          + '<button class="btn-publish" style="flex:unset;padding:7px 16px;font-size:12px" onclick="importPlan(\'published\')">▶ Publier</button>'
           + '<button class="btn-h" onclick="cancelImport()">✕ Annuler</button></div>';
       }
     } catch(e) {
       div.innerHTML = '<div style="display:flex;gap:10px">'
-        + '<button class="btn-success" onclick="importPlan('draft')">💾 Brouillon</button>'
+        + '<button class="btn-success" onclick="importPlan(\'draft\')">💾 Brouillon</button>'
         + '<button class="btn-h" onclick="cancelImport()">✕</button></div>';
     }
   }

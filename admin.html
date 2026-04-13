@@ -410,61 +410,37 @@ function showToast(msg, type) {
 
   function cellToHtml(cell) {
     if (!cell) return 'Repos';
-    var val = '', styles = [];
-    // ── Rich Text : cell.r contient le XML des runs ──
-    if (cell.r) {
-      try {
-        var parser = new DOMParser();
-        var safe = cell.r.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g, '&amp;');
-        var xmlDoc = parser.parseFromString('<root>' + safe + '</root>', 'text/xml');
-        var runs = xmlDoc.querySelectorAll('r');
-        if (runs.length > 0) {
-          var html = '';
-          runs.forEach(function(run) {
-            var rPr = run.querySelector('rPr');
-            var t   = run.querySelector('t');
-            if (!t) return;
-            var runTxt = (t.textContent || '').replace(/\n/g, '<br>');
-            var runStyles = [];
-            if (rPr) {
-              var colorEl = rPr.querySelector('color');
-              if (colorEl && colorEl.getAttribute('rgb')) {
-                var rgb = normalizeRgb(colorEl.getAttribute('rgb'));
-                if (rgb && rgb !== '333333' && rgb !== '000000' && rgb !== 'FFFFFF') {
-                  runStyles.push('color:#' + rgb);
-                }
-              }
-              if (rPr.querySelector('b'))  runStyles.push('font-weight:bold');
-              if (rPr.querySelector('i'))  runStyles.push('font-style:italic');
-            }
-            html += runStyles.length
-              ? '<span style="' + runStyles.join(';') + '">' + runTxt + '</span>'
-              : runTxt;
-          });
-          if (html.trim()) return html;
-        }
-      } catch(e) {}
+
+    // ── Stratégie 1 : utiliser cell.h (HTML pré-généré par SheetJS) ──
+    // SheetJS génère cell.h pour les Rich Text avec spans colorés
+    // On l'utilise en priorité mais on remplace les <br> mal formés
+    if (cell.h) {
+      var h = cell.h
+        .replace(/<br\s*\/?>/gi, '<br>')  // normaliser les <br>
+        .replace(/\r\n|\r|\n/g, '<br>'); // convertir vrais sauts de ligne
+      if (h.trim()) return h;
     }
-    // ── Cellule simple ──
-    val = String(cell.v || '').replace(/\n/g, '<br>');
+
+    // ── Stratégie 2 : cellule simple (texte brut + styles) ──
+    var val = String(cell.v || '')
+      .replace(/\r\n|\r|\n/g, '<br>');  // tous types de sauts de ligne
     if (!val) return 'Repos';
-    if (cell.s) {
-      // Couleur du texte : cell.s.font.color (SheetJS 0.18)
-      var fontColor = cell.s.font && cell.s.font.color ? cell.s.font.color : null;
-      if (fontColor && fontColor.rgb) {
-        var frgb = normalizeRgb(fontColor.rgb);
+
+    var styles = [];
+    if (cell.s && cell.s.font) {
+      var fc = cell.s.font.color;
+      if (fc && fc.rgb) {
+        var frgb = normalizeRgb(fc.rgb);
         if (frgb && frgb !== '333333' && frgb !== '000000' && frgb !== 'E8EAF0') {
           styles.push('color:#' + frgb);
         }
       }
-      // Gras / italique
-      if (cell.s.font) {
-        if (cell.s.font.bold)   styles.push('font-weight:bold');
-        if (cell.s.font.italic) styles.push('font-style:italic');
-      }
+      if (cell.s.font.bold)   styles.push('font-weight:bold');
+      if (cell.s.font.italic) styles.push('font-style:italic');
     }
-    if (styles.length) return '<span style="' + styles.join(';') + '">' + val + '</span>';
-    return val;
+    return styles.length
+      ? '<span style="' + styles.join(';') + '">' + val + '</span>'
+      : val;
   }
 
   function getTypeStyle(type) {

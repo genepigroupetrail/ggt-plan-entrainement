@@ -409,72 +409,81 @@ function showToast(msg, type) {
   }
 
   function cellToHtml(cell) {
-    if (!cell) return 'Repos';
+    if (!cell || cell.v === undefined || cell.v === null || String(cell.v) === '') return 'Repos';
 
-    // Fonction pour convertir le texte brut en HTML (sauts de ligne → <br>)
-    function escTxt(s) {
-      return String(s || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\r\n|\r|\n/g, '<br>');
+    var raw = String(cell.v);
+
+    // Convertir un texte brut en HTML safe avec \n → <br>
+    function toHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+               .split('\n').join('<br>');
     }
 
-    // ── Rich Text via cell.r (XML des runs) ──
+    // ── Parser cell.r par regex pour extraire TOUS les runs (avec et sans style) ──
     if (cell.r) {
-      try {
-        var parser = new DOMParser();
-        var safe   = cell.r.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g, '&amp;');
-        var xmlDoc = parser.parseFromString('<root>' + safe + '</root>', 'text/xml');
-        var runs   = xmlDoc.querySelectorAll('r');
-        if (runs.length > 0) {
-          var html = '';
-          runs.forEach(function(run) {
-            var rPr    = run.querySelector('rPr');
-            var t      = run.querySelector('t');
-            if (!t) return;
-            var runTxt = escTxt(t.textContent || '');
-            if (!runTxt) return;
-            var runStyles = [];
-            if (rPr) {
-              var colorEl = rPr.querySelector('color');
-              if (colorEl && colorEl.getAttribute('rgb')) {
-                var rgb = normalizeRgb(colorEl.getAttribute('rgb'));
-                if (rgb && rgb !== '333333' && rgb !== '000000' && rgb !== 'FFFFFF') {
-                  runStyles.push('color:#' + rgb);
-                }
-              }
-              if (rPr.querySelector('b')) runStyles.push('font-weight:bold');
-              if (rPr.querySelector('i')) runStyles.push('font-style:italic');
+      var runs = [];
+      // Capturer les blocs <rPr>...</rPr><t ...>...</t> (run avec style)
+      // ET les blocs <t ...>...</t> seuls (run sans style)
+      // On reconstruit en parcourant le XML run par run
+      var xml = cell.r;
+      var pos = 0;
+      var runRe = /(?:<rPr>([\s\S]*?)<\/rPr>\s*)?<t([^>]*)>([\s\S]*?)<\/t>/g;
+      var m;
+      while ((m = runRe.exec(xml)) !== null) {
+        var rPrContent = m[1] || '';
+        var tContent   = m[3] || '';
+        // Décoder les entités XML dans le texte
+        var txt = tContent
+          .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+          .replace(/&quot;/g,'"').replace(/&apos;/g,"'")
+          .replace(/&#10;/g,'\n').replace(/&#13;/g,'');
+        // Extraire les styles depuis rPr
+        var styles = [];
+        if (rPrContent) {
+          var cm = rPrContent.match(/rgb="([0-9A-Fa-f]{6,8})"/);
+          if (cm) {
+            var rgb = normalizeRgb(cm[1]);
+            if (rgb && rgb !== '333333' && rgb !== '000000' && rgb !== 'FFFFFF') {
+              styles.push('color:#' + rgb);
             }
-            html += runStyles.length
-              ? '<span style="' + runStyles.join(';') + '">' + runTxt + '</span>'
-              : runTxt;
-          });
-          if (html.trim()) return html;
+          }
+          if (/<b\s*\/>|<b>/.test(rPrContent)) styles.push('font-weight:bold');
+          if (/<i\s*\/>|<i>/.test(rPrContent)) styles.push('font-style:italic');
         }
-      } catch(e) {}
+        runs.push({ txt: txt, styles: styles });
+      }
+
+      // Si on a des runs ET au moins un avec un style → Rich Text
+      if (runs.length > 0) {
+        var html = '';
+        runs.forEach(function(run) {
+          if (!run.txt && run.txt !== '0') return;
+          var escaped = toHtml(run.txt);
+          html += run.styles.length
+            ? '<span style="' + run.styles.join(';') + '">' + escaped + '</span>'
+            : escaped;
+        });
+        if (html.trim()) return html;
+      }
     }
 
-    // ── Cellule simple ──
-    var val = escTxt(cell.v || '');
-    if (!val) return 'Repos';
-
-    var styles = [];
+    // ── Cellule simple : raw + styles globaux ──
+    var escaped = toHtml(raw);
+    var gStyles = [];
     if (cell.s && cell.s.font) {
       var fc = cell.s.font.color;
       if (fc && fc.rgb) {
         var frgb = normalizeRgb(fc.rgb);
         if (frgb && frgb !== '333333' && frgb !== '000000' && frgb !== 'E8EAF0') {
-          styles.push('color:#' + frgb);
+          gStyles.push('color:#' + frgb);
         }
       }
-      if (cell.s.font.bold)   styles.push('font-weight:bold');
-      if (cell.s.font.italic) styles.push('font-style:italic');
+      if (cell.s.font.bold)   gStyles.push('font-weight:bold');
+      if (cell.s.font.italic) gStyles.push('font-style:italic');
     }
-    return styles.length
-      ? '<span style="' + styles.join(';') + '">' + val + '</span>'
-      : val;
+    return gStyles.length
+      ? '<span style="' + gStyles.join(';') + '">' + escaped + '</span>'
+      : escaped;
   }
   function getTypeStyle(type) {
     var map = {

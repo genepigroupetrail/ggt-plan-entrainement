@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GGT — Plan hebdo</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -262,7 +263,7 @@ function toggleBTab(id, btn) {
 <script type="module">
   import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
@@ -411,6 +412,17 @@ function toggleBTab(id, btn) {
     const data = snap.exists() ? snap.data() : {};
     const name = [data.prenom||'',data.nom||''].filter(Boolean).join(' ') || user.email;
     document.getElementById('user-name').textContent = name;
+    // Enregistrer la connexion
+    if (data.role !== 'admin') {
+      try {
+        await addDoc(collection(db, 'connexions'), {
+          uid:  user.uid,
+          nom:  name,
+          page: 'Planning',
+          ts:   serverTimestamp()
+        });
+      } catch(e) { console.warn('Connexion non enregistrée:', e); }
+    }
     isAdmin = data.role==='admin';
     if (isAdmin) document.getElementById('btn-admin').style.display='inline-flex';
     loadWeek();

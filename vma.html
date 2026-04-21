@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GGT — Mon tableau VMA / FCM</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -112,7 +113,7 @@ tr.highlight-row td{background:rgba(79,142,247,.12);color:#fff;font-weight:600}
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   const firebaseConfig = {    apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
     authDomain: "ggt-plan-entrainement.firebaseapp.com",
     projectId: "ggt-plan-entrainement",
@@ -183,6 +184,13 @@ tr.highlight-row td{background:rgba(79,142,247,.12);color:#fff;font-weight:600}
     const snap=await getDoc(doc(db,'users',user.uid));
     const data=snap.exists()?snap.data():{};
     document.getElementById('user-name').textContent=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
+    // Enregistrer la connexion (adhérents uniquement)
+    if (data.role !== 'admin') {
+      try {
+        var connNom=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
+        await addDoc(collection(db,'connexions'),{uid:user.uid,nom:connNom,page:'VMA/FCM',ts:serverTimestamp()});
+      } catch(e){ console.warn('Connexion non enregistrée:',e); }
+    }
     try{
       const vs=await getDoc(doc(db,'vma_data',user.uid));
       if(vs.exists()){

@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GGT — Administration</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -124,6 +125,7 @@ textarea::placeholder{color:var(--mut)}
   </div>
   <div style="display:flex;gap:8px;align-items:center">
     <span id="user-name" style="font-size:13px;color:var(--mut)"></span>
+    <a href="connexions.html" class="btn-h">👥 Connexions</a>
     <a href="planning.html" class="btn-h">👁 Voir comme adhérent</a>
     <button class="btn-h" onclick="logout()">Déconnexion</button>
   </div>
@@ -281,6 +283,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null &amp;&amp;
         docId.matches(request.auth.uid + '_.*');
       allow read: if request.auth != null;
+    }
+    match /connexions/{docId} {
+      allow read: if request.auth != null &amp;&amp;
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if request.auth != null;
     }
   }
 }</pre>

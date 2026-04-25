@@ -394,7 +394,13 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
   }
-}</pre>
+}
+
+NOTES IMPORTANTES :
+- Utilisateurs sans doc users/{uid} : bloqués (ne peuvent pas se connecter)
+- Adhérent nouvellement créé : apparaît tout de suite (avec first_login_done=false)
+- Admin : rôle='admin' → accès complet à tout
+- Membres : rôle='membre' → accès lecture planning+écriture vma_data+race_suivi</pre>
       </div>
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">📂 Template Excel</div>
@@ -838,14 +844,12 @@ function showToast(msg, type) {
       allAdherents = [];
       snap.forEach(function(d) {
         var data = d.data();
-        if (data.role !== 'admin') {
-          allAdherents.push(Object.assign({ uid: d.id }, data));
-        }
+        allAdherents.push(Object.assign({ uid: d.id }, data));
       });
       allAdherents.sort(function(a, b) {
         return (a.nom || '').localeCompare(b.nom || '');
       });
-      document.getElementById('count-adherents').textContent = allAdherents.length + ' adhérent(s)';
+      document.getElementById('count-adherents').textContent = allAdherents.length + ' personne(s) GGT';
       filterAdherents();
     } catch(e) {
       div.innerHTML = '<p style="color:#ff6b6b">Erreur : ' + e.message + '</p>';
@@ -865,17 +869,21 @@ function showToast(msg, type) {
   function renderAdherentsList(list) {
     var div = document.getElementById('list-adherents-container');
     if (!list.length) {
-      div.innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut)"><span style="font-size:36px">👤</span><p style="margin-top:12px">Aucun adhérent trouvé</p></div>';
+      div.innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut)"><span style="font-size:36px">👤</span><p style="margin-top:12px">Aucune personne trouvée</p></div>';
       return;
     }
     div.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">' +
       list.map(function(a) {
         var statutClass = a.statut === 'actif' ? 'status-published' : a.statut === 'pause' ? 'status-draft' : 'status-empty';
         var statutLabel = a.statut === 'actif' ? '✓ Actif' : a.statut === 'pause' ? '⏸ Pause' : '🔒 Suspendu';
+        var roleLabel = a.role === 'admin' ? '👑 Admin' : '👤 Membre';
+        var roleBadgeStyle = a.role === 'admin' ? 'background:rgba(79,142,247,.15);color:var(--acc)' : 'background:rgba(34,197,94,.15);color:var(--grn)';
+        var firstLoginLabel = a.first_login_done === false ? '⚠ Pas encore connecté' : '';
+        var displayName = (a.prenom || '') && (a.nom || '') ? (a.prenom + ' ' + a.nom) : a.email;
         return '<div class="comp-item">' +
           '<div class="comp-item-info">' +
-          '<div class="comp-item-name">' + (a.prenom || '') + ' ' + (a.nom || '') + ' <span class="status-badge ' + statutClass + '">' + statutLabel + '</span></div>' +
-          '<div class="comp-item-meta">📧 ' + a.email + ' · 📱 ' + (a.telephone || '—') + '</div>' +
+          '<div class="comp-item-name">' + displayName + ' <span class="status-badge ' + statutClass + '">' + statutLabel + '</span> <span style="' + roleBadgeStyle + ';font-size:11px;padding:3px 8px;border-radius:4px;display:inline-block">' + roleLabel + '</span></div>' +
+          '<div class="comp-item-meta">📧 ' + a.email + ' · 📱 ' + (a.telephone || '—') + (firstLoginLabel ? ' · ' + firstLoginLabel : '') + '</div>' +
           '</div>' +
           '<div class="comp-item-actions">' +
           '<button class="btn-success" onclick="openEditAdherent(\'' + a.uid + '\')">✏️ Éditer</button>' +
@@ -938,6 +946,8 @@ function showToast(msg, type) {
       '<div><strong style="color:var(--acc)">Date de naissance</strong><br>' + (adh.date_naissance || '—') + '</div>' +
       '<div><strong style="color:var(--acc)">Sexe</strong><br>' + (adh.sexe || '—') + '</div>' +
       '<div><strong style="color:var(--acc)">Statut</strong><br>' + (adh.statut || 'actif') + '</div>' +
+      '<div><strong style="color:var(--acc)">Rôle</strong><br>' + (adh.role || 'membre') + '</div>' +
+      '<div><strong style="color:var(--acc)">Première connexion</strong><br>' + (adh.first_login_done ? '✓ Oui' : '❌ Non') + '</div>' +
       '<div><strong style="color:var(--acc)">Inscrit le</strong><br>' + 
         (adh.date_inscription && adh.date_inscription.toDate 
           ? adh.date_inscription.toDate().toLocaleDateString('fr-FR')

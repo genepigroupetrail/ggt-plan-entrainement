@@ -403,8 +403,11 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
       const snap = await getDoc(doc(db, 'users', auth.currentUser.uid));
       if (snap.exists()) {
         currentUserData = snap.data();
-        document.getElementById('user-name').textContent = [currentUserData.prenom || '', currentUserData.nom || ''].filter(Boolean).join(' ') || auth.currentUser.email;
+        const displayName = [currentUserData.prenom || '', currentUserData.nom || ''].filter(Boolean).join(' ') || auth.currentUser.email;
+        document.getElementById('user-name').textContent = displayName;
         displayUserData();
+      } else {
+        console.warn('Document users non trouvé');
       }
     } catch (e) {
       showToast('Erreur de chargement', 'error');

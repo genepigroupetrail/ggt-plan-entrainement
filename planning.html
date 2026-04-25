@@ -18,7 +18,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .logo img{width:34px;height:34px;border-radius:8px;object-fit:contain}
 .logo h1{font-size:15px;font-weight:700}
 .logo p{font-size:10px;color:var(--mut)}
-.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.user-badge{font-size:13px;color:var(--txt);font-weight:600;padding:5px 0}
 .user-badge{font-size:13px;color:var(--txt);font-weight:600;padding:5px 0}
 .btn-h{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:6px 12px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap}
 .btn-h:hover{color:var(--txt);border-color:var(--acc)}
@@ -121,8 +121,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
     <div><h1>GGT Plan hebdo</h1><p>Génépi Groupe Trail</p></div>
   </div>
   <div class="header-right">
-    <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
     <span class="user-badge" id="user-name"></span>
+    <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
     <a href="profil.html" class="btn-h">👤 Mon Profil</a>
     <a href="admin.html" class="btn-admin" id="btn-admin" style="display:none">⚙️ Admin</a>
     <button class="btn-h" onclick="logout()">Déconnexion</button>

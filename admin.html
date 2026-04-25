@@ -466,6 +466,7 @@ NOTES IMPORTANTES :
         <select id="edit-role">
           <option value="adherent">👤 Adhérent</option>
           <option value="adminadherent">⚙️ Admin Adhérent</option>
+          <option value="admin">👑 Admin</option>
         </select>
       </div>
     </div>
@@ -960,7 +961,7 @@ function showToast(msg, type) {
       '<div><strong style="color:var(--acc)">Date de naissance</strong><br>' + (adh.date_naissance || '—') + '</div>' +
       '<div><strong style="color:var(--acc)">Sexe</strong><br>' + (adh.sexe || '—') + '</div>' +
       '<div><strong style="color:var(--acc)">Statut</strong><br>' + (adh.statut || 'actif') + '</div>' +
-      '<div><strong style="color:var(--acc)">Rôle</strong><br>' + (adh.role || 'membre') + '</div>' +
+      '<div><strong style="color:var(--acc)">Rôle</strong><br>' + (adh.role === 'admin' ? 'Admin' : adh.role === 'adminadherent' ? 'Admin Adhérent' : 'Adhérent') + '</div>' +
       '<div><strong style="color:var(--acc)">Première connexion</strong><br>' + (adh.first_login_done ? '✓ Oui' : '❌ Non') + '</div>' +
       '<div><strong style="color:var(--acc)">Mot de passe par défaut</strong><br><span style="font-family:monospace;background:var(--bg);padding:4px 8px;border-radius:4px">Génèpi</span></div>' +
       '<div><strong style="color:var(--acc)">Inscrit le</strong><br>' + 
@@ -986,20 +987,28 @@ function showToast(msg, type) {
   async function deleteAdherent(uid) {
     closeModal();
     try {
-      await deleteDoc(doc(db, 'vma_data', uid));
+      // Supprimer vma_data (peut ne pas exister)
+      try { await deleteDoc(doc(db, 'vma_data', uid)); } catch(e) { }
+      
+      // Supprimer race_suivi
       var suiviSnap = await getDocs(query(collection(db, 'race_suivi'), where('__name__', '>=', uid + '_'), where('__name__', '<', uid + '_~')));
       var batch = db.batch();
       suiviSnap.forEach(function(doc_) {
         batch.delete(doc_.ref);
       });
       await batch.commit();
+      
+      // Supprimer connexions
       var connSnap = await getDocs(query(collection(db, 'connexions'), where('uid', '==', uid)));
       var batch2 = db.batch();
       connSnap.forEach(function(doc_) {
         batch2.delete(doc_.ref);
       });
       await batch2.commit();
+      
+      // Supprimer users
       await deleteDoc(doc(db, 'users', uid));
+      
       showToast('✓ Adhérent supprimé !');
       allAdherents = allAdherents.filter(function(a) { return a.uid !== uid; });
       filterAdherents();
@@ -1387,7 +1396,7 @@ function showToast(msg, type) {
     if (!user) { redirecting=true; window.location.href='index.html'; return; }
     try {
       var snap = await getDoc(doc(db,'users',user.uid));
-      if (!snap.exists() || snap.data().role !== 'admin') { redirecting=true; window.location.href='planning.html'; return; }
+      if (!snap.exists() || (snap.data().role !== 'admin' && snap.data().role !== 'adminadherent')) { redirecting=true; window.location.href='planning.html'; return; }
       document.getElementById('user-name').textContent = [snap.data().prenom||'',snap.data().nom||''].filter(Boolean).join(' ') || user.email;
       renderWeek();
     } catch(e) { console.error('Erreur auth:', e); }

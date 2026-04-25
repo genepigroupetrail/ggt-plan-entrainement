@@ -124,8 +124,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
             <div class="info-item-value" id="display-date-naissance">—</div>
           </div>
           <div class="info-item">
-            <div class="info-item-label">Sexe</div>
-            <div class="info-item-value" id="display-sexe">—</div>
+            <div class="info-item-label">Rôle</div>
+            <div class="info-item-value" id="display-role">—</div>
           </div>
           <div class="info-item">
             <div class="info-item-label">Statut</div>
@@ -395,6 +395,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
     document.getElementById('display-date-naissance').textContent = currentUserData.date_naissance || '—';
     document.getElementById('display-sexe').textContent = currentUserData.sexe || '—';
     document.getElementById('display-statut').textContent = currentUserData.statut || 'actif';
+    var roleLabel = currentUserData.role === 'admin' ? 'Admin' : currentUserData.role === 'adminadherent' ? 'Admin Adhérent' : 'Adhérent';
+    document.getElementById('display-role').textContent = roleLabel;
     checkAnniversary(currentUserData.date_naissance);
   }
 

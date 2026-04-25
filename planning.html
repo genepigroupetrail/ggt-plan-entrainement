@@ -314,17 +314,38 @@ function toggleBTab(id, btn) {
   function getWeekKey(monday) { return monday.toISOString().split('T')[0]; }
   function formatDate(d) { return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'}); }
 
-  function checkAnniversary(dateNaissance) {
-    if (!dateNaissance) return;
-    const today = new Date();
-    const [year, month, day] = dateNaissance.split('-');
-    const todayStr = String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
-    const birthStr = month + day;
-    const banner = document.getElementById('anniversary-banner');
-    if (todayStr === birthStr) {
-      banner.style.display = 'block';
-    } else {
-      banner.style.display = 'none';
+  async function checkAnniversaryToday() {
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      const today = new Date();
+      const todayStr = String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
+      
+      let anniversairesAujourdhui = [];
+      snap.forEach(function(d) {
+        const data = d.data();
+        if (data.date_naissance) {
+          const [year, month, day] = data.date_naissance.split('-');
+          const birthStr = month + day;
+          if (todayStr === birthStr) {
+            const displayName = (data.prenom || '') + ' ' + (data.nom || '');
+            anniversairesAujourdhui.push(displayName.trim());
+          }
+        }
+      });
+
+      const banner = document.getElementById('anniversary-banner');
+      if (anniversairesAujourdhui.length > 0) {
+        const names = anniversairesAujourdhui.join(', ');
+        const h3 = banner.querySelector('h2');
+        const p = banner.querySelector('p');
+        h3.textContent = '🎂 Joyeux anniversaire ' + names + ' !';
+        p.textContent = 'Que cette année vous apporte plein de belles sorties trail ! 🏃';
+        banner.style.display = 'block';
+      } else {
+        banner.style.display = 'none';
+      }
+    } catch(e) {
+      console.warn('Erreur anniversaire:', e);
     }
   }
 
@@ -449,10 +470,10 @@ function toggleBTab(id, btn) {
         });
       } catch(e) { console.warn('Connexion non enregistrée:', e); }
     }
-    isAdmin = data.role==='admin';
+    isAdmin = data.role==='admin' || data.role==='adminadherent';
     if (isAdmin) document.getElementById('btn-admin').style.display='inline-flex';
-    // Vérifier anniversaire
-    checkAnniversary(data.date_naissance);
+    // Vérifier anniversaires de tous
+    checkAnniversaryToday();
     loadWeek();
   });
 </script>

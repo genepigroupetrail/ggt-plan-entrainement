@@ -461,6 +461,13 @@ NOTES IMPORTANTES :
           <option value="suspendu">🔒 Suspendu</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Rôle</label>
+        <select id="edit-role">
+          <option value="adherent">👤 Adhérent</option>
+          <option value="adminadherent">⚙️ Admin Adhérent</option>
+        </select>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-h" onclick="closeModalAdherent()">Annuler</button>
@@ -847,7 +854,9 @@ function showToast(msg, type) {
         allAdherents.push(Object.assign({ uid: d.id }, data));
       });
       allAdherents.sort(function(a, b) {
-        return (a.nom || '').localeCompare(b.nom || '');
+        var nomA = (a.nom || '').toLowerCase();
+        var nomB = (b.nom || '').toLowerCase();
+        return nomA.localeCompare(nomB);
       });
       document.getElementById('count-adherents').textContent = allAdherents.length + ' personne(s) GGT';
       filterAdherents();
@@ -876,13 +885,16 @@ function showToast(msg, type) {
       list.map(function(a) {
         var statutClass = a.statut === 'actif' ? 'status-published' : a.statut === 'pause' ? 'status-draft' : 'status-empty';
         var statutLabel = a.statut === 'actif' ? '✓ Actif' : a.statut === 'pause' ? '⏸ Pause' : '🔒 Suspendu';
-        var roleLabel = a.role === 'admin' ? '👑 Admin' : '👤 Membre';
-        var roleBadgeStyle = a.role === 'admin' ? 'background:rgba(79,142,247,.15);color:var(--acc)' : 'background:rgba(34,197,94,.15);color:var(--grn)';
+        var roleMap = { 'admin': ['👑 Admin', 'rgba(79,142,247,.15)', 'var(--acc)'], 'adminadherent': ['⚙️ Admin Adhérent', 'rgba(252,76,2,.15)', 'var(--ora)'], 'adherent': ['👤 Adhérent', 'rgba(34,197,94,.15)', 'var(--grn)'] };
+        var roleInfo = roleMap[a.role] || roleMap['adherent'];
+        var roleLabel = roleInfo[0];
+        var roleBg = roleInfo[1];
+        var roleColor = roleInfo[2];
         var firstLoginLabel = a.first_login_done === false ? '⚠ Pas encore connecté' : '';
         var displayName = (a.prenom || '') && (a.nom || '') ? (a.prenom + ' ' + a.nom) : a.email;
         return '<div class="comp-item">' +
           '<div class="comp-item-info">' +
-          '<div class="comp-item-name">' + displayName + ' <span class="status-badge ' + statutClass + '">' + statutLabel + '</span> <span style="' + roleBadgeStyle + ';font-size:11px;padding:3px 8px;border-radius:4px;display:inline-block">' + roleLabel + '</span></div>' +
+          '<div class="comp-item-name">' + displayName + ' <span class="status-badge ' + statutClass + '">' + statutLabel + '</span> <span style="background:' + roleBg + ';color:' + roleColor + ';font-size:11px;padding:3px 8px;border-radius:4px;display:inline-block">' + roleLabel + '</span></div>' +
           '<div class="comp-item-meta">📧 ' + a.email + ' · 📱 ' + (a.telephone || '—') + (firstLoginLabel ? ' · ' + firstLoginLabel : '') + '</div>' +
           '</div>' +
           '<div class="comp-item-actions">' +
@@ -906,6 +918,7 @@ function showToast(msg, type) {
     document.getElementById('edit-date-naissance').value = adh.date_naissance || '';
     document.getElementById('edit-sexe').value = adh.sexe || '';
     document.getElementById('edit-statut').value = adh.statut || 'actif';
+    document.getElementById('edit-role').value = adh.role || 'adherent';
     document.getElementById('modal-edit-adh').classList.add('show');
   };
 
@@ -922,7 +935,8 @@ function showToast(msg, type) {
         adresse: document.getElementById('edit-adresse').value || '',
         date_naissance: document.getElementById('edit-date-naissance').value || '',
         sexe: document.getElementById('edit-sexe').value || '',
-        statut: document.getElementById('edit-statut').value || 'actif'
+        statut: document.getElementById('edit-statut').value || 'actif',
+        role: document.getElementById('edit-role').value || 'adherent'
       }, { merge: true });
       showToast('✓ Adhérent modifié !');
       closeModalAdherent();
@@ -1032,7 +1046,7 @@ function showToast(msg, type) {
         adresse: adresse,
         date_naissance: dateNaissance || '',
         sexe: sexe || '',
-        role: 'membre',
+        role: 'adherent',
         statut: 'actif',
         date_inscription: serverTimestamp(),
         created_by: auth.currentUser.uid,

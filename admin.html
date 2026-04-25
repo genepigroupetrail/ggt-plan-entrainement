@@ -1013,9 +1013,17 @@ function showToast(msg, type) {
     btn.textContent = '⏳ Création...';
 
     try {
+      console.log('=== CRÉATION ADHÉRENT ===');
+      console.log('Email:', email);
+      
+      // Étape 1: Créer l'user Auth
+      console.log('Étape 1: Création Firebase Auth...');
       var userCred = await createUserWithEmailAndPassword(auth, email, 'Génèpi');
       var newUid = userCred.user.uid;
+      console.log('✓ Auth créé, UID:', newUid);
 
+      // Étape 2: Créer le doc Firestore
+      console.log('Étape 2: Création Firestore users/{uid}...');
       var userData = {
         email: email,
         prenom: prenom,
@@ -1030,8 +1038,10 @@ function showToast(msg, type) {
         created_by: auth.currentUser.uid,
         first_login_done: false
       };
-
+      console.log('Données à sauvegarder:', userData);
+      
       await setDoc(doc(db, 'users', newUid), userData);
+      console.log('✓ Firestore créé');
 
       showToast('✓ Adhérent créé ! Email + "Génèpi"');
       
@@ -1047,11 +1057,12 @@ function showToast(msg, type) {
       setTimeout(function() { window.loadAdherents(); }, 500);
 
     } catch(error) {
+      console.error('❌ ERREUR:', error.code, error.message);
       var msg = error.message;
       if (error.code === 'auth/email-already-in-use') msg = 'Cet email est déjà utilisé';
       if (error.code === 'auth/invalid-email') msg = 'Email invalide';
       if (error.code === 'auth/weak-password') msg = 'Mot de passe trop faible';
-      showToast('Erreur création : ' + msg, 'err');
+      showToast('Erreur : ' + msg, 'err');
     }
 
     btn.disabled = false;

@@ -158,7 +158,7 @@ textarea::placeholder{color:var(--mut)}
     <div><h1>GGT Admin</h1><p>CoachDav</p></div>
   </div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <span id="user-name" style="font-size:13px;color:var(--mut)"></span>
+    <span id="user-name" style="font-size:13px;color:var(--txt);font-weight:600"></span>
     <a href="connexions.html" class="btn-h">👥 Connexions</a>
     <a href="planning.html" class="btn-h">👁 Voir comme adhérent</a>
     <button class="btn-h" onclick="logout()">Déconnexion</button>
@@ -168,8 +168,8 @@ textarea::placeholder{color:var(--mut)}
 <div class="main">
   <div class="main-tabs">
     <button class="main-tab on" id="tab-planning-btn" onclick="switchMain('planning')">📅 Planning hebdo</button>
-    <button class="main-tab" id="tab-adherents-btn" onclick="switchMain('adherents')">👥 Gérer adhérents</button>
     <button class="main-tab" id="tab-comp-btn" onclick="switchMain('comp')">🏅 Plans de compétition</button>
+    <button class="main-tab" id="tab-adherents-btn" onclick="switchMain('adherents')">👥 Gérer adhérents</button>
     <button class="main-tab" id="tab-export-btn" onclick="switchMain('export')">📥 Export Excel</button>
     <button class="main-tab" id="tab-lexique-btn" onclick="switchMain('lexique')">📖 Lexique du site</button>
   </div>

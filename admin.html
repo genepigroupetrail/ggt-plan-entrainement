@@ -948,6 +948,7 @@ function showToast(msg, type) {
       '<div><strong style="color:var(--acc)">Statut</strong><br>' + (adh.statut || 'actif') + '</div>' +
       '<div><strong style="color:var(--acc)">Rôle</strong><br>' + (adh.role || 'membre') + '</div>' +
       '<div><strong style="color:var(--acc)">Première connexion</strong><br>' + (adh.first_login_done ? '✓ Oui' : '❌ Non') + '</div>' +
+      '<div><strong style="color:var(--acc)">Mot de passe par défaut</strong><br><span style="font-family:monospace;background:var(--bg);padding:4px 8px;border-radius:4px">Génèpi</span></div>' +
       '<div><strong style="color:var(--acc)">Inscrit le</strong><br>' + 
         (adh.date_inscription && adh.date_inscription.toDate 
           ? adh.date_inscription.toDate().toLocaleDateString('fr-FR')
@@ -1015,7 +1016,7 @@ function showToast(msg, type) {
       var userCred = await createUserWithEmailAndPassword(auth, email, 'Génèpi');
       var newUid = userCred.user.uid;
 
-      await setDoc(doc(db, 'users', newUid), {
+      var userData = {
         email: email,
         prenom: prenom,
         nom: nom,
@@ -1028,9 +1029,11 @@ function showToast(msg, type) {
         date_inscription: serverTimestamp(),
         created_by: auth.currentUser.uid,
         first_login_done: false
-      });
+      };
 
-      showToast('✓ Adhérent créé ! Identifiants : email + "Génèpi"');
+      await setDoc(doc(db, 'users', newUid), userData);
+
+      showToast('✓ Adhérent créé ! Email + "Génèpi"');
       
       document.getElementById('new-email').value = '';
       document.getElementById('new-prenom').value = '';
@@ -1041,13 +1044,14 @@ function showToast(msg, type) {
       document.getElementById('new-sexe').value = '';
       
       switchAdherentTab('list');
-      window.loadAdherents();
+      setTimeout(function() { window.loadAdherents(); }, 500);
 
     } catch(error) {
       var msg = error.message;
       if (error.code === 'auth/email-already-in-use') msg = 'Cet email est déjà utilisé';
       if (error.code === 'auth/invalid-email') msg = 'Email invalide';
-      showToast('Erreur : ' + msg, 'err');
+      if (error.code === 'auth/weak-password') msg = 'Mot de passe trop faible';
+      showToast('Erreur création : ' + msg, 'err');
     }
 
     btn.disabled = false;

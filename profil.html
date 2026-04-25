@@ -301,14 +301,16 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
     btn.disabled = true;
     btn.textContent = '⏳ Sauvegarde...';
     try {
-      await setDoc(doc(db, 'users', auth.currentUser.uid), {
+      const updateData = {
         prenom: document.getElementById('edit-prenom').value || '',
         nom: document.getElementById('edit-nom').value || '',
         telephone: document.getElementById('edit-telephone').value || '',
         adresse: document.getElementById('edit-adresse').value || '',
         date_naissance: document.getElementById('edit-date-naissance').value || '',
         sexe: document.getElementById('edit-sexe').value || ''
-      }, { merge: true });
+      };
+      await setDoc(doc(db, 'users', auth.currentUser.uid), updateData, { merge: true });
+      if (currentUserData) currentUserData = Object.assign(currentUserData, updateData);
       showToast('✓ Profil mis à jour !');
       cancelEditMode();
       loadUserData();

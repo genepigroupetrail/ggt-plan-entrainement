@@ -57,6 +57,9 @@ select:focus{border-color:var(--acc)}
 input[type="text"]{background:var(--bg);border:.5px solid var(--brd);border-radius:7px;padding:6px 10px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:12px;outline:none}
 input[type="text"]:focus{border-color:var(--acc)}
 input[type="text"]::placeholder{color:var(--mut)}
+input[type="email"],input[type="tel"],input[type="date"]{background:var(--bg);border:.5px solid var(--brd);border-radius:7px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:12px;outline:none}
+input[type="email"]:focus,input[type="tel"]:focus,input[type="date"]:focus{border-color:var(--acc)}
+input[type="email"]::placeholder,input[type="tel"]::placeholder{color:var(--mut)}
 .select-type{width:180px}
 .input-location{width:160px}
 textarea{width:100%;background:var(--bg);border:.5px solid var(--brd);border-radius:7px;padding:10px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none;resize:vertical;min-height:75px;line-height:1.5;transition:border-color .2s}
@@ -104,10 +107,10 @@ textarea::placeholder{color:var(--mut)}
 .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
-.modal{background:var(--surf);border:.5px solid var(--brd);border-radius:16px;padding:28px;max-width:420px;width:90%}
+.modal{background:var(--surf);border:.5px solid var(--brd);border-radius:16px;padding:28px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto}
 .modal-title{font-size:16px;font-weight:600;margin-bottom:10px}
-.modal-body{font-size:13px;color:var(--mut);margin-bottom:20px;line-height:1.6}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.modal-body{font-size:13px;color:var(--mut);margin-bottom:20px;line-height:1.6;white-space:pre-line}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surf2);border:.5px solid rgba(34,197,94,.4);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--grn);transition:transform .3s;z-index:300;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast.error{border-color:rgba(224,0,32,.4);color:#ff6b6b}
@@ -115,6 +118,37 @@ textarea::placeholder{color:var(--mut)}
 .loading{display:flex;align-items:center;justify-content:center;min-height:120px;color:var(--mut);font-size:14px;gap:10px}
 .spin{width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.empty-week{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--mut);font-size:14px}
+.empty-week span{display:block;font-size:36px;margin-bottom:12px}
+.lex-section{margin-bottom:16px}
+.lex-section h3{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ora);margin-bottom:10px}
+.lex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.lex-item{background:var(--surf2);border-radius:8px;padding:7px 11px;font-size:12px}
+.lex-item strong{color:var(--acc);display:block;margin-bottom:1px}
+.lex-item span{color:var(--mut)}
+.allures-wrap{overflow-x:auto;border-radius:10px;border:.5px solid var(--brd)}
+.allures-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surf)}
+.allures-table th{background:var(--surf2);color:var(--mut);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 8px;text-align:center;border-bottom:.5px solid var(--brd);white-space:nowrap}
+.allures-table td{padding:8px;text-align:center;border-bottom:.5px solid rgba(255,255,255,.04);font-size:12px;color:var(--txt)}
+.allures-table tr:last-child td{border-bottom:none}
+.zone-0,.zone-1,.zone-2,.zone-3{background:rgba(122,128,153,.06)}
+.zone-4,.zone-5{background:rgba(34,197,94,.06)}
+.zone-6,.zone-7{background:rgba(245,158,11,.08)}
+.zone-8,.zone-9{background:rgba(252,76,2,.07)}
+.zone-10{background:rgba(239,68,68,.10)}
+.seuil-row td{border-top:.5px solid rgba(79,142,247,.3)}
+.seuil-label{font-size:9px;color:var(--acc);font-weight:700;text-align:left!important;padding-left:6px!important}
+.adherents-header{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.adherents-header input{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none;flex:1;min-width:200px}
+.adherents-header span{font-size:12px;color:var(--mut)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+.form-group input,.form-group select{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:10px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--acc)}
+.info-box{background:rgba(79,142,247,.05);border:.5px solid rgba(79,142,247,.2);border-radius:10px;padding:12px;font-size:11px;color:var(--mut);line-height:1.7;margin-bottom:16px}
+.info-box strong{color:var(--acc)}
 </style>
 </head>
 <body>
@@ -123,7 +157,7 @@ textarea::placeholder{color:var(--mut)}
     <img src="logo-ggt.png" alt="GGT">
     <div><h1>GGT Admin</h1><p>CoachDav</p></div>
   </div>
-  <div style="display:flex;gap:8px;align-items:center">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <span id="user-name" style="font-size:13px;color:var(--mut)"></span>
     <a href="connexions.html" class="btn-h">👥 Connexions</a>
     <a href="planning.html" class="btn-h">👁 Voir comme adhérent</a>
@@ -134,6 +168,7 @@ textarea::placeholder{color:var(--mut)}
 <div class="main">
   <div class="main-tabs">
     <button class="main-tab on" id="tab-planning-btn" onclick="switchMain('planning')">📅 Planning hebdo</button>
+    <button class="main-tab" id="tab-adherents-btn" onclick="switchMain('adherents')">👥 Gérer adhérents</button>
     <button class="main-tab" id="tab-comp-btn" onclick="switchMain('comp')">🏅 Plans de compétition</button>
     <button class="main-tab" id="tab-export-btn" onclick="switchMain('export')">📥 Export Excel</button>
     <button class="main-tab" id="tab-lexique-btn" onclick="switchMain('lexique')">📖 Lexique du site</button>
@@ -164,6 +199,73 @@ textarea::placeholder{color:var(--mut)}
     </div>
   </div>
 
+  <!-- ADHÉRENTS -->
+  <div class="tab-section" id="tab-adherents">
+    <div style="display:flex;border-bottom:.5px solid var(--brd);margin-bottom:16px">
+      <button class="main-tab on" id="subt-list-adh-btn" onclick="switchAdherentTab('list')">📋 Liste des adhérents</button>
+      <button class="main-tab" id="subt-new-adh-btn" onclick="switchAdherentTab('new')">➕ Créer un adhérent</button>
+    </div>
+
+    <!-- Liste adhérents -->
+    <div class="tab-section on" id="subt-list-adh">
+      <div class="adherents-header">
+        <input type="text" id="search-adherent" placeholder="Chercher par nom..." oninput="filterAdherents()">
+        <span id="count-adherents">Chargement...</span>
+      </div>
+      <div id="list-adherents-container"><div class="loading"><div class="spin"></div> Chargement...</div></div>
+    </div>
+
+    <!-- Créer adhérent -->
+    <div class="tab-section" id="subt-new-adh">
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:24px;max-width:600px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:16px">👤 Créer un nouvel adhérent</div>
+        <div class="form-grid full" style="display:flex;flex-direction:column;gap:14px">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="new-email" placeholder="prenom@email.fr">
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Prénom</label>
+              <input type="text" id="new-prenom" placeholder="Prénom">
+            </div>
+            <div class="form-group">
+              <label>Nom</label>
+              <input type="text" id="new-nom" placeholder="Nom">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="tel" id="new-telephone" placeholder="06 XX XX XX XX">
+          </div>
+          <div class="form-group">
+            <label>Adresse</label>
+            <input type="text" id="new-adresse" placeholder="Adresse complète">
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Date de naissance</label>
+              <input type="date" id="new-date-naissance">
+            </div>
+            <div class="form-group">
+              <label>Sexe</label>
+              <select id="new-sexe">
+                <option value="">— Non spécifié</option>
+                <option value="M">Masculin</option>
+                <option value="F">Féminin</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
+          <div class="info-box">
+            💡 <strong>Info :</strong> L'adhérent recevra par défaut le mot de passe "Génèpi". Il doit le changer à la première connexion depuis son profil.
+          </div>
+          <button class="btn-publish" style="width:100%;padding:12px;font-size:14px" onclick="createAdherent()">✅ Créer l'adhérent</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- COMPETITIONS -->
   <div class="tab-section" id="tab-comp">
     <div style="display:flex;border-bottom:.5px solid var(--brd);margin-bottom:16px">
@@ -183,10 +285,7 @@ textarea::placeholder{color:var(--mut)}
           <div><strong style="color:var(--red)">🗑 Suppression</strong><br><span style="color:var(--mut)">Supprime le plan ET tous les suivis. Préfère dépublier</span></div>
         </div>
       </div>
-      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
-           ondragover="event.preventDefault();this.classList.add('dragover')"
-           ondragleave="this.classList.remove('dragover')"
-           ondrop="handleDrop(event)">
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
         <input type="file" id="file-input" accept=".xlsx" style="display:none" onchange="handleFile(event)">
         <div class="upload-icon">📂</div>
         <div class="upload-title">Glisse ton fichier Excel ici</div>
@@ -238,54 +337,59 @@ textarea::placeholder{color:var(--mut)}
         </div>
       </div>
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏃 Activités suivi</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px">
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(34,197,94,0.20)"><span>🏃</span> <strong>Course / Trail</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.20)"><span>🚴</span> <strong>Vélo</strong><div style="font-size:10px;color:var(--mut)">km + D+ affichés</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(180,140,80,0.20)"><span>🚶</span> <strong>Marche</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(79,142,247,0.20)"><span>🏊</span> <strong>Natation</strong><div style="font-size:10px;color:var(--mut)">km affiché</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.20)"><span>🏋️</span> <strong>Renforcement</strong><div style="font-size:10px;color:var(--mut)">Sans mesure</div></div>
-        </div>
-        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Sensations :</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(34,197,94,0.22);font-size:13px">😊 Très facile</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(134,239,172,0.22);font-size:13px">🙂 Facile</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(251,191,36,0.22);font-size:13px">😐 Normal</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(252,165,165,0.22);font-size:13px">😓 Difficile</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(239,68,68,0.22);font-size:13px">😰 Très difficile</div>
-        </div>
-      </div>
-      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔐 Règles Firestore</div>
         <div style="font-size:11px;color:var(--mut);margin-bottom:10px">À copier-coller dans Firebase → Firestore → Règles</div>
-        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:14px;font-size:11px;color:#a8b0c8;overflow-x:auto;line-height:1.7">rules_version = '2';
+        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:14px;font-size:10px;color:#a8b0c8;overflow-x:auto;line-height:1.6">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // PLANNINGS (lecture tous, écriture admin)
     match /plannings/{weekId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null &amp;&amp;
+      allow write: if request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    
+    // USERS (lecture self+admin, écriture admin+self partiel)
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null &amp;&amp;
+      allow read: if request.auth != null &&
+        (request.auth.uid == userId || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      
+      allow create: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      
+      allow update: if request.auth != null &&
+        (request.auth.uid == userId ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      
+      allow delete: if request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    
+    // VMA_DATA (lecture+écriture self)
     match /vma_data/{userId} {
-      allow read, write: if request.auth != null &amp;&amp; request.auth.uid == userId;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+    
+    // RACE_PLANS (lecture tous, écriture admin)
     match /race_plans/{planId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null &amp;&amp;
+      allow write: if request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    
+    // RACE_SUIVI (lecture self+admin, écriture self)
     match /race_suivi/{docId} {
-      allow read, write: if request.auth != null &amp;&amp;
+      allow read, write: if request.auth != null &&
         docId.matches(request.auth.uid + '_.*');
-      allow read: if request.auth != null;
+      allow read: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    
+    // CONNEXIONS (lecture admin, écriture tous)
     match /connexions/{docId} {
-      allow read: if request.auth != null &amp;&amp;
+      allow read: if request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
       allow write: if request.auth != null;
     }
@@ -293,21 +397,7 @@ service cloud.firestore {
 }</pre>
       </div>
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">📅 Navigation semaines</div>
-        <div style="font-size:12px;color:var(--mut);line-height:1.8;margin-bottom:12px">Configurée sur <strong style="color:var(--txt)">±3120 semaines (60 ans)</strong>. Pour modifier, chercher dans planning.html et admin.html :</div>
-        <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:12px;font-size:11px;color:#a8b0c8;overflow-x:auto">currentWeekOffset &lt;= -3120  // changer pour ±5200 = 100 ans</pre>
-      </div>
-      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔗 URLs et références</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;font-size:12px">
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Site GGT</div><a href="https://genepigroupetrail.github.io/ggt-plan-entrainement/" target="_blank" style="color:var(--acc)">genepigroupetrail.github.io/ggt-plan-entrainement/</a></div>
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase</div><a href="https://console.firebase.google.com/project/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">console.firebase.google.com</a></div>
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">GitHub</div><a href="https://github.com/genepigroupetrail/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">github.com/genepigroupetrail/ggt-plan-entrainement</a></div>
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase Project ID</div><code style="color:var(--txt)">ggt-plan-entrainement</code></div>
-        </div>
-      </div>
-      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--acc)">📂 Template Excel</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">📂 Template Excel</div>
         <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Fichier template pour créer un plan de compétition.</div>
         <a href="GGT_Template_Plan_Course.xlsx" download class="btn-publish" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;flex:unset;padding:10px 20px;font-size:13px;border-radius:10px">📥 Télécharger le template Excel</a>
       </div>
@@ -315,7 +405,76 @@ service cloud.firestore {
   </div>
 </div>
 
-<!-- Modal -->
+<!-- MODAL ÉDITION ADHÉRENT -->
+<div class="modal-overlay" id="modal-edit-adh">
+  <div class="modal">
+    <div class="modal-title">✏️ Modifier adhérent</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="edit-email" readonly style="opacity:.6;cursor:not-allowed">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" id="edit-prenom">
+        </div>
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="edit-nom">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" id="edit-telephone">
+      </div>
+      <div class="form-group">
+        <label>Adresse</label>
+        <input type="text" id="edit-adresse">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date de naissance</label>
+          <input type="date" id="edit-date-naissance">
+        </div>
+        <div class="form-group">
+          <label>Sexe</label>
+          <select id="edit-sexe">
+            <option value="">— Non spécifié</option>
+            <option value="M">Masculin</option>
+            <option value="F">Féminin</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Statut</label>
+        <select id="edit-statut">
+          <option value="actif">✓ Actif</option>
+          <option value="pause">⏸ En pause</option>
+          <option value="suspendu">🔒 Suspendu</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-h" onclick="closeModalAdherent()">Annuler</button>
+      <button class="btn-success" onclick="saveAdherent()">💾 Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VOIR DÉTAIL ADHÉRENT -->
+<div class="modal-overlay" id="modal-detail-adh">
+  <div class="modal">
+    <div class="modal-title">👤 Détails adhérent</div>
+    <div id="detail-content" style="font-size:13px;line-height:1.8"></div>
+    <div class="modal-actions">
+      <button class="btn-h" onclick="closeModalDetail()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRINCIPAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-title" id="modal-title">Confirmer</div>
@@ -326,15 +485,25 @@ service cloud.firestore {
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 function switchMain(name) {
-  ['planning','comp','export','lexique'].forEach(function(n) {
-    document.getElementById('tab-'+n).className = 'tab-section' + (n===name ? ' on' : '');
-    document.getElementById('tab-'+n+'-btn').className = 'main-tab' + (n===name ? ' on' : '');
+  ['planning','adherents','comp','export','lexique'].forEach(function(n) {
+    const el = document.getElementById('tab-'+n);
+    const btn = document.getElementById('tab-'+n+'-btn');
+    if (el) el.className = 'tab-section' + (n===name ? ' on' : '');
+    if (btn) btn.className = 'main-tab' + (n===name ? ' on' : '');
   });
   if (name === 'comp') window.loadCompList && window.loadCompList();
+  if (name === 'adherents') window.loadAdherents && window.loadAdherents();
+}
+function switchAdherentTab(name) {
+  document.getElementById('subt-list-adh').className = 'tab-section' + (name==='list' ? ' on' : '');
+  document.getElementById('subt-new-adh').className = 'tab-section' + (name==='new' ? ' on' : '');
+  document.getElementById('subt-list-adh-btn').className = 'main-tab' + (name==='list' ? ' on' : '');
+  document.getElementById('subt-new-adh-btn').className = 'main-tab' + (name==='new' ? ' on' : '');
 }
 function switchSub(name) {
   ['list','new'].forEach(function(n) {
@@ -343,6 +512,8 @@ function switchSub(name) {
   });
 }
 function closeModal() { document.getElementById('modal').classList.remove('show'); }
+function closeModalAdherent() { document.getElementById('modal-edit-adh').classList.remove('show'); currentEditingUid = null; }
+function closeModalDetail() { document.getElementById('modal-detail-adh').classList.remove('show'); }
 function showToast(msg, type) {
   var t = document.getElementById('toast');
   t.textContent = msg;
@@ -353,8 +524,8 @@ function showToast(msg, type) {
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   var firebaseConfig = {
     apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
@@ -368,9 +539,14 @@ function showToast(msg, type) {
   var auth = getAuth(app);
   var db   = getFirestore(app);
 
+  // ════════════════════════════════════════════════════════════════════
+  // VARIABLES GLOBALES
+  // ════════════════════════════════════════════════════════════════════
   var currentWeekOffset = 0;
   var weekData = {};
   var parsedPlan = null;
+  var allAdherents = [];
+  var currentEditingUid = null;
 
   var JOURS   = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
   var TYPES   = [
@@ -398,53 +574,40 @@ function showToast(msg, type) {
   const CELL_DEFAULT_BG = 'rgba(156,163,175,0.13)';
 
   function normalizeRgb(raw) {
-    // SheetJS peut retourner 6 chars (RRGGBB) ou 8 chars (FFRRGGBB)
-    // On extrait toujours les 6 derniers chars significatifs
     var s = String(raw || '').toUpperCase().replace(/[^0-9A-F]/g, '');
-    if (s.length === 8) return s.slice(2); // enlever le canal alpha FF
+    if (s.length === 8) return s.slice(2);
     if (s.length === 6) return s;
     return '';
   }
   function getCellBg(cell) {
     if (!cell || !cell.s) return CELL_DEFAULT_BG;
     var fill = cell.s.fgColor || cell.s.bgColor;
-    if (!fill || fill.theme !== undefined) return CELL_DEFAULT_BG; // ignorer couleurs de thème
+    if (!fill || fill.theme !== undefined) return CELL_DEFAULT_BG;
     var rgb = normalizeRgb(fill.rgb);
     if (!rgb || rgb.length !== 6) return CELL_DEFAULT_BG;
-    if (rgb === '000000' || rgb === 'FFFFFF') return CELL_DEFAULT_BG; // noir/blanc = pas de couleur
+    if (rgb === '000000' || rgb === 'FFFFFF') return CELL_DEFAULT_BG;
     return CELL_COLOR_MAP[rgb] || CELL_DEFAULT_BG;
   }
 
   function cellToHtml(cell) {
     if (!cell || cell.v === undefined || cell.v === null || String(cell.v) === '') return 'Repos';
-
     var raw = String(cell.v);
-
-    // Convertir un texte brut en HTML safe avec \n → <br>
     function toHtml(s) {
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
                .split('\n').join('<br>');
     }
-
-    // ── Parser cell.r par regex pour extraire TOUS les runs (avec et sans style) ──
     if (cell.r) {
       var runs = [];
-      // Capturer les blocs <rPr>...</rPr><t ...>...</t> (run avec style)
-      // ET les blocs <t ...>...</t> seuls (run sans style)
-      // On reconstruit en parcourant le XML run par run
       var xml = cell.r;
-      var pos = 0;
       var runRe = /(?:<rPr>([\s\S]*?)<\/rPr>\s*)?<t([^>]*)>([\s\S]*?)<\/t>/g;
       var m;
       while ((m = runRe.exec(xml)) !== null) {
         var rPrContent = m[1] || '';
         var tContent   = m[3] || '';
-        // Décoder les entités XML dans le texte
         var txt = tContent
           .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')
           .replace(/&quot;/g,'"').replace(/&apos;/g,"'")
           .replace(/&#10;/g,'\n').replace(/&#13;/g,'');
-        // Extraire les styles depuis rPr
         var styles = [];
         if (rPrContent) {
           var cm = rPrContent.match(/rgb="([0-9A-Fa-f]{6,8})"/);
@@ -459,8 +622,6 @@ function showToast(msg, type) {
         }
         runs.push({ txt: txt, styles: styles });
       }
-
-      // Si on a des runs ET au moins un avec un style → Rich Text
       if (runs.length > 0) {
         var html = '';
         runs.forEach(function(run) {
@@ -473,8 +634,6 @@ function showToast(msg, type) {
         if (html.trim()) return html;
       }
     }
-
-    // ── Cellule simple : raw + styles globaux ──
     var escaped = toHtml(raw);
     var gStyles = [];
     if (cell.s && cell.s.font) {
@@ -492,6 +651,7 @@ function showToast(msg, type) {
       ? '<span style="' + gStyles.join(';') + '">' + escaped + '</span>'
       : escaped;
   }
+
   function getTypeStyle(type) {
     var map = {
       repos:'rgba(156,163,175,0.13)', cotes:'rgba(255,192,0,0.26)',
@@ -524,6 +684,10 @@ function showToast(msg, type) {
       return '<option value="' + t.value + '"' + (t.value===selected?' selected':'') + '>' + t.label + '</option>';
     }).join('');
   }
+
+  // ════════════════════════════════════════════════════════════════════
+  // PLANNING HEBDO
+  // ════════════════════════════════════════════════════════════════════
 
   function renderPlanBlock(dayIndex, planIndex, plan) {
     plan = plan || {};
@@ -662,6 +826,228 @@ function showToast(msg, type) {
   window.unpublish  = async function() { if (await save(false)) { showToast('🔒 Planning dépublié','warn'); renderWeek(); } };
   window.changeWeek = function(dir) { currentWeekOffset += dir; renderWeek(); };
 
+  // ════════════════════════════════════════════════════════════════════
+  // GESTION DES ADHÉRENTS
+  // ════════════════════════════════════════════════════════════════════
+
+  window.loadAdherents = async function() {
+    var div = document.getElementById('list-adherents-container');
+    div.innerHTML = '<div class="loading"><div class="spin"></div> Chargement...</div>';
+    try {
+      var snap = await getDocs(collection(db, 'users'));
+      allAdherents = [];
+      snap.forEach(function(d) {
+        var data = d.data();
+        if (data.role !== 'admin') {
+          allAdherents.push(Object.assign({ uid: d.id }, data));
+        }
+      });
+      allAdherents.sort(function(a, b) {
+        return (a.nom || '').localeCompare(b.nom || '');
+      });
+      document.getElementById('count-adherents').textContent = allAdherents.length + ' adhérent(s)';
+      filterAdherents();
+    } catch(e) {
+      div.innerHTML = '<p style="color:#ff6b6b">Erreur : ' + e.message + '</p>';
+    }
+  };
+
+  window.filterAdherents = function() {
+    var search = (document.getElementById('search-adherent').value || '').toLowerCase();
+    var filtered = allAdherents.filter(function(a) {
+      var fullName = ((a.prenom || '') + ' ' + (a.nom || '')).toLowerCase();
+      var email = (a.email || '').toLowerCase();
+      return fullName.includes(search) || email.includes(search);
+    });
+    renderAdherentsList(filtered);
+  };
+
+  function renderAdherentsList(list) {
+    var div = document.getElementById('list-adherents-container');
+    if (!list.length) {
+      div.innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut)"><span style="font-size:36px">👤</span><p style="margin-top:12px">Aucun adhérent trouvé</p></div>';
+      return;
+    }
+    div.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">' +
+      list.map(function(a) {
+        var statutClass = a.statut === 'actif' ? 'status-published' : a.statut === 'pause' ? 'status-draft' : 'status-empty';
+        var statutLabel = a.statut === 'actif' ? '✓ Actif' : a.statut === 'pause' ? '⏸ Pause' : '🔒 Suspendu';
+        return '<div class="comp-item">' +
+          '<div class="comp-item-info">' +
+          '<div class="comp-item-name">' + (a.prenom || '') + ' ' + (a.nom || '') + ' <span class="status-badge ' + statutClass + '">' + statutLabel + '</span></div>' +
+          '<div class="comp-item-meta">📧 ' + a.email + ' · 📱 ' + (a.telephone || '—') + '</div>' +
+          '</div>' +
+          '<div class="comp-item-actions">' +
+          '<button class="btn-success" onclick="openEditAdherent(\'' + a.uid + '\')">✏️ Éditer</button>' +
+          '<button class="btn-warn" onclick="openDetailAdherent(\'' + a.uid + '\')">👁️ Voir</button>' +
+          '<button class="btn-danger" onclick="confirmDeleteAdherent(\'' + a.uid + '\', \'' + ((a.prenom || '') + ' ' + (a.nom || '')).replace(/'/g, "\\'") + '\')">🗑️ Supprimer</button>' +
+          '</div></div>';
+      }).join('') +
+      '</div>';
+  }
+
+  window.openEditAdherent = function(uid) {
+    currentEditingUid = uid;
+    var adh = allAdherents.find(function(a) { return a.uid === uid; });
+    if (!adh) return;
+    document.getElementById('edit-email').value = adh.email || '';
+    document.getElementById('edit-prenom').value = adh.prenom || '';
+    document.getElementById('edit-nom').value = adh.nom || '';
+    document.getElementById('edit-telephone').value = adh.telephone || '';
+    document.getElementById('edit-adresse').value = adh.adresse || '';
+    document.getElementById('edit-date-naissance').value = adh.date_naissance || '';
+    document.getElementById('edit-sexe').value = adh.sexe || '';
+    document.getElementById('edit-statut').value = adh.statut || 'actif';
+    document.getElementById('modal-edit-adh').classList.add('show');
+  };
+
+  window.saveAdherent = async function() {
+    if (!currentEditingUid) return;
+    var btn = event.target;
+    btn.disabled = true;
+    btn.textContent = '⏳ Sauvegarde...';
+    try {
+      await setDoc(doc(db, 'users', currentEditingUid), {
+        prenom: document.getElementById('edit-prenom').value || '',
+        nom: document.getElementById('edit-nom').value || '',
+        telephone: document.getElementById('edit-telephone').value || '',
+        adresse: document.getElementById('edit-adresse').value || '',
+        date_naissance: document.getElementById('edit-date-naissance').value || '',
+        sexe: document.getElementById('edit-sexe').value || '',
+        statut: document.getElementById('edit-statut').value || 'actif'
+      }, { merge: true });
+      showToast('✓ Adhérent modifié !');
+      closeModalAdherent();
+      window.loadAdherents();
+    } catch(e) {
+      showToast('Erreur : ' + e.message, 'err');
+    }
+    btn.disabled = false;
+    btn.textContent = '💾 Sauvegarder';
+  };
+
+  window.openDetailAdherent = function(uid) {
+    var adh = allAdherents.find(function(a) { return a.uid === uid; });
+    if (!adh) return;
+    var html = '<div style="display:flex;flex-direction:column;gap:10px;font-size:12px">' +
+      '<div><strong style="color:var(--acc)">Email</strong><br>' + (adh.email || '—') + '</div>' +
+      '<div><strong style="color:var(--acc)">Prénom</strong><br>' + (adh.prenom || '—') + '</div>' +
+      '<div><strong style="color:var(--acc)">Nom</strong><br>' + (adh.nom || '—') + '</div>' +
+      '<div><strong style="color:var(--acc)">Téléphone</strong><br>' + (adh.telephone || '—') + '</div>' +
+      '<div><strong style="color:var(--acc)">Adresse</strong><br>' + (adh.adresse || '—') + '</div>' +
+      '<div><strong style="color:var(--acc)">Date de naissance</strong><br>' + (adh.date_naissance || '—') + '</div>' +
+      '<div><strong style="color:var(--acc)">Sexe</strong><br>' + (adh.sexe || '—') + '</div>' +
+      '<div><strong style="color:var(--acc)">Statut</strong><br>' + (adh.statut || 'actif') + '</div>' +
+      '<div><strong style="color:var(--acc)">Inscrit le</strong><br>' + 
+        (adh.date_inscription && adh.date_inscription.toDate 
+          ? adh.date_inscription.toDate().toLocaleDateString('fr-FR')
+          : '—') + '</div>' +
+      '</div>';
+    document.getElementById('detail-content').innerHTML = html;
+    document.getElementById('modal-detail-adh').classList.add('show');
+  };
+
+  window.confirmDeleteAdherent = function(uid, name) {
+    document.getElementById('modal-title').textContent = '🗑️ Supprimer cet adhérent ?';
+    document.getElementById('modal-body').textContent = 
+      'Suppression de "' + name + '"\n\nCette action supprimera :\n' +
+      '• Tous les profils\n' +
+      '• Tous les suivis\n' +
+      '• Toutes les connexions\n\nCette action est IRRÉVERSIBLE.';
+    document.getElementById('modal-confirm').onclick = function() { deleteAdherent(uid); };
+    document.getElementById('modal').classList.add('show');
+  };
+
+  async function deleteAdherent(uid) {
+    closeModal();
+    try {
+      await deleteDoc(doc(db, 'vma_data', uid));
+      var suiviSnap = await getDocs(query(collection(db, 'race_suivi'), where('__name__', '>=', uid + '_'), where('__name__', '<', uid + '_~')));
+      var batch = db.batch();
+      suiviSnap.forEach(function(doc_) {
+        batch.delete(doc_.ref);
+      });
+      await batch.commit();
+      var connSnap = await getDocs(query(collection(db, 'connexions'), where('uid', '==', uid)));
+      var batch2 = db.batch();
+      connSnap.forEach(function(doc_) {
+        batch2.delete(doc_.ref);
+      });
+      await batch2.commit();
+      await deleteDoc(doc(db, 'users', uid));
+      showToast('✓ Adhérent supprimé !');
+      allAdherents = allAdherents.filter(function(a) { return a.uid !== uid; });
+      filterAdherents();
+    } catch(error) {
+      showToast('Erreur : ' + error.message, 'err');
+    }
+  }
+
+  window.createAdherent = async function() {
+    var email = document.getElementById('new-email').value.trim();
+    var prenom = document.getElementById('new-prenom').value.trim();
+    var nom = document.getElementById('new-nom').value.trim();
+    var telephone = document.getElementById('new-telephone').value.trim();
+    var adresse = document.getElementById('new-adresse').value.trim();
+    var dateNaissance = document.getElementById('new-date-naissance').value;
+    var sexe = document.getElementById('new-sexe').value;
+
+    if (!email || !prenom || !nom) {
+      showToast('Remplis email, prénom et nom', 'err');
+      return;
+    }
+
+    var btn = event.target;
+    btn.disabled = true;
+    btn.textContent = '⏳ Création...';
+
+    try {
+      var userCred = await createUserWithEmailAndPassword(auth, email, 'Génèpi');
+      var newUid = userCred.user.uid;
+
+      await setDoc(doc(db, 'users', newUid), {
+        email: email,
+        prenom: prenom,
+        nom: nom,
+        telephone: telephone,
+        adresse: adresse,
+        date_naissance: dateNaissance || '',
+        sexe: sexe || '',
+        role: 'membre',
+        statut: 'actif',
+        date_inscription: serverTimestamp(),
+        created_by: auth.currentUser.uid,
+        first_login_done: false
+      });
+
+      showToast('✓ Adhérent créé ! Identifiants : email + "Génèpi"');
+      
+      document.getElementById('new-email').value = '';
+      document.getElementById('new-prenom').value = '';
+      document.getElementById('new-nom').value = '';
+      document.getElementById('new-telephone').value = '';
+      document.getElementById('new-adresse').value = '';
+      document.getElementById('new-date-naissance').value = '';
+      document.getElementById('new-sexe').value = '';
+      
+      switchAdherentTab('list');
+      window.loadAdherents();
+
+    } catch(error) {
+      var msg = error.message;
+      if (error.code === 'auth/email-already-in-use') msg = 'Cet email est déjà utilisé';
+      if (error.code === 'auth/invalid-email') msg = 'Email invalide';
+      showToast('Erreur : ' + msg, 'err');
+    }
+
+    btn.disabled = false;
+    btn.textContent = '✅ Créer l\'adhérent';
+  };
+
+  // ════════════════════════════════════════════════════════════════════
+  // COMPÉTITIONS
+  // ════════════════════════════════════════════════════════════════════
+
   window.loadCompList = async function() {
     var div = document.getElementById('comp-list-container');
     div.innerHTML = '<div class="loading"><div class="spin"></div> Chargement...</div>';
@@ -673,19 +1059,19 @@ function showToast(msg, type) {
       if (!comps.length) { div.innerHTML = '<p style="color:var(--mut);font-size:13px;padding:20px 0">Aucun plan créé.</p>'; return; }
       div.innerHTML = comps.map(function(comp) {
         var bc  = comp.status==='published' ? 'status-published' : 'status-draft';
-        var bt  = comp.status==='published' ? '&#9679; Publié' : '&#9679; Brouillon';
+        var bt  = comp.status==='published' ? '✓ Publié' : '📝 Brouillon';
         var cid = comp.id;
         var cnom = (comp.nom||'').replace(/'/g, "\\'");
         var dists = (comp.distances||[]).map(function(d){return d.label;}).join(' / ');
         var nbSem = comp.semaines ? comp.semaines.length : '?';
         var pubBtn = comp.status!=='published'
-          ? '<button class="btn-success" onclick="publishComp(\'' + cid + '\')">&#9654; Publier</button>'
-          : '<button class="btn-warn" onclick="unpublishComp(\'' + cid + '\')">&#9646;&#9646; Dépublier</button>';
-        var delBtn = '<button class="btn-danger" onclick="confirmDelete(\'' + cid + '\', \'' + cnom + '\')">&#128465; Supprimer</button>';
+          ? '<button class="btn-success" onclick="publishComp(\'' + cid + '\')">✓ Publier</button>'
+          : '<button class="btn-warn" onclick="unpublishComp(\'' + cid + '\')">⏸ Dépublier</button>';
+        var delBtn = '<button class="btn-danger" onclick="confirmDelete(\'' + cid + '\', \'' + cnom + '\')">🗑️ Supprimer</button>';
         return '<div class="comp-item">'
           + '<div class="comp-item-info">'
-          + '<div class="comp-item-name">' + comp.nom + ' <span class="status-badge ' + bc + '" style="margin-left:8px">' + bt + '</span></div>'
-          + '<div class="comp-item-meta">&#128197; ' + comp.date_course + ' &middot; ' + dists + ' &middot; ' + nbSem + ' semaines</div>'
+          + '<div class="comp-item-name">' + comp.nom + ' <span class="status-badge ' + bc + '">' + bt + '</span></div>'
+          + '<div class="comp-item-meta">📅 ' + comp.date_course + ' · ' + dists + ' · ' + nbSem + ' semaines</div>'
           + '</div>'
           + '<div class="comp-item-actions">' + pubBtn + delBtn + '</div>'
           + '</div>';
@@ -783,7 +1169,6 @@ function showToast(msg, type) {
       var dist  = String(r[3] || '').trim();
       if (!num) return;
       if (!weeksMap[num]) { weeksMap[num] = { num: num, phase: phase, titre: titre, distances: {} }; weekOrder.push(num); }
-      // Trouver la ligne exacte dans ws2 pour col A=num ET col D=dist
       var realRow = null;
       allAddrs.forEach(function(addr) {
         var col = addr.replace(/[0-9]/g, '');
@@ -931,22 +1316,22 @@ function showToast(msg, type) {
         var jours=data.jours||Array(7).fill(null).map(function(){return{plans:[{type:'repos',contenu:'',location:''}]};});
         var statut=data.published?'Publié':snap.exists()?'Brouillon':'Vide';
         var lbl=weekNum+' · '+monday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})+' – '+sunday.toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-        rows.push([lbl,'','','',statut,data.message||'']);
-        rows.push(['Jour','Date','Type','Lieu','Contenu','']);
+        rows.push([lbl,'','',statut,data.message||'']);
+        rows.push(['Jour','Date','Type','Lieu','Contenu']);
         var normalJ=jours.map(function(j){if(!j)return{plans:[{type:'repos',contenu:'',location:''}]};if(!j.plans)return{plans:[{type:j.type||'repos',contenu:j.contenu||'',location:''}]};return j;});
         for(var i=0;i<7;i++){
           var date=new Date(monday); date.setDate(monday.getDate()+i);
           var plans=normalJ[i].plans;
           plans.forEach(function(plan,pi){
-            rows.push([pi===0?JOURS[i]:'', pi===0?date.toLocaleDateString('fr-FR'):'', TYPES_LABELS[plan.type]||plan.type, plan.location||'', plan.contenu||'','']);
+            rows.push([pi===0?JOURS[i]:'', pi===0?date.toLocaleDateString('fr-FR'):'', TYPES_LABELS[plan.type]||plan.type, plan.location||'', plan.contenu||'']);
           });
         }
-        rows.push(['','','','','','']);
-      } catch(e) { rows.push([weekNum,'Erreur','','','','']); }
+        rows.push(['','','','','']);
+      } catch(e) { rows.push([weekNum,'Erreur','','','']); }
     }
     status.textContent = '📊 Génération...';
     var wb2=XLSX.utils.book_new(), ws=XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols']=[{wch:12},{wch:14},{wch:22},{wch:20},{wch:60},{wch:10}];
+    ws['!cols']=[{wch:12},{wch:14},{wch:22},{wch:20},{wch:60}];
     XLSX.utils.book_append_sheet(wb2,ws,'Planning GGT');
     var sf=startDate.toLocaleDateString('fr-FR').replace(/\//g,'-');
     var ef=endDate.toLocaleDateString('fr-FR').replace(/\//g,'-');

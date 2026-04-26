@@ -539,7 +539,7 @@ function showToast(msg, type) {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   var firebaseConfig = {
     apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
@@ -992,15 +992,15 @@ function showToast(msg, type) {
       
       // Supprimer race_suivi
       var suiviSnap = await getDocs(query(collection(db, 'race_suivi'), where('__name__', '>=', uid + '_'), where('__name__', '<', uid + '_~')));
-      var batch = db.batch();
+      var batch1 = writeBatch(db);
       suiviSnap.forEach(function(doc_) {
-        batch.delete(doc_.ref);
+        batch1.delete(doc_.ref);
       });
-      await batch.commit();
+      await batch1.commit();
       
       // Supprimer connexions
       var connSnap = await getDocs(query(collection(db, 'connexions'), where('uid', '==', uid)));
-      var batch2 = db.batch();
+      var batch2 = writeBatch(db);
       connSnap.forEach(function(doc_) {
         batch2.delete(doc_.ref);
       });

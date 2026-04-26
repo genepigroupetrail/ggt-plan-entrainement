@@ -1,135 +1,238 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<link rel="icon" type="image/png" href="favicon.png">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GGT — Connexion</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0f14;--surf:#161a23;--surf2:#1e2330;--brd:rgba(255,255,255,.08);--txt:#e8eaf0;--mut:#7a8099;--acc:#4f8ef7;--ora:#fc4c02;--grn:#22c55e}
-html,body{min-height:100%;height:100%}
-body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--txt);display:flex;align-items:center;justify-content:center;min-height:100vh;
-background-image:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(79,142,247,.08),transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(252,76,2,.06),transparent 60%)}
-.card{background:var(--surf);border:.5px solid var(--brd);border-radius:20px;padding:40px;width:100%;max-width:400px;margin:20px}
-.logo-wrap{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:32px}
-.logo-img{width:52px;height:52px;border-radius:12px;object-fit:contain}
-.logo-text h1{font-size:22px;font-weight:700}
-.logo-text p{font-size:13px;color:var(--mut);margin-top:2px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:7px}
-.form-group input{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:10px;padding:12px 14px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:15px;outline:none;transition:border-color .2s}
-.form-group input:focus{border-color:var(--acc)}
-.form-group input::placeholder{color:var(--mut)}
-.btn-login{width:100%;background:var(--acc);border:none;border-radius:10px;padding:13px;color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:8px}
-.btn-login:hover{opacity:.9}
-.btn-login:disabled{opacity:.5;cursor:not-allowed}
-.error{background:rgba(239,68,68,.1);border:.5px solid rgba(239,68,68,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#ff6b6b;margin-bottom:16px;display:none}
-.error.show{display:block}
-.footer{text-align:center;margin-top:24px;font-size:11px;color:var(--mut)}
-.separator{display:flex;align-items:center;gap:12px;margin:20px 0}
-.separator hr{flex:1;border:none;border-top:.5px solid var(--brd)}
-.separator span{font-size:11px;color:var(--mut)}
-.loading-overlay{display:none;position:fixed;inset:0;background:rgba(13,15,20,.8);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-.loading-overlay.show{display:flex}
-.spin{width:28px;height:28px;border:3px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-overlay p{font-size:14px;color:var(--mut)}
-</style>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Connexion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    /* Styles spécifiques à la page de connexion */
+    html, body {
+      min-height: 100%;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(79, 142, 247, 0.08), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(252, 76, 2, 0.06), transparent 60%);
+    }
+
+    .card {
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .logo-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .logo-text h1 {
+      font-size: 22px;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .logo-text p {
+      font-size: 13px;
+      color: var(--mut);
+      margin-top: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 7px;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: var(--surf2);
+      border: 0.5px solid var(--brd);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--txt);
+      font-family: var(--font-family);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--acc);
+    }
+
+    .form-group input::placeholder {
+      color: var(--mut);
+    }
+
+    .btn-login {
+      width: 100%;
+      background: var(--acc);
+      border: none;
+      border-radius: 10px;
+      padding: 13px;
+      color: #fff;
+      font-family: var(--font-family);
+      font-size: 15px;
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-login:hover {
+      opacity: 0.9;
+    }
+
+    .btn-login:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--mut);
+    }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 15, 20, 0.8);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-overlay p {
+      font-size: 14px;
+      color: var(--mut);
+    }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <div class="logo-wrap">
+      <img class="logo-img" src="logo-ggt.png" alt="GGT">
+      <div class="logo-text">
+        <h1>GGT Entraînement</h1>
+        <p>Génépi Groupe Trail</p>
+      </div>
+    </div>
 
-<div class="card">
-  <div class="logo-wrap">
-    <img class="logo-img" src="logo-ggt.png" alt="GGT">
-    <div class="logo-text">
-      <h1>GGT Entrainement</h1>
-      <p>Génépi Groupe Trail</p>
+    <div class="error" id="error-msg"></div>
+
+    <div class="form-group">
+      <label>Adresse email</label>
+      <input type="email" id="email" placeholder="prenom@email.fr" autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <button class="btn-login" id="btn-login" onclick="doLogin()">Se connecter</button>
+
+    <div class="footer">
+      Accès réservé aux adhérents GGT<br>Génépi Groupe Trail · Élancourt &amp; Magny-les-Hameaux
     </div>
   </div>
 
-  <div class="error" id="error-msg"></div>
-
-  <div class="form-group">
-    <label>Adresse email</label>
-    <input type="email" id="email" placeholder="prenom@email.fr" autocomplete="email">
+  <div class="loading-overlay" id="loading">
+    <div class="spin"></div>
+    <p>Connexion en cours...</p>
   </div>
-  <div class="form-group">
-    <label>Mot de passe</label>
-    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-  </div>
-  <button class="btn-login" id="btn-login" onclick="doLogin()">Se connecter</button>
 
-  <div class="footer">
-    Accès réservé aux adhérents GGT<br>Génépi Groupe Trail · Élancourt &amp; Magny-les-Hameaux
-  </div>
-</div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { firebaseConfig, showError, hideError } from "./shared-app.js";
 
-<div class="loading-overlay" id="loading">
-  <div class="spin"></div>
-  <p>Connexion en cours...</p>
-</div>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-<script type="module">
-  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    // Si déjà connecté → rediriger directement
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = 'planning.html';
+    });
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
-    authDomain: "ggt-plan-entrainement.firebaseapp.com",
-    projectId: "ggt-plan-entrainement",
-    storageBucket: "ggt-plan-entrainement.firebasestorage.app",
-    messagingSenderId: "663631056543",
-    appId: "1:663631056543:web:d8cb50121fcf8d1c635caa"
-  };
+    window.doLogin = async function() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('btn-login');
 
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+      if (!email || !password) {
+        showError('error-msg', 'Remplis tous les champs.');
+        return;
+      }
 
-  // Si déjà connecté → rediriger directement
-  onAuthStateChanged(auth, (user) => {
-    if (user) window.location.href = 'planning.html';
-  });
+      hideError('error-msg');
+      btn.disabled = true;
+      document.getElementById('loading').classList.add('show');
 
-  function showError(msg) {
-    const el = document.getElementById('error-msg');
-    el.textContent = msg;
-    el.classList.add('show');
-  }
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = 'planning.html';
+      } catch (error) {
+        document.getElementById('loading').classList.remove('show');
+        btn.disabled = false;
 
-  window.doLogin = async function() {
-    const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const btn      = document.getElementById('btn-login');
+        const errorMessages = {
+          'auth/invalid-credential': 'Email ou mot de passe incorrect.',
+          'auth/user-not-found': 'Aucun compte avec cet email.',
+          'auth/wrong-password': 'Mot de passe incorrect.',
+          'auth/too-many-requests': 'Trop de tentatives. Réessaie dans quelques minutes.',
+          'auth/invalid-email': 'Adresse email invalide.'
+        };
 
-    if (!email || !password) { showError('Remplis tous les champs.'); return; }
+        const message = errorMessages[error.code] || 'Erreur de connexion : ' + error.message;
+        showError('error-msg', message);
+      }
+    };
 
-    document.getElementById('error-msg').classList.remove('show');
-    btn.disabled = true;
-    document.getElementById('loading').classList.add('show');
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = 'planning.html';
-    } catch(e) {
-      document.getElementById('loading').classList.remove('show');
-      btn.disabled = false;
-      const msgs = {
-        'auth/invalid-credential'   : 'Email ou mot de passe incorrect.',
-        'auth/user-not-found'       : 'Aucun compte avec cet email.',
-        'auth/wrong-password'       : 'Mot de passe incorrect.',
-        'auth/too-many-requests'    : 'Trop de tentatives. Réessaie dans quelques minutes.',
-        'auth/invalid-email'        : 'Adresse email invalide.',
-      };
-      showError(msgs[e.code] || 'Erreur de connexion : ' + e.message);
-    }
-  };
-
-  // Connexion avec Entrée
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') window.doLogin();
-  });
-</script>
+    // Connexion avec la touche Entrée
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') window.doLogin();
+    });
+  </script>
 </body>
 </html>

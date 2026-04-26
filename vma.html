@@ -1,214 +1,374 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<link rel="icon" type="image/png" href="favicon.png">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GGT — Mon tableau VMA / FCM</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0f14;--surf:#161a23;--surf2:#1e2330;--brd:rgba(255,255,255,.08);--txt:#e8eaf0;--mut:#7a8099;--acc:#4f8ef7;--ora:#fc4c02;--grn:#22c55e;--amb:#f59e0b}
-html,body{min-height:100%}
-body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--txt);background-image:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(79,142,247,.06),transparent 60%)}
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:.5px solid var(--brd);background:rgba(22,26,35,.9);backdrop-filter:blur(10px);position:sticky;top:0;z-index:10;flex-wrap:wrap;gap:8px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo img{width:36px;height:36px;border-radius:9px;object-fit:contain}
-.logo h1{font-size:16px;font-weight:600}
-.logo p{font-size:11px;color:var(--mut)}
-.btn-h{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:6px 12px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:color .2s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
-.btn-h:hover{color:var(--txt);border-color:var(--acc)}
-.main{max-width:1200px;margin:0 auto;padding:20px}
-.inputs-card{background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px;margin-bottom:24px}
-.inputs-title{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:16px}
-.inputs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-.input-group label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:5px}
-.input-group input{width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;outline:none;transition:border-color .2s}
-.input-group input:focus{border-color:var(--acc)}
-.input-group .hint{font-size:10px;color:var(--mut);margin-top:3px}
-.btn-save{margin-top:16px;padding:9px 20px;border-radius:9px;border:none;background:var(--acc);color:#fff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.btn-save:hover{opacity:.9}
-.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.tab-btn{background:var(--surf);border:.5px solid var(--brd);border-radius:8px;padding:7px 16px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
-.tab-btn.active{background:var(--acc);border-color:var(--acc);color:#fff}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.table-wrap{overflow-x:auto;border-radius:12px;border:.5px solid var(--brd)}
-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--surf)}
-th{background:var(--surf2);color:var(--mut);font-weight:600;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:10px 8px;text-align:center;white-space:nowrap;border-bottom:.5px solid var(--brd);position:sticky;top:0}
-td{padding:7px 8px;text-align:center;border-bottom:.5px solid rgba(255,255,255,.04);white-space:nowrap;color:var(--txt)}
-tr:last-child td{border-bottom:none}
-tr.highlight-row td{background:rgba(79,142,247,.12);color:#fff;font-weight:600}
-.td-pct{color:var(--acc);font-weight:600}
-.td-kmh{color:var(--ora);font-weight:600}
-.td-fc{color:var(--grn)}
-.td-time{color:#a8b0c8}
-.td-perso{background:rgba(252,76,2,.08);color:var(--ora);font-weight:700}
-.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.8;padding:0 4px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surf2);border:.5px solid rgba(34,197,94,.4);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--grn);transition:transform .3s;z-index:100;white-space:nowrap}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.toast.error{border-color:rgba(224,0,32,.4);color:#ff6b6b}
-@media(max-width:600px){.inputs-grid{grid-template-columns:1fr 1fr}}
-</style>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Mon tableau VMA / FCM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    /* Styles spécifiques à VMA/FCM */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .inputs-card {
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .inputs-title {
+      font-size: 13px;
+      font-weight: var(--font-weight-medium);
+      color: var(--txt);
+      margin-bottom: 16px;
+    }
+
+    .btn-save {
+      margin-top: 16px;
+      padding: 9px 20px;
+      border-radius: 9px;
+      border: none;
+      background: var(--acc);
+      color: #fff;
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-save:hover {
+      opacity: 0.9;
+    }
+
+    /* Onglets */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 8px;
+      padding: 7px 16px;
+      color: var(--mut);
+      font-family: var(--font-family);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--acc);
+      color: var(--txt);
+    }
+
+    .tab-btn.active {
+      background: var(--acc);
+      border-color: var(--acc);
+      color: #fff;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* Styles spécifiques aux tableaux VMA/FCM */
+    .td-pct {
+      color: var(--acc);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .td-kmh {
+      color: var(--ora);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .td-fc {
+      color: var(--grn);
+    }
+
+    .td-time {
+      color: #a8b0c8;
+    }
+
+    .td-perso {
+      background: rgba(252, 76, 2, 0.08);
+      color: var(--ora);
+      font-weight: var(--font-weight-bold);
+    }
+
+    tr.highlight-row td {
+      background: rgba(79, 142, 247, 0.12);
+      color: #fff;
+      font-weight: var(--font-weight-medium);
+    }
+
+    .legend {
+      font-size: 11px;
+      color: var(--mut);
+      margin-top: 10px;
+      line-height: 1.8;
+      padding: 0 4px;
+    }
+
+    @media (max-width: 600px) {
+      .inputs-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="logo">
-    <img src="logo-ggt.png" alt="GGT">
-    <div><h1>Mon tableau VMA / FCM</h1><p>Génépi Groupe Trail</p></div>
-  </div>
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <span id="user-name" style="font-size:13px;color:var(--mut)"></span>
-    <a href="plan-competition.html" class="btn-h" id="btn-retour-comp" style="display:none">← Retour compétition</a>
-    <a href="planning.html" class="btn-h">← Retour planning</a>
-    <button class="btn-h" onclick="logout()">Déconnexion</button>
-  </div>
-</header>
-<div class="main">
-  <div class="inputs-card">
-    <div class="inputs-title">⚙️ Mes données personnelles</div>
-    <div class="inputs-grid">
-      <div class="input-group"><label>VMA (km/h)</label><input type="number" id="vma" min="6" max="25" step="0.1" placeholder="12.0" oninput="recalc()"><div class="hint">Vitesse Maximale Aérobie</div></div>
-      <div class="input-group"><label>FCM (bpm)</label><input type="number" id="fcm" min="100" max="220" step="1" placeholder="180" oninput="recalc()"><div class="hint">Fréquence Cardiaque Maximale</div></div>
-      <div class="input-group"><label>FC Repos (bpm)</label><input type="number" id="fc_repos" min="30" max="100" step="1" placeholder="60" oninput="recalc()"><div class="hint">FC au Repos</div></div>
-      <div class="input-group"><label>Distance perso (m)</label><input type="number" id="dist_perso" min="100" max="100000" step="50" placeholder="70000" oninput="recalc()"><div class="hint">Ex: 70000 = 70km</div></div>
-      <div class="input-group"><label>Temps perso (sec)</label><input type="number" id="temps_sec" min="0" max="36000" step="1" placeholder="120" oninput="recalc()"><div class="hint">Temps de référence en secondes</div></div>
-      <div class="input-group"><label>Temps perso (min)</label><input type="number" id="temps_min" min="0" max="600" step="1" placeholder="10" oninput="recalc()"><div class="hint">Temps de référence en minutes</div></div>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>Mon tableau VMA / FCM</h1><p>Génépi Groupe Trail</p></div>
     </div>
-    <button class="btn-save" onclick="saveData()">💾 Sauvegarder mes données</button>
-  </div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('tab-vma',event)">📊 Tableau VMA / Temps</button>
-    <button class="tab-btn" onclick="showTab('tab-fcm',event)">❤️ Tableau FCM / Distances</button>
-  </div>
-  <div class="tab-panel active" id="tab-vma">
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>%VMA</th><th>km/h</th><th>FC (bpm)</th><th>%FCM</th>
-          <th>100m (s)</th><th>200m</th><th>300m</th><th>400m</th><th>500m</th><th>1000m</th>
-          <th>2000m</th><th>3000m</th><th>5000m</th><th>10km</th><th>15km</th><th>Semi</th><th>Marathon</th><th>Perso 🏅</th><th>%VMA</th>
-        </tr></thead>
-        <tbody id="tbody-vma"></tbody>
-      </table>
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+      <span id="user-name" style="font-size: 13px; color: var(--mut);"></span>
+      <a href="plan-competition.html" class="btn-h" id="btn-retour-comp" style="display: none;">← Retour compétition</a>
+      <a href="planning.html" class="btn-h">← Retour planning</a>
+      <button class="btn-h" onclick="logout()">Déconnexion</button>
     </div>
-    <div class="legend">* La ligne bleue = 100% VMA &nbsp;|&nbsp; 🏅 = ta distance personnalisée</div>
-  </div>
-  <div class="tab-panel" id="tab-fcm">
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>%VMA</th><th>km/h</th><th>%FCM</th>
-          <th>en 15s (m)</th><th>en 30s (m)</th><th>en 45s (m)</th><th>en 1min (m)</th>
-          <th>en 2min (m)</th><th>en 3min (m)</th><th>en 4min (m)</th><th>en 5min (m)</th>
-          <th>en ⏱ perso sec (m)</th><th>en ⏱ perso min (m)</th>
-        </tr></thead>
-        <tbody id="tbody-fcm"></tbody>
-      </table>
+  </header>
+
+  <div class="main">
+    <div class="inputs-card">
+      <div class="inputs-title">⚙️ Mes données personnelles</div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>VMA (km/h)</label>
+          <input type="number" id="vma" min="6" max="25" step="0.1" placeholder="12.0" oninput="recalc()">
+          <div class="hint">Vitesse Maximale Aérobie</div>
+        </div>
+        <div class="input-group">
+          <label>FCM (bpm)</label>
+          <input type="number" id="fcm" min="100" max="220" step="1" placeholder="180" oninput="recalc()">
+          <div class="hint">Fréquence Cardiaque Maximale</div>
+        </div>
+        <div class="input-group">
+          <label>FC Repos (bpm)</label>
+          <input type="number" id="fc_repos" min="30" max="100" step="1" placeholder="60" oninput="recalc()">
+          <div class="hint">FC au Repos</div>
+        </div>
+        <div class="input-group">
+          <label>Distance perso (m)</label>
+          <input type="number" id="dist_perso" min="100" max="100000" step="50" placeholder="70000" oninput="recalc()">
+          <div class="hint">Ex: 70000 = 70km</div>
+        </div>
+        <div class="input-group">
+          <label>Temps perso (sec)</label>
+          <input type="number" id="temps_sec" min="0" max="36000" step="1" placeholder="120" oninput="recalc()">
+          <div class="hint">Temps de référence en secondes</div>
+        </div>
+        <div class="input-group">
+          <label>Temps perso (min)</label>
+          <input type="number" id="temps_min" min="0" max="600" step="1" placeholder="10" oninput="recalc()">
+          <div class="hint">Temps de référence en minutes</div>
+        </div>
+      </div>
+      <button class="btn-save" onclick="saveData()">💾 Sauvegarder mes données</button>
     </div>
-    <div class="legend">Les valeurs indiquent la distance parcourue (en mètres) pour chaque durée à chaque % de VMA</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('tab-vma', event)">📊 Tableau VMA / Temps</button>
+      <button class="tab-btn" onclick="showTab('tab-fcm', event)">❤️ Tableau FCM / Distances</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-vma">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>%VMA</th><th>km/h</th><th>FC (bpm)</th><th>%FCM</th>
+              <th>100m (s)</th><th>200m</th><th>300m</th><th>400m</th><th>500m</th><th>1000m</th>
+              <th>2000m</th><th>3000m</th><th>5000m</th><th>10km</th><th>15km</th><th>Semi</th><th>Marathon</th><th>Perso 🏅</th><th>%VMA</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-vma"></tbody>
+        </table>
+      </div>
+      <div class="legend">* La ligne bleue = 100% VMA &nbsp;|&nbsp; 🏅 = ta distance personnalisée</div>
+    </div>
+
+    <div class="tab-panel" id="tab-fcm">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>%VMA</th><th>km/h</th><th>%FCM</th>
+              <th>en 15s (m)</th><th>en 30s (m)</th><th>en 45s (m)</th><th>en 1min (m)</th>
+              <th>en 2min (m)</th><th>en 3min (m)</th><th>en 4min (m)</th><th>en 5min (m)</th>
+              <th>en ⏱ perso sec (m)</th><th>en ⏱ perso min (m)</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-fcm"></tbody>
+        </table>
+      </div>
+      <div class="legend">Les valeurs indiquent la distance parcourue (en mètres) pour chaque durée à chaque % de VMA</div>
+    </div>
   </div>
-</div>
-<div class="toast" id="toast"></div>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  const firebaseConfig = {    apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
-    authDomain: "ggt-plan-entrainement.firebaseapp.com",
-    projectId: "ggt-plan-entrainement",
-    storageBucket: "ggt-plan-entrainement.firebasestorage.app",
-    messagingSenderId: "663631056543",
-    appId: "1:663631056543:web:d8cb50121fcf8d1c635caa"};
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  let currentUid = null;
-  const LEVELS = [.5,.55,.6,.65,.7,.75,.8,.825,.85,.9,.95,1.0,1.05,1.1,1.15,1.2];
-  const FCM_PCT = [.667,.700,.733,.767,.800,.833,.867,.883,.900,.933,.967,1.000,null,null,null,null];
-  function fmtSec(s){if(!s||isNaN(s))return'—';return Math.round(s)+'s'}
-  function fmtMin(s){if(!s||isNaN(s))return'—';const m=Math.floor(s/60),sec=Math.round(s%60);return m+"'"+String(sec).padStart(2,'0')+'"'}
-  function fmtTime(t){if(!t||isNaN(t))return'—';const h=Math.floor(t/60),m=Math.floor(t%60),s=Math.round((t*60)%60);return h>0?h+'h'+String(m).padStart(2,'0')+"'"+String(s).padStart(2,'0')+'"':m+"'"+String(s).padStart(2,'0')+'"'}
-  function fmtDist(m){if(!m||isNaN(m))return'—';return Math.round(m)+'m'}
-  function getInputs(){
-    return{
-      vma:parseFloat(document.getElementById('vma').value)||12,
-      fcm:parseFloat(document.getElementById('fcm').value)||180,
-      fcRepos:parseFloat(document.getElementById('fc_repos').value)||60,
-      distPerso:parseFloat(document.getElementById('dist_perso').value)||70000,
-      tempsSec:parseFloat(document.getElementById('temps_sec').value)||120,
-      tempsMin:parseFloat(document.getElementById('temps_min').value)||10
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig, showToast, getUserDisplayName, logUserConnection } from "./shared-app.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUid = null;
+    const LEVELS = [0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.825, 0.85, 0.9, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2];
+    const FCM_PCT = [0.667, 0.700, 0.733, 0.767, 0.800, 0.833, 0.867, 0.883, 0.900, 0.933, 0.967, 1.000, null, null, null, null];
+
+    // Formateurs (traduction: formatters) de temps et distances
+    function fmtSec(s) {
+      if (!s || isNaN(s)) return '—';
+      return Math.round(s) + 's';
+    }
+
+    function fmtMin(s) {
+      if (!s || isNaN(s)) return '—';
+      const m = Math.floor(s / 60);
+      const sec = Math.round(s % 60);
+      return m + "'" + String(sec).padStart(2, '0') + '"';
+    }
+
+    function fmtTime(t) {
+      if (!t || isNaN(t)) return '—';
+      const h = Math.floor(t / 60);
+      const m = Math.floor(t % 60);
+      const s = Math.round((t * 60) % 60);
+      return h > 0 ? h + 'h' + String(m).padStart(2, '0') + "'" + String(s).padStart(2, '0') + '"' : m + "'" + String(s).padStart(2, '0') + '"';
+    }
+
+    function fmtDist(m) {
+      if (!m || isNaN(m)) return '—';
+      return Math.round(m) + 'm';
+    }
+
+    // Récupère les valeurs des inputs
+    function getInputs() {
+      return {
+        vma: parseFloat(document.getElementById('vma').value) || 12,
+        fcm: parseFloat(document.getElementById('fcm').value) || 180,
+        fcRepos: parseFloat(document.getElementById('fc_repos').value) || 60,
+        distPerso: parseFloat(document.getElementById('dist_perso').value) || 70000,
+        tempsSec: parseFloat(document.getElementById('temps_sec').value) || 120,
+        tempsMin: parseFloat(document.getElementById('temps_min').value) || 10
+      };
+    }
+
+    window.recalc = function() {
+      const { vma, fcm, distPerso, tempsSec, tempsMin } = getInputs();
+      const tv = document.getElementById('tbody-vma');
+      const tf = document.getElementById('tbody-fcm');
+      let rv = '', rf = '';
+
+      LEVELS.forEach((pct, i) => {
+        const kmh = +(vma * pct).toFixed(2);
+        const ms = kmh / 3.6;
+        const fc = FCM_PCT[i] != null ? Math.round(fcm * FCM_PCT[i]) : '—';
+        const fcPct = FCM_PCT[i] != null ? Math.round(FCM_PCT[i] * 100) + '%' : '—';
+
+        const t100 = 100 / ms, t200 = 200 / ms, t300 = 300 / ms, t400 = 400 / ms, t500 = 500 / ms, t1000 = 1000 / ms;
+        const t2000 = 2000 / ms / 60, t3000 = 3000 / ms / 60, t5000 = 5000 / ms / 60, t10000 = 10000 / ms / 60;
+        const t15000 = 15000 / ms / 60, t21100 = 21100 / ms / 60, t42200 = 42200 / ms / 60, tPerso = distPerso / ms / 60;
+
+        const isRef = Math.abs(pct - 1.0) < 0.001;
+        const cls = isRef ? ' class="highlight-row"' : '';
+
+        rv += `<tr${cls}><td class="td-pct">${Math.round(pct * 100)}%</td><td class="td-kmh">${kmh.toFixed(1)}</td><td class="td-fc">${fc}</td><td class="td-fc">${fcPct}</td><td class="td-time">${fmtSec(t100)}</td><td class="td-time">${fmtMin(t200)}</td><td class="td-time">${fmtMin(t300)}</td><td class="td-time">${fmtMin(t400)}</td><td class="td-time">${fmtMin(t500)}</td><td class="td-time">${fmtMin(t1000)}</td><td class="td-time">${fmtTime(t2000)}</td><td class="td-time">${fmtTime(t3000)}</td><td class="td-time">${fmtTime(t5000)}</td><td class="td-time">${fmtTime(t10000)}</td><td class="td-time">${fmtTime(t15000)}</td><td class="td-time">${fmtTime(t21100)}</td><td class="td-time">${fmtTime(t42200)}</td><td class="td-perso">${fmtTime(tPerso)}</td><td class="td-pct">${Math.round(pct * 100)}%</td></tr>`;
+
+        const d15 = ms * 15, d30 = ms * 30, d45 = ms * 45, d60 = ms * 60, d120 = ms * 120, d180 = ms * 180, d240 = ms * 240, d300 = ms * 300;
+        rf += `<tr${cls}><td class="td-pct">${Math.round(pct * 100)}%</td><td class="td-kmh">${kmh.toFixed(1)}</td><td class="td-fc">${fcPct}</td><td class="td-time">${fmtDist(d15)}</td><td class="td-time">${fmtDist(d30)}</td><td class="td-time">${fmtDist(d45)}</td><td class="td-time">${fmtDist(d60)}</td><td class="td-time">${fmtDist(d120)}</td><td class="td-time">${fmtDist(d180)}</td><td class="td-time">${fmtDist(d240)}</td><td class="td-time">${fmtDist(d300)}</td><td class="td-perso">${fmtDist(ms * tempsSec)}</td><td class="td-perso">${fmtDist(ms * tempsMin * 60)}</td></tr>`;
+      });
+
+      tv.innerHTML = rv;
+      tf.innerHTML = rf;
     };
-  }
-  window.recalc = function(){
-    const {vma,fcm,distPerso,tempsSec,tempsMin}=getInputs();
-    const tv=document.getElementById('tbody-vma');
-    const tf=document.getElementById('tbody-fcm');
-    let rv='',rf='';
-    LEVELS.forEach((pct,i)=>{
-      const kmh=+(vma*pct).toFixed(2),ms=kmh/3.6;
-      const fc=FCM_PCT[i]!=null?Math.round(fcm*FCM_PCT[i]):'—';
-      const fcPct=FCM_PCT[i]!=null?Math.round(FCM_PCT[i]*100)+'%':'—';
-      const t100=100/ms,t200=200/ms,t300=300/ms,t400=400/ms,t500=500/ms,t1000=1000/ms;
-      const t2000=2000/ms/60,t3000=3000/ms/60,t5000=5000/ms/60,t10000=10000/ms/60;
-      const t15000=15000/ms/60,t21100=21100/ms/60,t42200=42200/ms/60,tPerso=distPerso/ms/60;
-      const isRef=Math.abs(pct-1.0)<.001,cls=isRef?' class="highlight-row"':'';
-      rv+=`<tr${cls}><td class="td-pct">${Math.round(pct*100)}%</td><td class="td-kmh">${kmh.toFixed(1)}</td><td class="td-fc">${fc}</td><td class="td-fc">${fcPct}</td><td class="td-time">${fmtSec(t100)}</td><td class="td-time">${fmtMin(t200)}</td><td class="td-time">${fmtMin(t300)}</td><td class="td-time">${fmtMin(t400)}</td><td class="td-time">${fmtMin(t500)}</td><td class="td-time">${fmtMin(t1000)}</td><td class="td-time">${fmtTime(t2000)}</td><td class="td-time">${fmtTime(t3000)}</td><td class="td-time">${fmtTime(t5000)}</td><td class="td-time">${fmtTime(t10000)}</td><td class="td-time">${fmtTime(t15000)}</td><td class="td-time">${fmtTime(t21100)}</td><td class="td-time">${fmtTime(t42200)}</td><td class="td-perso">${fmtTime(tPerso)}</td><td class="td-pct">${Math.round(pct*100)}%</td></tr>`;
-      const d15=ms*15,d30=ms*30,d45=ms*45,d60=ms*60,d120=ms*120,d180=ms*180,d240=ms*240,d300=ms*300;
-      rf+=`<tr${cls}><td class="td-pct">${Math.round(pct*100)}%</td><td class="td-kmh">${kmh.toFixed(1)}</td><td class="td-fc">${fcPct}</td><td class="td-time">${fmtDist(d15)}</td><td class="td-time">${fmtDist(d30)}</td><td class="td-time">${fmtDist(d45)}</td><td class="td-time">${fmtDist(d60)}</td><td class="td-time">${fmtDist(d120)}</td><td class="td-time">${fmtDist(d180)}</td><td class="td-time">${fmtDist(d240)}</td><td class="td-time">${fmtDist(d300)}</td><td class="td-perso">${fmtDist(ms*tempsSec)}</td><td class="td-perso">${fmtDist(ms*tempsMin*60)}</td></tr>`;
-    });
-    tv.innerHTML=rv; tf.innerHTML=rf;
-  };
-  window.showTab = function(id,e){
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    e.target.classList.add('active');
-  };
-  function showToast(msg,err){
-    const t=document.getElementById('toast');
-    t.textContent=msg;t.className='toast show'+(err?' error':'');
-    setTimeout(()=>t.className='toast'+(err?' error':''),3000);
-  }
-  window.saveData = async function(){
-    if(!currentUid)return;
-    try{await setDoc(doc(db,'vma_data',currentUid),getInputs());showToast('✓ Données sauvegardées !');}
-    catch(e){showToast('Erreur de sauvegarde',true);}
-  };
-  window.logout = ()=>signOut(auth).then(()=>window.location.href='index.html');
-  let redirecting=false;
-  onAuthStateChanged(auth,async(user)=>{
-    if(redirecting)return;
-    if(!user){redirecting=true;window.location.href='index.html';return;}
-    currentUid=user.uid;
-    const snap=await getDoc(doc(db,'users',user.uid));
-    const data=snap.exists()?snap.data():{};
-    document.getElementById('user-name').textContent=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
-    // Enregistrer la connexion (adhérents uniquement)
-    if (data.role !== 'admin') {
+
+    window.showTab = function(id, e) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      e.target.classList.add('active');
+    };
+
+    window.saveData = async function() {
+      if (!currentUid) return;
       try {
-        var connNom=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
-        await addDoc(collection(db,'connexions'),{uid:user.uid,nom:connNom,page:'VMA/FCM',ts:serverTimestamp()});
-      } catch(e){ console.warn('Connexion non enregistrée:',e); }
-    }
-    try{
-      const vs=await getDoc(doc(db,'vma_data',user.uid));
-      if(vs.exists()){
-        const v=vs.data();
-        if(v.vma)document.getElementById('vma').value=v.vma;
-        if(v.fcm)document.getElementById('fcm').value=v.fcm;
-        if(v.fcRepos)document.getElementById('fc_repos').value=v.fcRepos;
-        if(v.distPerso)document.getElementById('dist_perso').value=v.distPerso;
-        if(v.tempsSec)document.getElementById('temps_sec').value=v.tempsSec;
-        if(v.tempsMin)document.getElementById('temps_min').value=v.tempsMin;
+        await setDoc(doc(db, 'vma_data', currentUid), getInputs());
+        showToast('✓ Données sauvegardées !');
+      } catch (error) {
+        showToast('Erreur de sauvegarde', 'error');
       }
-    }catch(e){}
-    recalc();
-    // Afficher bouton retour compétition si on vient d'un plan
-    if(sessionStorage.getItem('ggt_comp_id')) {
-      document.getElementById('btn-retour-comp').style.display='inline-flex';
-    }
-  });
-</script>
+    };
+
+    window.logout = () => signOut(auth).then(() => window.location.href = 'index.html');
+
+    let redirecting = false;
+    onAuthStateChanged(auth, async (user) => {
+      if (redirecting) return;
+      if (!user) {
+        redirecting = true;
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUid = user.uid;
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      const data = snap.exists() ? snap.data() : {};
+
+      document.getElementById('user-name').textContent = getUserDisplayName(data, user.email);
+
+      // Enregistrer la connexion (adhérents uniquement, avec déduplication)
+      if (data.role !== 'admin') {
+        await logUserConnection(db, user.uid, getUserDisplayName(data, user.email), 'VMA/FCM');
+      }
+
+      // Charger les données sauvegardées
+      try {
+        const vmaSnap = await getDoc(doc(db, 'vma_data', user.uid));
+        if (vmaSnap.exists()) {
+          const vmaData = vmaSnap.data();
+          if (vmaData.vma) document.getElementById('vma').value = vmaData.vma;
+          if (vmaData.fcm) document.getElementById('fcm').value = vmaData.fcm;
+          if (vmaData.fcRepos) document.getElementById('fc_repos').value = vmaData.fcRepos;
+          if (vmaData.distPerso) document.getElementById('dist_perso').value = vmaData.distPerso;
+          if (vmaData.tempsSec) document.getElementById('temps_sec').value = vmaData.tempsSec;
+          if (vmaData.tempsMin) document.getElementById('temps_min').value = vmaData.tempsMin;
+        }
+      } catch (error) {
+        console.warn('Erreur lors du chargement des données VMA:', error);
+      }
+
+      recalc();
+
+      // Afficher bouton retour compétition si on vient d'un plan
+      if (sessionStorage.getItem('ggt_comp_id')) {
+        document.getElementById('btn-retour-comp').style.display = 'inline-flex';
+      }
+    });
+  </script>
 </body>
 </html>

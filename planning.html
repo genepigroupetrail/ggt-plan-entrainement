@@ -1,432 +1,621 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<link rel="icon" type="image/png" href="favicon.png">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GGT — Plan hebdo</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0f14;--surf:#161a23;--surf2:#1e2330;--brd:rgba(255,255,255,.08);--txt:#e8eaf0;--mut:#7a8099;--acc:#4f8ef7;--ora:#fc4c02;--grn:#22c55e;--amb:#f59e0b}
-html,body{min-height:100%}
-body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--txt);background-image:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(79,142,247,.06),transparent 60%)}
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Plan hebdo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    /* Styles spécifiques au planning */
+    .week-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 16px 20px 8px;
+      flex-wrap: wrap;
+    }
 
-/* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:.5px solid var(--brd);background:rgba(22,26,35,.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;flex-wrap:wrap;gap:8px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo img{width:34px;height:34px;border-radius:8px;object-fit:contain}
-.logo h1{font-size:15px;font-weight:700}
-.logo p{font-size:10px;color:var(--mut)}
-.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.user-badge{font-size:13px;color:var(--mut);padding:5px 10px;background:var(--surf2);border-radius:8px;border:.5px solid var(--brd)}
-.btn-h{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:6px 12px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap}
-.btn-h:hover{color:var(--txt);border-color:var(--acc)}
-.btn-comp{background:rgba(252,76,2,.12);border:.5px solid rgba(252,76,2,.3);border-radius:8px;padding:6px 14px;color:var(--ora);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
-.btn-comp:hover{background:rgba(252,76,2,.2);border-color:var(--ora)}
-.btn-admin{background:rgba(79,142,247,.12);border:.5px solid rgba(79,142,247,.3);border-radius:8px;padding:6px 14px;color:var(--acc);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
-.btn-admin:hover{background:rgba(79,142,247,.2);border-color:var(--acc)}
+    .week-title {
+      text-align: center;
+      min-width: 200px;
+    }
 
-/* NAVIGATION SEMAINES */
-.week-nav{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px 20px 8px;flex-wrap:wrap}
-.nav-btn{background:var(--surf);border:.5px solid var(--brd);border-radius:10px;padding:7px 16px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
-.nav-btn:hover{border-color:var(--acc);background:var(--surf2)}
-.nav-btn:disabled{opacity:.3;cursor:not-allowed}
-.week-title{text-align:center;min-width:200px}
-.week-title h2{font-size:16px;font-weight:600}
-.week-title p{font-size:11px;color:var(--mut);margin-top:2px}
+    .week-title h2 {
+      font-size: 16px;
+      font-weight: var(--font-weight-bold);
+    }
 
-/* MESSAGE COACHDAV */
-.message-wrap{max-width:1300px;margin:0 auto;padding:0 20px 10px}
-.message-box{background:rgba(79,142,247,.08);border:.5px solid rgba(79,142,247,.25);border-radius:12px;padding:12px 16px;font-size:13px;color:#c8d4f0;line-height:1.7;white-space:pre-line;display:none}
-.message-box.visible{display:block}
-.message-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:5px}
+    .week-title p {
+      font-size: 11px;
+      color: var(--mut);
+      margin-top: 2px;
+    }
 
-/* GRILLE PLANNING */
-.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;padding:12px 20px 20px;max-width:1300px;margin:0 auto}
-.day-card{background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:12px 10px;min-height:130px;display:flex;flex-direction:column;gap:6px;transition:border-color .2s}
-.day-card.today{border-color:var(--acc)}
-.day-card.repos{opacity:.5}
-.day-name{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
-.day-date{font-size:18px;font-weight:700}
-.day-card.today .day-date{color:var(--acc)}
-.day-badge{display:inline-block;font-size:14px;font-weight:600;padding:4px 12px;border-radius:20px;width:fit-content}
-.badge-repos{background:rgba(237,234,228,.12);color:#9ca3af}
-.badge-cotes{background:rgba(255,192,0,.22);color:#FFC000}
-.badge-seuil{background:rgba(119,181,254,.22);color:#77B5FE}
-.badge-sortie{background:rgba(120,170,60,.22);color:#8fba3a}
-.badge-footing{background:rgba(143,168,191,.22);color:#8FA8BF}
-.badge-course{background:rgba(245,158,11,.22);color:#f59e0b}
-.badge-rm{background:rgba(168,116,255,.22);color:#b08fff}
-.badge-autre{background:rgba(200,185,130,.18);color:#c8b870}
-.day-plans{display:flex;flex-direction:column;gap:6px;flex:1}
-.plan-block{border-top:.5px solid var(--brd);padding-top:6px}
-.plan-block:first-child{border-top:none;padding-top:0}
-.plan-location{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ora);margin-bottom:3px}
-.day-content{font-size:11px;color:#d8dae8;line-height:1.6;white-space:pre-line}
+    .message-wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 20px 10px;
+    }
 
-/* LOADING */
-.loading{display:flex;align-items:center;justify-content:center;min-height:250px;color:var(--mut);font-size:14px;gap:10px}
-.spin{width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.empty-week{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--mut);font-size:14px}
-.empty-week span{display:block;font-size:36px;margin-bottom:12px}
+    .day-plans {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
 
-/* ONGLETS BAS */
-.bottom-tabs{max-width:1300px;margin:0 auto;padding:8px 20px 4px;display:flex;gap:8px;flex-wrap:wrap}
-.btab-btn{background:var(--surf);border:.5px solid var(--brd);border-radius:8px;padding:7px 16px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
-.btab-btn:hover{border-color:var(--acc);color:var(--txt)}
-.btab-btn.active{background:var(--surf2);border-color:var(--acc);color:var(--txt)}
-.btab-panel{display:none}
-.btab-panel.active{display:block}
+    .day-content {
+      font-size: 11px;
+      color: #d8dae8;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
 
-/* LEXIQUE */
-.lexique-wrap{padding:12px 20px 20px;max-width:1300px;margin:0 auto;background:var(--surf);border:.5px solid var(--brd);border-radius:14px;margin-top:0}
-.lex-section{margin-bottom:16px}
-.lex-section h3{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ora);margin-bottom:10px}
-.lex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
-.lex-item{background:var(--surf2);border-radius:8px;padding:7px 11px;font-size:12px}
-.lex-item strong{color:var(--acc);display:block;margin-bottom:1px}
-.lex-item span{color:var(--mut)}
+    .empty-week {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--mut);
+      font-size: 14px;
+    }
 
-/* TABLEAU ALLURES */
-.allures-wrap{max-width:1300px;margin:0 auto;padding:12px 20px 20px}
-.allures-table-wrap{overflow-x:auto;border-radius:10px;border:.5px solid var(--brd)}
-.allures-table{width:100%;border-collapse:collapse;font-size:11px;background:var(--surf)}
-.allures-table th{background:var(--surf2);color:var(--mut);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:10px 8px;text-align:center;border-bottom:.5px solid var(--brd);white-space:nowrap}
-.allures-table td{padding:8px;text-align:center;border-bottom:.5px solid rgba(255,255,255,.04);font-size:12px;color:var(--txt)}
-.allures-table tr:last-child td{border-bottom:none}
-.zone-0,.zone-1,.zone-2,.zone-3{background:rgba(122,128,153,.06)}
-.zone-4,.zone-5{background:rgba(34,197,94,.06)}
-.zone-6,.zone-7{background:rgba(245,158,11,.08)}
-.zone-8,.zone-9{background:rgba(252,76,2,.07)}
-.zone-10{background:rgba(239,68,68,.10)}
-.seuil-row td{border-top:.5px solid rgba(79,142,247,.3)}
-.seuil-label{font-size:9px;color:var(--acc);font-weight:700;text-align:left!important;padding-left:6px!important}
+    .empty-week span {
+      display: block;
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
 
-@media(max-width:900px){.days-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:500px){.days-grid{grid-template-columns:1fr}header{padding:10px 14px}}
-</style>
+    /* Onglets bas */
+    .bottom-tabs {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 8px 20px 4px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btab-btn {
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 8px;
+      padding: 7px 16px;
+      color: var(--mut);
+      font-family: var(--font-family);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btab-btn:hover {
+      border-color: var(--acc);
+      color: var(--txt);
+    }
+
+    .btab-btn.active {
+      background: var(--surf2);
+      border-color: var(--acc);
+      color: var(--txt);
+    }
+
+    .btab-panel {
+      display: none;
+    }
+
+    .btab-panel.active {
+      display: block;
+    }
+
+    /* Lexique */
+    .lexique-wrap {
+      padding: 12px 20px 20px;
+      max-width: 1300px;
+      margin: 0 auto;
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 14px;
+      margin-top: 0;
+    }
+
+    .lex-section {
+      margin-bottom: 16px;
+    }
+
+    .lex-section h3 {
+      font-size: 11px;
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ora);
+      margin-bottom: 10px;
+    }
+
+    .lex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 6px;
+    }
+
+    .lex-item {
+      background: var(--surf2);
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 12px;
+    }
+
+    .lex-item strong {
+      color: var(--acc);
+      display: block;
+      margin-bottom: 1px;
+    }
+
+    .lex-item span {
+      color: var(--mut);
+    }
+
+    /* Tableau des allures */
+    .allures-wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 12px 20px 20px;
+    }
+
+    .allures-table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 0.5px solid var(--brd);
+    }
+
+    .allures-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      background: var(--surf);
+    }
+
+    .allures-table th {
+      background: var(--surf2);
+      color: var(--mut);
+      font-size: 10px;
+      font-weight: var(--font-weight-medium);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 8px;
+      text-align: center;
+      border-bottom: 0.5px solid var(--brd);
+      white-space: nowrap;
+    }
+
+    .allures-table td {
+      padding: 8px;
+      text-align: center;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.04);
+      font-size: 12px;
+      color: var(--txt);
+    }
+
+    .allures-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .zone-0, .zone-1, .zone-2, .zone-3 {
+      background: rgba(122, 128, 153, 0.06);
+    }
+
+    .zone-4, .zone-5 {
+      background: rgba(34, 197, 94, 0.06);
+    }
+
+    .zone-6, .zone-7 {
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .zone-8, .zone-9 {
+      background: rgba(252, 76, 2, 0.07);
+    }
+
+    .zone-10 {
+      background: rgba(239, 68, 68, 0.10);
+    }
+
+    .seuil-row td {
+      border-top: 0.5px solid rgba(79, 142, 247, 0.3);
+    }
+
+    .seuil-label {
+      font-size: 9px;
+      color: var(--acc);
+      font-weight: var(--font-weight-bold);
+      text-align: left !important;
+      padding-left: 6px !important;
+    }
+
+    /* Boutons coloriés */
+    .btn-comp {
+      background: rgba(252, 76, 2, 0.12);
+      border: 0.5px solid rgba(252, 76, 2, 0.3);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: var(--ora);
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-comp:hover {
+      background: rgba(252, 76, 2, 0.2);
+      border-color: var(--ora);
+    }
+
+    .btn-admin {
+      background: rgba(79, 142, 247, 0.12);
+      border: 0.5px solid rgba(79, 142, 247, 0.3);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: var(--acc);
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-admin:hover {
+      background: rgba(79, 142, 247, 0.2);
+      border-color: var(--acc);
+    }
+
+    .user-badge {
+      font-size: 13px;
+      color: var(--mut);
+      padding: 5px 10px;
+      background: var(--surf2);
+      border-radius: 8px;
+      border: 0.5px solid var(--brd);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .days-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .days-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>GGT Plan hebdo</h1><p>Génépi Groupe Trail</p></div>
+    </div>
+    <div class="header-right">
+      <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
+      <span class="user-badge" id="user-name">...</span>
+      <a href="admin.html" class="btn-admin" id="btn-admin" style="display: none;">⚙️ Admin</a>
+      <button class="btn-h" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
 
-<header>
-  <div class="logo">
-    <img src="logo-ggt.png" alt="GGT">
-    <div><h1>GGT Plan hebdo</h1><p>Génépi Groupe Trail</p></div>
+  <div class="week-nav">
+    <button class="nav-btn" id="btn-prev" onclick="changeWeek(-1)">← Précédente</button>
+    <div class="week-title">
+      <h2 id="week-label">Chargement...</h2>
+      <p id="week-dates"></p>
+    </div>
+    <button class="nav-btn" id="btn-next" onclick="changeWeek(1)">Suivante →</button>
   </div>
-  <div class="header-right">
-    <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
-    <span class="user-badge" id="user-name">...</span>
-    <a href="admin.html" class="btn-admin" id="btn-admin" style="display:none">⚙️ Admin</a>
-    <button class="btn-h" onclick="logout()">Déconnexion</button>
-  </div>
-</header>
 
-<div class="week-nav">
-  <button class="nav-btn" id="btn-prev" onclick="changeWeek(-1)">← Précédente</button>
-  <div class="week-title">
-    <h2 id="week-label">Chargement...</h2>
-    <p id="week-dates"></p>
-  </div>
-  <button class="nav-btn" id="btn-next" onclick="changeWeek(1)">Suivante →</button>
-</div>
-
-<div class="message-wrap">
-  <div class="message-box" id="message-box">
-    <div class="message-label">💬 Message de CoachDav</div>
-    <span id="message-text"></span>
-  </div>
-</div>
-
-<div id="content">
-  <div class="loading"><div class="spin"></div> Chargement du planning...</div>
-</div>
-
-<!-- ONGLETS BAS -->
-<div class="bottom-tabs">
-  <button class="btab-btn" id="btab-lex-btn" onclick="toggleBTab('btab-lex',this)">📖 Lexique</button>
-  <button class="btab-btn" id="btab-all-btn" onclick="toggleBTab('btab-all',this)">⚡ Tableau des allures</button>
-  <a href="vma.html" class="btab-btn">📊 Mon VMA / FCM</a>
-</div>
-
-<div class="btab-panel" id="btab-lex">
-<div class="lexique-wrap">
-  <div class="lex-section">
-    <h3>🌍 Commun — toutes communes</h3>
-    <div class="lex-grid">
-      <div class="lex-item"><strong>TP</strong><span>Terrain Plat — sans dénivelé significatif</span></div>
-      <div class="lex-item"><strong>TV</strong><span>Terrain Vallonné — sentiers naturels avec dénivelé</span></div>
-      <div class="lex-item"><strong>S1</strong><span>Allure marathon — 75% VMA</span></div>
-      <div class="lex-item"><strong>S2</strong><span>Allure 15km compétition — 85% VMA</span></div>
-      <div class="lex-item"><strong>EF</strong><span>Endurance Fondamentale — footing allure libre</span></div>
-      <div class="lex-item"><strong>RAC</strong><span>Retour Au Calme — footing léger en fin de séance</span></div>
-      <div class="lex-item"><strong>R</strong><span>Récupération active entre les répétitions</span></div>
-      <div class="lex-item"><strong>VMA</strong><span>Vitesse Maximale Aérobie</span></div>
-      <div class="lex-item"><strong>D+</strong><span>Dénivelé positif</span></div>
+  <div class="message-wrap">
+    <div class="message-box" id="message-box">
+      <div class="message-label">💬 Message de CoachDav</div>
+      <span id="message-text"></span>
     </div>
   </div>
-  <div class="lex-section">
-    <h3>📍 Élancourt</h3>
-    <div class="lex-grid">
-      <div class="lex-item"><strong>CH</strong><span>Cimetière Haut — 120m</span></div>
-      <div class="lex-item"><strong>CB</strong><span>Cimetière Bas — 240m</span></div>
-      <div class="lex-item"><strong>CE</strong><span>Cimetière Entier — 360m</span></div>
-      <div class="lex-item"><strong>MB</strong><span>Muette Bas — 70m</span></div>
-      <div class="lex-item"><strong>ME</strong><span>Muette Entière — 160m</span></div>
-      <div class="lex-item"><strong>MBR</strong><span>Muette Bas + Rond-point</span></div>
-      <div class="lex-item"><strong>MER</strong><span>Muette Entière + Rond-point</span></div>
-      <div class="lex-item"><strong>CL</strong><span>Côte Richarderie Longue — 800m</span></div>
-      <div class="lex-item"><strong>CR</strong><span>Côte Raide Maurepas — 170m</span></div>
+
+  <div id="content">
+    <div class="loading"><div class="spin"></div> Chargement du planning...</div>
+  </div>
+
+  <!-- Onglets bas -->
+  <div class="bottom-tabs">
+    <button class="btab-btn active" id="btab-lex-btn" onclick="toggleBTab('btab-lex', this)">📖 Lexique</button>
+    <button class="btab-btn" id="btab-all-btn" onclick="toggleBTab('btab-all', this)">⚡ Tableau des allures</button>
+    <a href="vma.html" class="btab-btn">📊 Mon VMA / FCM</a>
+  </div>
+
+  <div class="btab-panel active" id="btab-lex">
+    <div class="lexique-wrap">
+      <div class="lex-section">
+        <h3>🌍 Commun — toutes communes</h3>
+        <div class="lex-grid">
+          <div class="lex-item"><strong>TP</strong><span>Terrain Plat — sans dénivelé significatif</span></div>
+          <div class="lex-item"><strong>TV</strong><span>Terrain Vallonné — sentiers naturels avec dénivelé</span></div>
+          <div class="lex-item"><strong>S1</strong><span>Allure marathon — 75% VMA</span></div>
+          <div class="lex-item"><strong>S2</strong><span>Allure 15km compétition — 85% VMA</span></div>
+          <div class="lex-item"><strong>EF</strong><span>Endurance Fondamentale — footing allure libre</span></div>
+          <div class="lex-item"><strong>RAC</strong><span>Retour Au Calme — footing léger en fin de séance</span></div>
+          <div class="lex-item"><strong>R</strong><span>Récupération active entre les répétitions</span></div>
+          <div class="lex-item"><strong>VMA</strong><span>Vitesse Maximale Aérobie</span></div>
+          <div class="lex-item"><strong>D+</strong><span>Dénivelé positif</span></div>
+        </div>
+      </div>
+      <div class="lex-section">
+        <h3>📍 Élancourt</h3>
+        <div class="lex-grid">
+          <div class="lex-item"><strong>CH</strong><span>Cimetière Haut — 120m</span></div>
+          <div class="lex-item"><strong>CB</strong><span>Cimetière Bas — 240m</span></div>
+          <div class="lex-item"><strong>CE</strong><span>Cimetière Entier — 360m</span></div>
+          <div class="lex-item"><strong>MB</strong><span>Muette Bas — 70m</span></div>
+          <div class="lex-item"><strong>ME</strong><span>Muette Entière — 160m</span></div>
+          <div class="lex-item"><strong>MBR</strong><span>Muette Bas + Rond-point</span></div>
+          <div class="lex-item"><strong>MER</strong><span>Muette Entière + Rond-point</span></div>
+          <div class="lex-item"><strong>CL</strong><span>Côte Richarderie Longue — 800m</span></div>
+          <div class="lex-item"><strong>CR</strong><span>Côte Raide Maurepas — 170m</span></div>
+        </div>
+      </div>
+      <div class="lex-section">
+        <h3>📍 Magny-les-Hameaux</h3>
+        <div class="lex-grid">
+          <div class="lex-item"><strong>CCE</strong><span>Courcelle Escalier — 490m</span></div>
+          <div class="lex-item"><strong>CCH</strong><span>Courcelle 1er virage — 140m</span></div>
+          <div class="lex-item"><strong>CCL</strong><span>Courcelle Longue — 700m</span></div>
+          <div class="lex-item"><strong>CCR</strong><span>Courcelle Raide — 260m</span></div>
+          <div class="lex-item"><strong>CB</strong><span>Carrière Bas — 150m</span></div>
+          <div class="lex-item"><strong>CH</strong><span>Carrière Haut — 80m</span></div>
+          <div class="lex-item"><strong>CE</strong><span>Carrière Entière — 230m</span></div>
+          <div class="lex-item"><strong>GOR</strong><span>Goutte d'Or — 220m</span></div>
+          <div class="lex-item"><strong>RE</strong><span>Rhodon 1er carrefour — 300m</span></div>
+          <div class="lex-item"><strong>RP</strong><span>Rhodon escalier — 170m</span></div>
+          <div class="lex-item"><strong>REE</strong><span>Rhodon complet — 600m</span></div>
+        </div>
+      </div>
+      <div class="lex-section">
+        <h3>🏃 Gammes — échauffement GGT</h3>
+        <div class="lex-grid">
+          <div class="lex-item"><strong>1 — Footing 20'</strong><span>Échauffement de base</span></div>
+          <div class="lex-item"><strong>2 — Étirements 2'</strong><span>Bras, Hanche, Jambes</span></div>
+          <div class="lex-item"><strong>3 — Ouverture hanche</strong><span>2×10</span></div>
+          <div class="lex-item"><strong>4 — Extension hanche</strong><span>2×10</span></div>
+          <div class="lex-item"><strong>5 — Talon fesse</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>6 — Jambes tendues griffées</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>7 — Montées genoux</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>8 — Foulées bondissantes</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>9 — Pas chassés</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>10 — Étirement dynamique</strong><span>2×10</span></div>
+          <div class="lex-item"><strong>11 — Sprint souple</strong><span>2×30m</span></div>
+        </div>
+      </div>
+      <div style="font-size: 11px; color: var(--mut); padding: 8px; background: rgba(252, 76, 2, 0.05); border-radius: 7px; margin-top: 4px;">
+        💬 <strong style="color: var(--ora);">Note CoachDav :</strong> CB, CH et CE existent dans les deux communes — Élancourt (Cimetière) et Magny (Carrière). Le contexte du plan indique toujours la commune.
+      </div>
     </div>
   </div>
-  <div class="lex-section">
-    <h3>📍 Magny-les-Hameaux</h3>
-    <div class="lex-grid">
-      <div class="lex-item"><strong>CCE</strong><span>Courcelle Escalier — 490m</span></div>
-      <div class="lex-item"><strong>CCH</strong><span>Courcelle 1er virage — 140m</span></div>
-      <div class="lex-item"><strong>CCL</strong><span>Courcelle Longue — 700m</span></div>
-      <div class="lex-item"><strong>CCR</strong><span>Courcelle Raide — 260m</span></div>
-      <div class="lex-item"><strong>CB</strong><span>Carrière Bas — 150m</span></div>
-      <div class="lex-item"><strong>CH</strong><span>Carrière Haut — 80m</span></div>
-      <div class="lex-item"><strong>CE</strong><span>Carrière Entière — 230m</span></div>
-      <div class="lex-item"><strong>GOR</strong><span>Goutte d'Or — 220m</span></div>
-      <div class="lex-item"><strong>RE</strong><span>Rhodon 1er carrefour — 300m</span></div>
-      <div class="lex-item"><strong>RP</strong><span>Rhodon escalier — 170m</span></div>
-      <div class="lex-item"><strong>REE</strong><span>Rhodon complet — 600m</span></div>
+
+  <div class="btab-panel" id="btab-all">
+    <div class="allures-wrap">
+      <div class="allures-table-wrap">
+        <table class="allures-table">
+          <thead>
+            <tr>
+              <th>Échelle</th><th>Niveau</th><th>Exemple</th><th>Parole / Respiration</th><th>%FCM</th><th>%VMA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="zone-0"><td>0</td><td>Inactif</td><td>Repos</td><td>Conversation facile · Normale</td><td>&lt;40%</td><td>—</td></tr>
+            <tr class="zone-1"><td>1</td><td>Imperceptible</td><td>Marche</td><td>Conversation facile · Normale</td><td>40–50%</td><td>—</td></tr>
+            <tr class="zone-2"><td>2</td><td>Très faible</td><td>Marche active</td><td>Conversation facile · Légère</td><td>50–55%</td><td>—</td></tr>
+            <tr class="zone-3"><td>3</td><td>Faible</td><td>Randonnée</td><td>Conversation facile · Modérée</td><td>55–60%</td><td>—</td></tr>
+            <tr class="zone-4"><td>4</td><td>Très modéré</td><td>Footing lent</td><td>Conversation facile · Accélérée</td><td>60–65%</td><td>50–55%</td></tr>
+            <tr class="zone-5"><td>5</td><td>Modéré</td><td>Endurance Fondamentale</td><td>Phrases courtes · Accélérée</td><td>65–75%</td><td>55–70%</td></tr>
+            <tr class="seuil-row zone-5"><td colspan="6" class="seuil-label">▲ SEUIL AÉROBIE — Fabrication de lactates + oxygène</td></tr>
+            <tr class="zone-6"><td>6</td><td>Légèrement intense</td><td>Endurance active</td><td>Quelques mots · Forte</td><td>75–80%</td><td>70–75%</td></tr>
+            <tr class="zone-7"><td>7</td><td>Intense</td><td>Allure marathon</td><td>Difficile · Très forte</td><td>80–85%</td><td>75–80%</td></tr>
+            <tr class="seuil-row zone-7"><td colspan="6" class="seuil-label">▲ SEUIL ANAÉROBIE LACTIQUE — Jambes lourdes si dépassé</td></tr>
+            <tr class="zone-8"><td>8</td><td>Très intense</td><td>Allure semi-marathon</td><td>Quasi impossible · Quasi maximale</td><td>85–90%</td><td>80–85%</td></tr>
+            <tr class="zone-9"><td>9</td><td>Extrêmement intense</td><td>Allure 5–10km</td><td>Impossible · Maximale</td><td>90–95%</td><td>85–90%</td></tr>
+            <tr class="zone-10"><td>10</td><td>Maximal</td><td>Sprint</td><td>À bout de souffle · Maximale</td><td>95–100%</td><td>90–100%</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-  <div class="lex-section">
-    <h3>🏃 Gammes — échauffement GGT</h3>
-    <div class="lex-grid">
-      <div class="lex-item"><strong>1 — Footing 20'</strong><span>Échauffement de base</span></div>
-      <div class="lex-item"><strong>2 — Étirements 2'</strong><span>Bras, Hanche, Jambes</span></div>
-      <div class="lex-item"><strong>3 — Ouverture hanche</strong><span>2×10</span></div>
-      <div class="lex-item"><strong>4 — Extension hanche</strong><span>2×10</span></div>
-      <div class="lex-item"><strong>5 — Talon fesse</strong><span>2×30m</span></div>
-      <div class="lex-item"><strong>6 — Jambes tendues griffées</strong><span>2×30m</span></div>
-      <div class="lex-item"><strong>7 — Montées genoux</strong><span>2×30m</span></div>
-      <div class="lex-item"><strong>8 — Foulées bondissantes</strong><span>2×30m</span></div>
-      <div class="lex-item"><strong>9 — Pas chassés</strong><span>2×30m</span></div>
-      <div class="lex-item"><strong>10 — Étirement dynamique</strong><span>2×10</span></div>
-      <div class="lex-item"><strong>11 — Sprint souple</strong><span>2×30m</span></div>
-    </div>
-  </div>
-  <div style="font-size:11px;color:var(--mut);padding:8px;background:rgba(252,76,2,.05);border-radius:7px;margin-top:4px">
-    💬 <strong style="color:var(--ora)">Note CoachDav :</strong> CB, CH et CE existent dans les deux communes — Élancourt (Cimetière) et Magny (Carrière). Le contexte du plan indique toujours la commune.
-  </div>
-</div>
-</div>
 
-<div class="btab-panel" id="btab-all">
-<div class="allures-wrap">
-  <div class="allures-table-wrap">
-    <table class="allures-table">
-      <thead>
-        <tr>
-          <th>Échelle</th><th>Niveau</th><th>Exemple</th><th>Parole / Respiration</th><th>%FCM</th><th>%VMA</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="zone-0"><td>0</td><td>Inactif</td><td>Repos</td><td>Conversation facile · Normale</td><td>&lt;40%</td><td>—</td></tr>
-        <tr class="zone-1"><td>1</td><td>Imperceptible</td><td>Marche</td><td>Conversation facile · Normale</td><td>40–50%</td><td>—</td></tr>
-        <tr class="zone-2"><td>2</td><td>Très faible</td><td>Marche active</td><td>Conversation facile · Légère</td><td>50–55%</td><td>—</td></tr>
-        <tr class="zone-3"><td>3</td><td>Faible</td><td>Randonnée</td><td>Conversation facile · Modérée</td><td>55–60%</td><td>—</td></tr>
-        <tr class="zone-4"><td>4</td><td>Très modéré</td><td>Footing lent</td><td>Conversation facile · Accélérée</td><td>60–65%</td><td>50–55%</td></tr>
-        <tr class="zone-5"><td>5</td><td>Modéré</td><td>Endurance Fondamentale</td><td>Phrases courtes · Accélérée</td><td>65–75%</td><td>55–70%</td></tr>
-        <tr class="seuil-row zone-5"><td colspan="6" class="seuil-label">▲ SEUIL AÉROBIE — Fabrication de lactates + oxygène</td></tr>
-        <tr class="zone-6"><td>6</td><td>Légèrement intense</td><td>Endurance active</td><td>Quelques mots · Forte</td><td>75–80%</td><td>70–75%</td></tr>
-        <tr class="zone-7"><td>7</td><td>Intense</td><td>Allure marathon</td><td>Difficile · Très forte</td><td>80–85%</td><td>75–80%</td></tr>
-        <tr class="seuil-row zone-7"><td colspan="6" class="seuil-label">▲ SEUIL ANAÉROBIE LACTIQUE — Jambes lourdes si dépassé</td></tr>
-        <tr class="zone-8"><td>8</td><td>Très intense</td><td>Allure semi-marathon</td><td>Quasi impossible · Quasi maximale</td><td>85–90%</td><td>80–85%</td></tr>
-        <tr class="zone-9"><td>9</td><td>Extrêmement intense</td><td>Allure 5–10km</td><td>Impossible · Maximale</td><td>90–95%</td><td>85–90%</td></tr>
-        <tr class="zone-10"><td>10</td><td>Maximal</td><td>Sprint</td><td>À bout de souffle · Maximale</td><td>95–100%</td><td>90–100%</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-</div>
+  <script>
+    // Fonction pour bascule (toggle = basculer) les onglets bas
+    function toggleBTab(id, btn) {
+      const panel = document.getElementById(id);
+      const isActive = panel.classList.contains('active');
+      document.querySelectorAll('.btab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('button.btab-btn').forEach(b => b.classList.remove('active'));
+      if (!isActive) {
+        panel.classList.add('active');
+        btn.classList.add('active');
+      }
+    }
+  </script>
 
-<script>
-function toggleBTab(id, btn) {
-  const panel = document.getElementById(id);
-  const isActive = panel.classList.contains('active');
-  document.querySelectorAll('.btab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('button.btab-btn').forEach(b => b.classList.remove('active'));
-  if (!isActive) {
-    panel.classList.add('active');
-    btn.classList.add('active');
-  }
-}
-</script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig, getWeekNumber, getMondayOfWeek, getWeekKey, formatDate, getUserDisplayName, logUserConnection } from "./shared-app.js";
 
-<script type="module">
-  import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
-    authDomain: "ggt-plan-entrainement.firebaseapp.com",
-    projectId: "ggt-plan-entrainement",
-    storageBucket: "ggt-plan-entrainement.firebasestorage.app",
-    messagingSenderId: "663631056543",
-    appId: "1:663631056543:web:d8cb50121fcf8d1c635caa"
-  };
+    const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+    let currentWeekOffset = 0;
+    let isAdmin = false;
 
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
+    // Fonction pour récupérer le type d'une séance et son style
+    function getSeanceInfo(type) {
+      const info = {
+        repos: { badge: 'badge-repos', emoji: '😴', label: 'Repos' },
+        cotes: { badge: 'badge-cotes', emoji: '🏔️', label: 'Côtes' },
+        seuil: { badge: 'badge-seuil', emoji: '⚡', label: 'Seuil' },
+        sortie: { badge: 'badge-sortie', emoji: '🌲', label: 'Sortie' },
+        footing: { badge: 'badge-footing', emoji: '🏃', label: 'Footing' },
+        course: { badge: 'badge-course', emoji: '🏅', label: 'Course' },
+        rm: { badge: 'badge-rm', emoji: '💪', label: 'Renforcement' },
+        autre: { badge: 'badge-autre', emoji: '📋', label: 'Autre' }
+      };
+      return info[type] || info.autre;
+    }
 
-  const JOURS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
-  let currentWeekOffset = 0;
-  let isAdmin = false;
+    // Fonction pour récupérer la couleur de fond d'une journée
+    function getCardStyle(type) {
+      const styles = {
+        repos: 'rgba(156, 163, 175, 0.13)',
+        cotes: 'rgba(255, 192, 0, 0.26)',
+        seuil: 'rgba(119, 181, 254, 0.26)',
+        sortie: 'rgba(120, 170, 60, 0.26)',
+        footing: 'rgba(143, 168, 191, 0.26)',
+        course: 'rgba(245, 158, 11, 0.26)',
+        rm: 'rgba(168, 116, 255, 0.26)',
+        autre: 'rgba(200, 185, 130, 0.22)'
+      };
+      return styles[type] || styles.autre;
+    }
 
-  function getWeekNumber(date) {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-    return 'S' + String(Math.ceil((((d - yearStart) / 86400000) + 1)/7)).padStart(2,'0');
-  }
+    // Charge et affiche la semaine
+    async function loadWeek() {
+      const monday = getMondayOfWeek(currentWeekOffset);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      const weekKey = getWeekKey(monday);
 
-  function getMondayOfWeek(offset=0) {
-    const now = new Date();
-    const day = now.getDay() || 7;
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - day + 1 + offset * 7);
-    monday.setHours(0,0,0,0);
-    return monday;
-  }
+      const weekNum = getWeekNumber(monday);
+      const weekLabel = currentWeekOffset === 0 ? 'Cette semaine' :
+        currentWeekOffset === -1 ? 'Semaine dernière' :
+        currentWeekOffset === 1 ? 'Semaine prochaine' :
+        'Semaine';
 
-  function getWeekKey(monday) { return monday.toISOString().split('T')[0]; }
-  function formatDate(d) { return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'}); }
+      document.getElementById('week-label').textContent = weekLabel;
+      document.getElementById('week-dates').textContent = `${weekNum} · ${formatDate(monday)} – ${formatDate(sunday)}`;
+      document.getElementById('btn-prev').disabled = currentWeekOffset <= -3120;
+      document.getElementById('btn-next').disabled = currentWeekOffset >= 3120;
+      document.getElementById('content').innerHTML = '<div class="loading"><div class="spin"></div> Chargement...</div>';
 
-  function getBadge(type) {
-    const map = {
-      repos:   ['badge-repos','😴 Repos'],
-      cotes:   ['badge-cotes','🏔️ Côtes'],
-      seuil:   ['badge-seuil','⚡ Seuil'],
-      sortie:  ['badge-sortie','🌲 Sortie'],
-      footing: ['badge-footing','🏃 Footing'],
-      course:  ['badge-course','🏅 Course'],
-      rm:      ['badge-rm','💪 Renforcement'],
-      autre:   ['badge-autre','📋 Autre'],
+      try {
+        const snap = await getDoc(doc(db, 'plannings', weekKey));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (!snap.exists() || !snap.data().jours || (!snap.data().published && !isAdmin)) {
+          document.getElementById('content').innerHTML = `<div class="days-grid"><div class="empty-week"><span>📋</span>Le planning de cette semaine n'a pas encore été publié.</div></div>`;
+          document.getElementById('message-box').classList.remove('visible');
+          return;
+        }
+
+        const jours = snap.data().jours;
+        let html = '<div class="days-grid">';
+
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(monday);
+          date.setDate(monday.getDate() + i);
+          const isToday = date.getTime() === today.getTime();
+          const jour = jours[i] || {};
+          const plans = jour.plans || (jour.contenu ? [{ location: '', type: jour.type || 'repos', contenu: jour.contenu }] : [{ location: '', type: 'repos', contenu: '' }]);
+          const isRepos = plans.every(p => p.type === 'repos' && !p.contenu);
+
+          let plansHtml = '<div class="day-plans">';
+          plans.forEach((plan, pi) => {
+            const info = getSeanceInfo(plan.type || 'repos');
+            const contenu = plan.contenu || (plan.type === 'repos' ? 'Repos' : '');
+            plansHtml += `<div class="plan-block">`;
+            if (plan.location) plansHtml += `<div class="plan-location">📍 ${plan.location}</div>`;
+            plansHtml += `<span class="day-badge ${info.badge}" style="font-size: 9px; margin-bottom: 4px; display: inline-block;">${info.emoji} ${info.label}</span>`;
+            plansHtml += `<div class="day-content">${contenu}</div></div>`;
+          });
+          plansHtml += '</div>';
+
+          const mainType = plans[0]?.type || 'repos';
+          const cardBg = getCardStyle(mainType);
+          html += `<div class="day-card ${isToday ? 'today' : ''} ${isRepos ? 'repos' : ''}" style="background: ${cardBg};">
+            <div>
+              <div class="day-name">${JOURS[i]}</div>
+              <div class="day-date">${date.getDate()}</div>
+            </div>
+            ${plansHtml}
+          </div>`;
+        }
+
+        html += '</div>';
+        document.getElementById('content').innerHTML = html;
+
+        // Message CoachDav
+        const msg = snap.data().message || '';
+        const msgBox = document.getElementById('message-box');
+        if (msg.trim()) {
+          document.getElementById('message-text').textContent = msg;
+          msgBox.classList.add('visible');
+        } else {
+          msgBox.classList.remove('visible');
+        }
+      } catch (error) {
+        document.getElementById('content').innerHTML = '<div class="loading">❌ Erreur de chargement.</div>';
+      }
+    }
+
+    window.changeWeek = (dir) => {
+      currentWeekOffset += dir;
+      loadWeek();
     };
-    return map[type] || map['autre'];
-  }
 
-  function getCardStyle(type) {
-    const map = {
-      repos:   'rgba(156,163,175,0.13)',
-      cotes:   'rgba(255,192,0,0.26)',
-      seuil:   'rgba(119,181,254,0.26)',
-      sortie:  'rgba(120,170,60,0.26)',
-      footing: 'rgba(143,168,191,0.26)',
-      course:  'rgba(245,158,11,0.26)',
-      rm:      'rgba(168,116,255,0.26)',
-      autre:   'rgba(200,185,130,0.22)',
-    };
-    return map[type] || map['autre'];
-  }
+    window.logout = () => signOut(auth).then(() => window.location.href = 'index.html');
 
-  async function loadWeek() {
-    const monday = getMondayOfWeek(currentWeekOffset);
-    const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
-    const weekKey = getWeekKey(monday);
-
-    const weekNum = getWeekNumber(monday);
-    const weekLabel = currentWeekOffset===0 ? 'Cette semaine' :
-      currentWeekOffset===-1 ? 'Semaine dernière' :
-      currentWeekOffset===1 ? 'Semaine prochaine' :
-      'Semaine';
-    document.getElementById('week-label').textContent = weekLabel;
-    document.getElementById('week-dates').textContent = `${weekNum} · ${formatDate(monday)} – ${formatDate(sunday)}`;
-    document.getElementById('btn-prev').disabled = currentWeekOffset <= -3120;
-    document.getElementById('btn-next').disabled = currentWeekOffset >= 3120;
-    document.getElementById('content').innerHTML = '<div class="loading"><div class="spin"></div> Chargement...</div>';
-
-    try {
-      const snap = await getDoc(doc(db,'plannings',weekKey));
-      const today = new Date(); today.setHours(0,0,0,0);
-
-      if (!snap.exists() || !snap.data().jours || (!snap.data().published && !isAdmin)) {
-        document.getElementById('content').innerHTML = `<div class="days-grid"><div class="empty-week"><span>📋</span>Le planning de cette semaine n'a pas encore été publié.</div></div>`;
-        document.getElementById('message-box').classList.remove('visible');
+    let redirecting = false;
+    onAuthStateChanged(auth, async (user) => {
+      if (redirecting) return;
+      if (!user) {
+        redirecting = true;
+        window.location.href = 'index.html';
         return;
       }
 
-      const jours = snap.data().jours;
-      let html = '<div class="days-grid">';
-      for (let i=0;i<7;i++) {
-        const date = new Date(monday); date.setDate(monday.getDate()+i);
-        const isToday = date.getTime()===today.getTime();
-        const jour = jours[i] || {};
-        const plans = jour.plans || (jour.contenu ? [{location:'',type:jour.type||'repos',contenu:jour.contenu}] : [{location:'',type:'repos',contenu:''}]);
-        const isRepos = plans.every(p=>p.type==='repos' && !p.contenu);
-        let plansHtml = '<div class="day-plans">';
-        plans.forEach((plan,pi) => {
-          const [badgeCls,badgeLbl] = getBadge(plan.type||'repos');
-          const contenu = plan.contenu || (plan.type==='repos'?'Repos':'');
-          plansHtml += `<div class="plan-block">`;
-          if (plan.location) plansHtml += `<div class="plan-location">📍 ${plan.location}</div>`;
-          plansHtml += `<span class="day-badge ${badgeCls}" style="font-size:9px;margin-bottom:4px;display:inline-block">${badgeLbl}</span>`;
-          plansHtml += `<div class="day-content">${contenu}</div></div>`;
-        });
-        plansHtml += '</div>';
-        const mainType = plans[0]?.type || 'repos';
-        const cardBg = getCardStyle(mainType);
-        html += `<div class="day-card ${isToday?'today':''} ${isRepos?'repos':''}" style="background:${cardBg}">
-          <div>
-            <div class="day-name">${JOURS[i]}</div>
-            <div class="day-date">${date.getDate()}</div>
-          </div>
-          ${plansHtml}
-        </div>`;
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      const data = snap.exists() ? snap.data() : {};
+
+      document.getElementById('user-name').textContent = getUserDisplayName(data, user.email);
+
+      // Enregistrer la connexion (adhérents uniquement, avec déduplication)
+      if (data.role !== 'admin') {
+        await logUserConnection(db, user.uid, getUserDisplayName(data, user.email), 'Planning');
       }
-      html += '</div>';
-      document.getElementById('content').innerHTML = html;
 
-      // Message CoachDav
-      const msg = snap.data().message || '';
-      const msgBox = document.getElementById('message-box');
-      if (msg.trim()) {
-        document.getElementById('message-text').textContent = msg;
-        msgBox.classList.add('visible');
-      } else {
-        msgBox.classList.remove('visible');
-      }
-    } catch(e) {
-      document.getElementById('content').innerHTML = '<div class="loading">❌ Erreur de chargement.</div>';
-    }
-  }
+      isAdmin = data.role === 'admin';
+      if (isAdmin) document.getElementById('btn-admin').style.display = 'inline-flex';
 
-  window.changeWeek = (dir) => { currentWeekOffset += dir; loadWeek(); };
-  window.logout = () => signOut(auth).then(()=>window.location.href='index.html');
-
-  let redirecting = false;
-  onAuthStateChanged(auth, async (user) => {
-    if (redirecting) return;
-    if (!user) { redirecting=true; window.location.href='index.html'; return; }
-    const snap = await getDoc(doc(db,'users',user.uid));
-    const data = snap.exists() ? snap.data() : {};
-    const name = [data.prenom||'',data.nom||''].filter(Boolean).join(' ') || user.email;
-    document.getElementById('user-name').textContent = name;
-    // Enregistrer la connexion
-    if (data.role !== 'admin') {
-      try {
-        await addDoc(collection(db, 'connexions'), {
-          uid:  user.uid,
-          nom:  name,
-          page: 'Planning',
-          ts:   serverTimestamp()
-        });
-      } catch(e) { console.warn('Connexion non enregistrée:', e); }
-    }
-    isAdmin = data.role==='admin';
-    if (isAdmin) document.getElementById('btn-admin').style.display='inline-flex';
-    loadWeek();
-  });
-</script>
+      loadWeek();
+    });
+  </script>
 </body>
 </html>

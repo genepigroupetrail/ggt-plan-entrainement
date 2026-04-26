@@ -1,267 +1,389 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<link rel="icon" type="image/png" href="favicon.png">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GGT — Connexions</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0f14;--surf:#161a23;--surf2:#1e2330;--brd:rgba(255,255,255,.08);--txt:#e8eaf0;--mut:#7a8099;--acc:#4f8ef7;--ora:#fc4c02;--grn:#22c55e;--amb:#f59e0b;--red:#ef4444}
-body{background:var(--bg);font-family:'Outfit',sans-serif;color:var(--txt);min-height:100vh;background-image:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(252,76,2,.05),transparent 60%)}
-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:.5px solid var(--brd);background:rgba(22,26,35,.9);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;flex-wrap:wrap;gap:8px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo img{width:36px;height:36px;border-radius:9px;object-fit:contain}
-.logo h1{font-size:16px;font-weight:600}
-.logo p{font-size:11px;color:var(--ora)}
-.btn-h{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:6px 12px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
-.btn-h:hover{color:var(--txt);border-color:var(--acc)}
-.main{max-width:900px;margin:0 auto;padding:24px}
-.page-title{font-size:20px;font-weight:600;margin-bottom:4px}
-.page-sub{font-size:13px;color:var(--mut);margin-bottom:24px}
-.stats-bar{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-.stat-card{background:var(--surf);border:.5px solid var(--brd);border-radius:12px;padding:14px 16px;text-align:center}
-.stat-val{font-size:24px;font-weight:700;color:var(--acc)}
-.stat-label{font-size:11px;color:var(--mut);margin-top:2px}
-.table-wrap{background:var(--surf);border:.5px solid var(--brd);border-radius:14px;overflow:hidden}
-.table-header{display:grid;grid-template-columns:1fr 1fr 1fr;padding:12px 16px;background:var(--surf2);border-bottom:.5px solid var(--brd);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
-.table-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:12px 16px;border-bottom:.5px solid var(--brd);font-size:13px;transition:background .15s}
-.table-row:last-child{border-bottom:none}
-.table-row:hover{background:rgba(255,255,255,.03)}
-.name{font-weight:600;color:var(--txt)}
-.date{color:var(--mut)}
-.page-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.page-planning{background:rgba(79,142,247,.15);color:var(--acc)}
-.page-competition{background:rgba(245,158,11,.15);color:var(--amb)}
-.page-vma{background:rgba(34,197,94,.15);color:var(--grn)}
-.loading{display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--mut);font-size:14px;gap:10px}
-.spin{width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:60px 20px;color:var(--mut)}
-.empty-icon{font-size:40px;margin-bottom:12px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surf2);border:.5px solid rgba(34,197,94,.4);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--grn);transition:transform .3s;z-index:300}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.toast.error{border-color:rgba(239,68,68,.4);color:var(--red)}
-.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.filter-bar select{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:7px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none;cursor:pointer}
-.filter-bar select:focus{border-color:var(--acc)}
-.count-badge{font-size:12px;color:var(--mut);margin-left:auto}
-</style>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Connexions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: var(--font-weight-bold);
+      margin-bottom: 4px;
+    }
+
+    .page-sub {
+      font-size: 13px;
+      color: var(--mut);
+      margin-bottom: 24px;
+    }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 24px;
+      font-weight: var(--font-weight-bold);
+      color: var(--acc);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--mut);
+      margin-top: 2px;
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar select {
+      background: var(--surf2);
+      border: 0.5px solid var(--brd);
+      border-radius: 8px;
+      padding: 7px 12px;
+      color: var(--txt);
+      font-family: var(--font-family);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-bar select:focus {
+      border-color: var(--acc);
+    }
+
+    .count-badge {
+      font-size: 12px;
+      color: var(--mut);
+      margin-left: auto;
+    }
+
+    .table-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      padding: 12px 16px;
+      background: var(--surf2);
+      border-bottom: 0.5px solid var(--brd);
+      font-size: 11px;
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mut);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid var(--brd);
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .table-row:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .table-row .name {
+      font-weight: var(--font-weight-medium);
+      color: var(--txt);
+    }
+
+    .table-row .date {
+      color: var(--mut);
+    }
+
+    .page-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: var(--font-weight-medium);
+    }
+
+    .page-planning {
+      background: rgba(79, 142, 247, 0.15);
+      color: var(--acc);
+    }
+
+    .page-competition {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amb);
+    }
+
+    .page-vma {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--grn);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--mut);
+    }
+
+    .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="logo">
-    <img src="logo-ggt.png" alt="GGT">
-    <div><h1>GGT Admin</h1><p>CoachDav</p></div>
-  </div>
-  <div style="display:flex;gap:8px;align-items:center">
-    <span id="user-name" style="font-size:13px;color:var(--mut)"></span>
-    <a href="admin.html" class="btn-h">&#8592; Admin</a>
-    <button class="btn-h" onclick="logout()">Déconnexion</button>
-  </div>
-</header>
-
-<div class="main">
-  <div class="page-title">👥 Connexions des adhérents</div>
-  <div class="page-sub" id="period-label">6 derniers mois</div>
-
-  <div class="stats-bar" id="stats-bar">
-    <div class="stat-card"><div class="stat-val" id="stat-total">—</div><div class="stat-label">Connexions totales</div></div>
-    <div class="stat-card"><div class="stat-val" id="stat-users">—</div><div class="stat-label">Adhérents actifs</div></div>
-    <div class="stat-card"><div class="stat-val" id="stat-today">—</div><div class="stat-label">Aujourd'hui</div></div>
-    <div class="stat-card"><div class="stat-val" id="stat-week">—</div><div class="stat-label">Cette semaine</div></div>
-  </div>
-
-  <div class="filter-bar">
-    <select id="filter-user" onchange="applyFilter()">
-      <option value="">Tous les adhérents</option>
-    </select>
-    <select id="filter-page" onchange="applyFilter()">
-      <option value="">Toutes les pages</option>
-      <option value="Planning">Planning</option>
-      <option value="Plan compétition">Plan compétition</option>
-      <option value="VMA/FCM">VMA/FCM</option>
-    </select>
-    <span class="count-badge" id="count-badge"></span>
-  </div>
-
-  <div class="table-wrap">
-    <div class="table-header">
-      <div>Adhérent</div>
-      <div>Date &amp; heure</div>
-      <div>Page</div>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>GGT Admin</h1><p>CoachDav</p></div>
     </div>
-    <div id="table-body"><div class="loading"><div class="spin"></div> Chargement...</div></div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span id="user-name" style="font-size: 13px; color: var(--mut);"></span>
+      <a href="admin.html" class="btn-h">← Admin</a>
+      <button class="btn-h" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="page-title">👥 Connexions des adhérents</div>
+    <div class="page-sub" id="period-label">6 derniers mois</div>
+
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-card">
+        <div class="stat-val" id="stat-total">—</div>
+        <div class="stat-label">Connexions totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-users">—</div>
+        <div class="stat-label">Adhérents actifs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-today">—</div>
+        <div class="stat-label">Aujourd'hui</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="stat-week">—</div>
+        <div class="stat-label">Cette semaine</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <select id="filter-user" onchange="applyFilter()">
+        <option value="">Tous les adhérents</option>
+      </select>
+      <select id="filter-page" onchange="applyFilter()">
+        <option value="">Toutes les pages</option>
+        <option value="Planning">Planning</option>
+        <option value="Plan compétition">Plan compétition</option>
+        <option value="VMA/FCM">VMA/FCM</option>
+      </select>
+      <span class="count-badge" id="count-badge"></span>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-header">
+        <div>Adhérent</div>
+        <div>Date &amp; heure</div>
+        <div>Page</div>
+      </div>
+      <div id="table-body"><div class="loading"><div class="spin"></div> Chargement...</div></div>
+    </div>
   </div>
-</div>
-<div class="toast" id="toast"></div>
 
-<script>
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type === 'err' ? ' error' : '');
-  setTimeout(function() { t.className = 'toast'; }, 3000);
-}
-</script>
+  <div class="toast" id="toast"></div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig, formatDateTime, getTodayUTC, showToast, getUserDisplayName } from "./shared-app.js";
 
-  var firebaseConfig = {
-    apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
-    authDomain: "ggt-plan-entrainement.firebaseapp.com",
-    projectId: "ggt-plan-entrainement",
-    storageBucket: "ggt-plan-entrainement.firebasestorage.app",
-    messagingSenderId: "663631056543",
-    appId: "1:663631056543:web:d8cb50121fcf8d1c635caa"
-  };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  var app  = initializeApp(firebaseConfig);
-  var auth = getAuth(app);
-  var db   = getFirestore(app);
+    let allConnexions = [];
+    let redirecting = false;
 
-  var allConnexions = [];
-  var redirecting   = false;
-
-  function formatDateTime(ts) {
-    if (!ts) return '—';
-    var d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d.toLocaleDateString('fr-FR', {weekday:'short', day:'numeric', month:'short', year:'numeric'})
-      + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-  }
-
-  function pageClass(page) {
-    if (!page) return '';
-    if (page.toLowerCase().includes('planning'))    return 'page-planning';
-    if (page.toLowerCase().includes('comp'))        return 'page-competition';
-    if (page.toLowerCase().includes('vma'))         return 'page-vma';
-    return '';
-  }
-
-  function pageEmoji(page) {
-    if (!page) return '📄';
-    if (page.toLowerCase().includes('planning'))    return '📅';
-    if (page.toLowerCase().includes('comp'))        return '🏅';
-    if (page.toLowerCase().includes('vma'))         return '⚡';
-    return '📄';
-  }
-
-  window.applyFilter = function() {
-    var filterUser = document.getElementById('filter-user').value;
-    var filterPage = document.getElementById('filter-page').value;
-    var filtered = allConnexions.filter(function(c) {
-      var matchUser = !filterUser || c.nom === filterUser;
-      var matchPage = !filterPage || (c.page && c.page.includes(filterPage));
-      return matchUser && matchPage;
-    });
-    renderTable(filtered);
-    document.getElementById('count-badge').textContent = filtered.length + ' connexion(s)';
-  };
-
-  function renderTable(connexions) {
-    var body = document.getElementById('table-body');
-    if (!connexions.length) {
-      body.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>Aucune connexion trouvée.</p></div>';
-      return;
+    // Fonction pour déterminer le type de page et son style (traduction: determine page type and its style)
+    function getPageInfo(page) {
+      if (!page) return { badge: '', emoji: '📄' };
+      if (page.toLowerCase().includes('planning')) return { badge: 'page-planning', emoji: '📅' };
+      if (page.toLowerCase().includes('comp')) return { badge: 'page-competition', emoji: '🏅' };
+      if (page.toLowerCase().includes('vma')) return { badge: 'page-vma', emoji: '⚡' };
+      return { badge: '', emoji: '📄' };
     }
-    body.innerHTML = connexions.map(function(c) {
-      var pc = pageClass(c.page);
-      var pe = pageEmoji(c.page);
-      return '<div class="table-row">'
-        + '<div class="name">' + (c.nom || '—') + '</div>'
-        + '<div class="date">' + formatDateTime(c.ts) + '</div>'
-        + '<div><span class="page-badge ' + pc + '">' + pe + ' ' + (c.page || '—') + '</span></div>'
-        + '</div>';
-    }).join('');
-  }
 
-  async function loadConnexions() {
-    try {
-      // Supprimer les connexions de plus de 6 mois
-      var sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      var cutoff = Timestamp.fromDate(sixMonthsAgo);
-
-      var snap = await getDocs(collection(db, 'connexions'));
-      var toDelete = [];
-      var connexions = [];
-
-      snap.forEach(function(d) {
-        var data = d.data();
-        if (data.ts && data.ts.toMillis && data.ts.toMillis() < cutoff.toMillis()) {
-          toDelete.push(d.id);
-        } else {
-          connexions.push(Object.assign({ id: d.id }, data));
-        }
+    window.applyFilter = function() {
+      const filterUser = document.getElementById('filter-user').value;
+      const filterPage = document.getElementById('filter-page').value;
+      const filtered = allConnexions.filter(function(c) {
+        const matchUser = !filterUser || c.nom === filterUser;
+        const matchPage = !filterPage || (c.page && c.page.includes(filterPage));
+        return matchUser && matchPage;
       });
+      renderTable(filtered);
+      document.getElementById('count-badge').textContent = filtered.length + ' connexion(s)';
+    };
 
-      // Supprimer les anciennes en arrière-plan
-      if (toDelete.length) {
-        Promise.all(toDelete.map(function(id) {
-          return deleteDoc(doc(db, 'connexions', id));
-        })).then(function() {
-          console.log('Supprimé ' + toDelete.length + ' connexion(s) ancienne(s)');
-        });
+    function renderTable(connexions) {
+      const body = document.getElementById('table-body');
+      if (!connexions.length) {
+        body.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>Aucune connexion trouvée.</p></div>';
+        return;
       }
 
-      // Trier par date décroissante
-      connexions.sort(function(a, b) {
-        var ta = a.ts && a.ts.toMillis ? a.ts.toMillis() : 0;
-        var tb = b.ts && b.ts.toMillis ? b.ts.toMillis() : 0;
-        return tb - ta;
+      let html = '';
+      connexions.forEach(function(c) {
+        const pageInfo = getPageInfo(c.page);
+        const badgeClass = pageInfo.badge ? ` ${pageInfo.badge}` : '';
+        const safeNom = (c.nom || '—').replace(/[&<>"']/g, char => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;',
+          '"': '&quot;', "'": '&#039;'
+        }[char]));
+        const safePage = (c.page || '—').replace(/[&<>"']/g, char => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;',
+          '"': '&quot;', "'": '&#039;'
+        }[char]));
+
+        html += `<div class="table-row">
+          <div class="name">${safeNom}</div>
+          <div class="date">${formatDateTime(c.ts)}</div>
+          <div><span class="page-badge${badgeClass}">${pageInfo.emoji} ${safePage}</span></div>
+        </div>`;
       });
-
-      allConnexions = connexions;
-
-      // Stats
-      var today = new Date(); today.setHours(0,0,0,0);
-      var weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
-      var uniqueUsers = new Set(connexions.map(function(c) { return c.uid; })).size;
-      var todayCount = connexions.filter(function(c) {
-        return c.ts && c.ts.toDate && c.ts.toDate() >= today;
-      }).length;
-      var weekCount = connexions.filter(function(c) {
-        return c.ts && c.ts.toDate && c.ts.toDate() >= weekAgo;
-      }).length;
-
-      document.getElementById('stat-total').textContent = connexions.length;
-      document.getElementById('stat-users').textContent = uniqueUsers;
-      document.getElementById('stat-today').textContent = todayCount;
-      document.getElementById('stat-week').textContent  = weekCount;
-
-      // Remplir le filtre adhérents
-      var names = [...new Set(connexions.map(function(c) { return c.nom; }).filter(Boolean))].sort();
-      var sel = document.getElementById('filter-user');
-      names.forEach(function(n) {
-        var opt = document.createElement('option');
-        opt.value = n; opt.textContent = n;
-        sel.appendChild(opt);
-      });
-
-      document.getElementById('count-badge').textContent = connexions.length + ' connexion(s)';
-      renderTable(connexions);
-
-    } catch(e) {
-      document.getElementById('table-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Erreur : ' + e.message + '</p></div>';
+      body.innerHTML = html;
     }
-  }
 
-  window.logout = function() { signOut(auth).then(function() { window.location.href = 'index.html'; }); };
+    async function loadConnexions() {
+      try {
+        // Supprimer les connexions de plus de 6 mois
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        const cutoff = Timestamp.fromDate(sixMonthsAgo);
 
-  onAuthStateChanged(auth, async function(user) {
-    if (redirecting) return;
-    if (!user) { redirecting = true; window.location.href = 'index.html'; return; }
-    try {
-      var snap = await getDoc(doc(db, 'users', user.uid));
-      if (!snap.exists() || snap.data().role !== 'admin') { redirecting = true; window.location.href = 'planning.html'; return; }
-      document.getElementById('user-name').textContent = [snap.data().prenom||'', snap.data().nom||''].filter(Boolean).join(' ') || user.email;
-      loadConnexions();
-    } catch(e) { console.error(e); }
-  });
-</script>
+        const snap = await getDocs(collection(db, 'connexions'));
+        const toDelete = [];
+        const connexions = [];
+
+        snap.forEach(function(d) {
+          const data = d.data();
+          if (data.ts && data.ts.toMillis && data.ts.toMillis() < cutoff.toMillis()) {
+            toDelete.push(d.id);
+          } else {
+            connexions.push(Object.assign({ id: d.id }, data));
+          }
+        });
+
+        // Supprimer les anciennes en arrière-plan
+        if (toDelete.length) {
+          Promise.all(toDelete.map(function(id) {
+            return deleteDoc(doc(db, 'connexions', id));
+          })).then(function() {
+            console.log('Supprimé ' + toDelete.length + ' connexion(s) ancienne(s)');
+          });
+        }
+
+        // Trier par date décroissante
+        connexions.sort(function(a, b) {
+          const ta = a.ts && a.ts.toMillis ? a.ts.toMillis() : 0;
+          const tb = b.ts && b.ts.toMillis ? b.ts.toMillis() : 0;
+          return tb - ta;
+        });
+
+        allConnexions = connexions;
+
+        // Stats avec getTodayUTC pour éviter les problèmes timezone
+        const today = getTodayUTC();
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+
+        const uniqueUsers = new Set(connexions.map(function(c) { return c.uid; })).size;
+        const todayCount = connexions.filter(function(c) {
+          return c.ts && c.ts.toDate && c.ts.toDate() >= today;
+        }).length;
+        const weekCount = connexions.filter(function(c) {
+          return c.ts && c.ts.toDate && c.ts.toDate() >= weekAgo;
+        }).length;
+
+        document.getElementById('stat-total').textContent = connexions.length;
+        document.getElementById('stat-users').textContent = uniqueUsers;
+        document.getElementById('stat-today').textContent = todayCount;
+        document.getElementById('stat-week').textContent = weekCount;
+
+        // Remplir le filtre adhérents
+        const names = [...new Set(connexions.map(function(c) { return c.nom; }).filter(Boolean))].sort();
+        const sel = document.getElementById('filter-user');
+        names.forEach(function(n) {
+          const opt = document.createElement('option');
+          opt.value = n;
+          opt.textContent = n;
+          sel.appendChild(opt);
+        });
+
+        document.getElementById('count-badge').textContent = connexions.length + ' connexion(s)';
+        renderTable(connexions);
+
+      } catch (error) {
+        document.getElementById('table-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Erreur : ' + error.message + '</p></div>';
+      }
+    }
+
+    window.logout = function() {
+      signOut(auth).then(function() {
+        window.location.href = 'index.html';
+      });
+    };
+
+    onAuthStateChanged(auth, async function(user) {
+      if (redirecting) return;
+      if (!user) {
+        redirecting = true;
+        window.location.href = 'index.html';
+        return;
+      }
+
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (!snap.exists() || snap.data().role !== 'admin') {
+          redirecting = true;
+          window.location.href = 'planning.html';
+          return;
+        }
+        document.getElementById('user-name').textContent = getUserDisplayName(snap.data(), user.email);
+        loadConnexions();
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  </script>
 </body>
 </html>

@@ -18,19 +18,14 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .logo img{width:34px;height:34px;border-radius:8px;object-fit:contain}
 .logo h1{font-size:15px;font-weight:700}
 .logo p{font-size:10px;color:var(--mut)}
-.user-badge{font-size:13px;color:var(--txt);font-weight:600;padding:5px 0}
-.user-badge{font-size:13px;color:var(--txt);font-weight:600;padding:5px 0}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.user-badge{font-size:13px;color:var(--mut);padding:5px 10px;background:var(--surf2);border-radius:8px;border:.5px solid var(--brd)}
 .btn-h{background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:6px 12px;color:var(--mut);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap}
 .btn-h:hover{color:var(--txt);border-color:var(--acc)}
 .btn-comp{background:rgba(252,76,2,.12);border:.5px solid rgba(252,76,2,.3);border-radius:8px;padding:6px 14px;color:var(--ora);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
 .btn-comp:hover{background:rgba(252,76,2,.2);border-color:var(--ora)}
 .btn-admin{background:rgba(79,142,247,.12);border:.5px solid rgba(79,142,247,.3);border-radius:8px;padding:6px 14px;color:var(--acc);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
 .btn-admin:hover{background:rgba(79,142,247,.2);border-color:var(--acc)}
-
-/* BANNER ANNIVERSAIRE */
-.anniversary-banner{background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(251,191,36,.05));border:.5px solid rgba(251,191,36,.3);border-radius:12px;padding:14px 24px;text-align:center;display:none;margin:0 20px;max-width:calc(100% - 40px)}
-.anniversary-banner h3{font-size:15px;font-weight:600;color:var(--amb);margin-bottom:4px}
-.anniversary-banner p{font-size:12px;color:var(--mut)}
 
 /* NAVIGATION SEMAINES */
 .week-nav{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px 20px 8px;flex-wrap:wrap}
@@ -121,19 +116,12 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
     <div><h1>GGT Plan hebdo</h1><p>Génépi Groupe Trail</p></div>
   </div>
   <div class="header-right">
-    <span class="user-badge" id="user-name"></span>
     <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
-    <a href="profil.html" class="btn-h">👤 Mon Profil</a>
+    <span class="user-badge" id="user-name">...</span>
     <a href="admin.html" class="btn-admin" id="btn-admin" style="display:none">⚙️ Admin</a>
     <button class="btn-h" onclick="logout()">Déconnexion</button>
   </div>
 </header>
-
-<!-- BANNER ANNIVERSAIRE -->
-<div class="anniversary-banner" id="anniversary-banner">
-  <h3>🎂 Joyeux Anniversaire !</h3>
-  <p>Que cette année t'apporte plein de belles sorties trail ! 🏃</p>
-</div>
 
 <div class="week-nav">
   <button class="nav-btn" id="btn-prev" onclick="changeWeek(-1)">← Précédente</button>
@@ -314,41 +302,6 @@ function toggleBTab(id, btn) {
   function getWeekKey(monday) { return monday.toISOString().split('T')[0]; }
   function formatDate(d) { return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'}); }
 
-  async function checkAnniversaryToday() {
-    try {
-      const snap = await getDocs(collection(db, 'users'));
-      const today = new Date();
-      const todayStr = String(today.getMonth() + 1).padStart(2, '0') + String(today.getDate()).padStart(2, '0');
-      
-      let anniversairesAujourdhui = [];
-      snap.forEach(function(d) {
-        const data = d.data();
-        if (data.date_naissance) {
-          const [year, month, day] = data.date_naissance.split('-');
-          const birthStr = month + day;
-          if (todayStr === birthStr) {
-            const displayName = (data.prenom || '') + ' ' + (data.nom || '');
-            anniversairesAujourdhui.push(displayName.trim());
-          }
-        }
-      });
-
-      const banner = document.getElementById('anniversary-banner');
-      if (anniversairesAujourdhui.length > 0) {
-        const names = anniversairesAujourdhui.join(', ');
-        const h3 = banner.querySelector('h2');
-        const p = banner.querySelector('p');
-        h3.textContent = '🎂 Joyeux anniversaire ' + names + ' !';
-        p.textContent = 'Que cette année vous apporte plein de belles sorties trail ! 🏃';
-        banner.style.display = 'block';
-      } else {
-        banner.style.display = 'none';
-      }
-    } catch(e) {
-      console.warn('Erreur anniversaire:', e);
-    }
-  }
-
   function getBadge(type) {
     const map = {
       repos:   ['badge-repos','😴 Repos'],
@@ -470,10 +423,8 @@ function toggleBTab(id, btn) {
         });
       } catch(e) { console.warn('Connexion non enregistrée:', e); }
     }
-    isAdmin = data.role==='admin' || data.role==='adminadherent';
+    isAdmin = data.role==='admin';
     if (isAdmin) document.getElementById('btn-admin').style.display='inline-flex';
-    // Vérifier anniversaires de tous
-    checkAnniversaryToday();
     loadWeek();
   });
 </script>

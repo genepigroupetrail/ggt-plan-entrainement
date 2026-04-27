@@ -1,0 +1,105 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                   ✅ PRÊT À DÉPLOYER - MODIFICATIONS COMPLÈTES            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+🎉 **EXCELLENT!** Tous les fichiers sont modifiés et prêts.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ MODIFICATIONS EFFECTUÉES:
+
+1. 📖 LEXIQUE
+   ✓ Ajouté: FC, FCM, %VMA, %FCM, D-
+   ✓ Clarifié: RAC (footing léger en fin de séance)
+   ✓ Clarifié: R (récupération active)
+   ✓ Ajouté: Timing gammes (~10 min)
+   ✓ Retiré: Note CoachDav obsolète
+
+2. 🎨 DESIGN
+   ✓ Lexique: Fond noir (identique à la page)
+   ✓ Lexique: Listel gris subtil pour délimitation
+   ✓ Tableau allures: Même style
+   ✓ Lexique: FERMÉ par défaut (faut cliquer)
+
+3. 👤 HEADER RÉORGANISÉ
+   ✓ Planning: Nom Prénom AVANT Plans compétition
+   ✓ VMA/FCM: Nom Prénom dans un badge gris
+   ✓ Admin: Nom Prénom dans un badge gris
+   ✓ Connexions: Nom Prénom dans un badge gris
+
+4. 🎯 COHÉRENCE
+   ✓ Tous les utilisateurs ont le même style de badge
+   ✓ Tous les fichiers utilisent la classe .user-badge
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 COMMENT DÉPLOYER (FACILE):
+
+Étape 1: Ouvre un terminal/cmd dans ton dossier GitHub
+  genepigroupetrail.github.io/
+
+Étape 2: Tape ces 3 commandes:
+
+  git add .
+  git commit -m "🎨 Améliorations design, lexique et cohérence UI"
+  git push origin main
+
+Étape 3: Attends 2-3 minutes que GitHub déploie
+
+Étape 4: Teste sur le site en live:
+  https://genepigroupetrail.github.io/ggt-plan-entrainement/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ VÉRIFICATIONS À FAIRE APRÈS LE PUSH:
+
+Planning (planning.html):
+  ☐ Nom Prénom avant "Plans compétition"
+  ☐ Nom Prénom dans un badge gris
+  ☐ Lexique FERMÉ (voir seulement le planning)
+  ☐ Cliquer sur "📖 Lexique" l'ouvre
+  ☐ Fond noir partout + listel gris autour du lexique
+
+VMA/FCM (vma.html):
+  ☐ Nom Prénom dans un badge gris (style unifié)
+
+Admin (admin.html):
+  ☐ Nom Prénom dans un badge gris (style unifié)
+
+Connexions (connexions.html):
+  ☐ Nom Prénom dans un badge gris (style unifié)
+
+Lexique (contenu):
+  ☐ FC: Fréquence Cardiaque
+  ☐ FCM: Fréquence Cardiaque Maximale
+  ☐ %VMA: Pourcentage de la VMA
+  ☐ %FCM: Pourcentage de la FCM
+  ☐ D-: Dénivelé négatif
+  ☐ RAC: Clarification correcte
+  ☐ R: Clarification correcte
+  ☐ Gammes: "(environ 10 minutes)"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 FICHIERS MODIFIÉS:
+
+planning.html          ✅ Lexique + design + header
+vma.html               ✅ Badge utilisateur
+connexions.html        ✅ Badge utilisateur
+admin.html             ✅ Badge utilisateur
+shared-styles.css      ✅ Classe .user-badge ajoutée
+MODIFICATIONS.md       📖 Détail des modifications (pour référence)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ SI TU AS DES QUESTIONS:
+
+- Les modifications te paraissent bon?
+- Y a-t-il quelque chose à changer?
+- Besoin d'aide pour le git push?
+
+→ Dis-moi avant de pusher si tu veux ajuster quelque chose!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 Prêt? Tape les 3 commandes git ci-dessus et teste! 🚀

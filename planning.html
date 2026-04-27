@@ -116,8 +116,8 @@
       padding: 12px 20px 20px;
       max-width: 1300px;
       margin: 0 auto;
-      background: var(--surf);
-      border: 0.5px solid var(--brd);
+      background: var(--bg);
+      border: 0.5px solid rgba(122, 128, 153, 0.2);
       border-radius: 14px;
       margin-top: 0;
     }
@@ -163,12 +163,13 @@
       max-width: 1300px;
       margin: 0 auto;
       padding: 12px 20px 20px;
+      background: var(--bg);
     }
 
     .allures-table-wrap {
       overflow-x: auto;
       border-radius: 10px;
-      border: 0.5px solid var(--brd);
+      border: 0.5px solid rgba(122, 128, 153, 0.2);
     }
 
     .allures-table {
@@ -316,8 +317,8 @@
       <div><h1>GGT Plan hebdo</h1><p>Génépi Groupe Trail</p></div>
     </div>
     <div class="header-right">
-      <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
       <span class="user-badge" id="user-name">...</span>
+      <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
       <a href="admin.html" class="btn-admin" id="btn-admin" style="display: none;">⚙️ Admin</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>
     </div>
@@ -345,12 +346,12 @@
 
   <!-- Onglets bas -->
   <div class="bottom-tabs">
-    <button class="btab-btn active" id="btab-lex-btn" onclick="toggleBTab('btab-lex', this)">📖 Lexique</button>
+    <button class="btab-btn" id="btab-lex-btn" onclick="toggleBTab('btab-lex', this)">📖 Lexique</button>
     <button class="btab-btn" id="btab-all-btn" onclick="toggleBTab('btab-all', this)">⚡ Tableau des allures</button>
     <a href="vma.html" class="btab-btn">📊 Mon VMA / FCM</a>
   </div>
 
-  <div class="btab-panel active" id="btab-lex">
+  <div class="btab-panel" id="btab-lex">
     <div class="lexique-wrap">
       <div class="lex-section">
         <h3>🌍 Commun — toutes communes</h3>
@@ -360,10 +361,15 @@
           <div class="lex-item"><strong>S1</strong><span>Allure marathon — 75% VMA</span></div>
           <div class="lex-item"><strong>S2</strong><span>Allure 15km compétition — 85% VMA</span></div>
           <div class="lex-item"><strong>EF</strong><span>Endurance Fondamentale — footing allure libre</span></div>
-          <div class="lex-item"><strong>RAC</strong><span>Retour Au Calme — footing léger en fin de séance</span></div>
-          <div class="lex-item"><strong>R</strong><span>Récupération active entre les répétitions</span></div>
+          <div class="lex-item"><strong>RAC</strong><span>Retour Au Calme — footing léger en fin de séance avant arrêt complet</span></div>
+          <div class="lex-item"><strong>R</strong><span>Récupération Active — repos actif entre répétitions</span></div>
           <div class="lex-item"><strong>VMA</strong><span>Vitesse Maximale Aérobie</span></div>
+          <div class="lex-item"><strong>FC</strong><span>Fréquence Cardiaque (pulsations par minute)</span></div>
+          <div class="lex-item"><strong>FCM</strong><span>Fréquence Cardiaque Maximale</span></div>
+          <div class="lex-item"><strong>%VMA</strong><span>Pourcentage de la VMA</span></div>
+          <div class="lex-item"><strong>%FCM</strong><span>Pourcentage de la FCM</span></div>
           <div class="lex-item"><strong>D+</strong><span>Dénivelé positif</span></div>
+          <div class="lex-item"><strong>D-</strong><span>Dénivelé négatif</span></div>
         </div>
       </div>
       <div class="lex-section">
@@ -397,7 +403,7 @@
         </div>
       </div>
       <div class="lex-section">
-        <h3>🏃 Gammes — échauffement GGT</h3>
+        <h3>🏃 Gammes — échauffement GGT (environ 10 minutes)</h3>
         <div class="lex-grid">
           <div class="lex-item"><strong>1 — Footing 20'</strong><span>Échauffement de base</span></div>
           <div class="lex-item"><strong>2 — Étirements 2'</strong><span>Bras, Hanche, Jambes</span></div>
@@ -412,9 +418,7 @@
           <div class="lex-item"><strong>11 — Sprint souple</strong><span>2×30m</span></div>
         </div>
       </div>
-      <div style="font-size: 11px; color: var(--mut); padding: 8px; background: rgba(252, 76, 2, 0.05); border-radius: 7px; margin-top: 4px;">
-        💬 <strong style="color: var(--ora);">Note CoachDav :</strong> CB, CH et CE existent dans les deux communes — Élancourt (Cimetière) et Magny (Carrière). Le contexte du plan indique toujours la commune.
-      </div>
+
     </div>
   </div>
 

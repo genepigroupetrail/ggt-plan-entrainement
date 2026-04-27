@@ -453,6 +453,16 @@ textarea {
   color: #c8b870;
 }
 
+/* Badge utilisateur dans le header */
+.user-badge {
+  font-size: 13px;
+  color: var(--mut);
+  padding: 5px 10px;
+  background: var(--surf2);
+  border-radius: 8px;
+  border: 0.5px solid var(--brd);
+}
+
 /* GRILLE DE JOURS - Planning */
 .days-grid {
   display: grid;

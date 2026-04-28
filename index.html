@@ -217,7 +217,11 @@
         // Enregistrer la connexion avec l'email (simple!)
         const user = auth.currentUser;
         if (user) {
-          await logLogin(db, user.uid, user.email);
+          try {
+            await logLogin(db, user.uid, user.email);
+          } catch (logError) {
+            console.error('Erreur logLogin:', logError);
+          }
         }
         
         window.location.href = 'planning.html';

@@ -657,11 +657,11 @@ function showToast(msg,err) {
       }
       if(!users.length){div.innerHTML='<p style="color:var(--mut);font-size:13px;padding:20px 0">Aucun athlète n&apos;a encore rempli son suivi pour cette compétition.</p>';return;}
       
-      // Tri par plan (A, B, C) puis par nom
+      // Tri par distance (index: 0, 1, 2...) puis par nom
       users.sort((a,b)=>{
-        const planA=a.distLabel?.charAt(0)||'Z';
-        const planB=b.distLabel?.charAt(0)||'Z';
-        if(planA!==planB)return planA.localeCompare(planB);
+        const distA = a.dist !== null ? a.dist : 999;
+        const distB = b.dist !== null ? b.dist : 999;
+        if(distA !== distB) return distA - distB;
         return (a.prenom+' '+a.nom).localeCompare(b.prenom+' '+b.nom);
       });
       

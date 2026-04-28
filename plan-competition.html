@@ -656,6 +656,15 @@ function showToast(msg,err) {
         }catch(e){}
       }
       if(!users.length){div.innerHTML='<p style="color:var(--mut);font-size:13px;padding:20px 0">Aucun athlète n&apos;a encore rempli son suivi pour cette compétition.</p>';return;}
+      
+      // Tri par plan (A, B, C) puis par nom
+      users.sort((a,b)=>{
+        const planA=a.distLabel?.charAt(0)||'Z';
+        const planB=b.distLabel?.charAt(0)||'Z';
+        if(planA!==planB)return planA.localeCompare(planB);
+        return (a.prenom+' '+a.nom).localeCompare(b.prenom+' '+b.nom);
+      });
+      
       const weeks=currentComp.semaines||[];
       const startDate=new Date(currentComp.date_debut_iso||Date.now());
       let html='';

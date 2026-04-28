@@ -185,7 +185,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, showError, hideError, logLogin } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
@@ -214,13 +214,10 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         
-        // Récupérer le nom de l'utilisateur et enregistrer la connexion
+        // Enregistrer la connexion avec l'email (simple!)
         const user = auth.currentUser;
         if (user) {
-          const userSnap = await getDoc(doc(db, 'users', user.uid));
-          const userData = userSnap.exists() ? userSnap.data() : {};
-          const userName = [userData.prenom || '', userData.nom || ''].filter(Boolean).join(' ') || user.email;
-          await logLogin(db, user.uid, userName);
+          await logLogin(db, user.uid, user.email);
         }
         
         window.location.href = 'planning.html';

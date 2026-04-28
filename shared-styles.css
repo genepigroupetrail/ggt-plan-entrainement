@@ -292,7 +292,7 @@ header {
   background: var(--surf);
   border: 0.5px solid var(--brd);
   border-radius: 14px;
-  overflow: hidden;
+  overflow-x: auto;
   margin-bottom: 20px;
 }
 

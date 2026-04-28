@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GGT — Plans de compétition</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-styles.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0d0f14;--surf:#161a23;--surf2:#1e2330;--brd:rgba(255,255,255,.08);--txt:#e8eaf0;--mut:#7a8099;--acc:#4f8ef7;--ora:#fc4c02;--grn:#22c55e;--amb:#f59e0b;--red:#ef4444}
@@ -164,6 +165,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
   </div>
   <div class="header-right">
     <span class="user-badge" id="user-name">...</span>
+    <button class="btn-h" id="btn-back-to-list" onclick="backToList()" style="display:none">📋 Toutes les compétitions</button>
     <a href="planning.html" class="btn-h">← Planning</a>
     <a href="admin.html" class="btn-admin" id="btn-admin" style="display:none">⚙️ Admin</a>
     <button class="btn-h" onclick="logout()">Déconnexion</button>
@@ -223,16 +225,21 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
     </div>
     <div class="tpan" id="p-lex">
       <div style="padding:16px 0">
-        <div class="lex-section"><h3>🌍 Commun</h3><div class="lex-grid">
-          <div class="lex-item"><strong>TP</strong><span>Terrain Plat</span></div>
-          <div class="lex-item"><strong>TV</strong><span>Terrain Vallonné</span></div>
-          <div class="lex-item"><strong>S1</strong><span>75% VMA — allure marathon</span></div>
-          <div class="lex-item"><strong>S2</strong><span>85% VMA — allure 15km</span></div>
-          <div class="lex-item"><strong>EF</strong><span>Endurance Fondamentale</span></div>
-          <div class="lex-item"><strong>RAC</strong><span>Retour Au Calme</span></div>
-          <div class="lex-item"><strong>R</strong><span>Récupération active</span></div>
+        <div class="lex-section"><h3>🌍 Commun — toutes communes</h3><div class="lex-grid">
+          <div class="lex-item"><strong>TP</strong><span>Terrain Plat — sans dénivelé significatif</span></div>
+          <div class="lex-item"><strong>TV</strong><span>Terrain Vallonné — sentiers naturels avec dénivelé</span></div>
+          <div class="lex-item"><strong>S1</strong><span>Allure marathon — 75% VMA</span></div>
+          <div class="lex-item"><strong>S2</strong><span>Allure 15km compétition — 85% VMA</span></div>
+          <div class="lex-item"><strong>EF</strong><span>Endurance Fondamentale — footing allure libre</span></div>
+          <div class="lex-item"><strong>RAC</strong><span>Retour Au Calme — footing léger en fin de séance avant arrêt complet</span></div>
+          <div class="lex-item"><strong>R</strong><span>Récupération Active — repos actif entre répétitions</span></div>
           <div class="lex-item"><strong>VMA</strong><span>Vitesse Maximale Aérobie</span></div>
+          <div class="lex-item"><strong>FC</strong><span>Fréquence Cardiaque (pulsations par minute)</span></div>
+          <div class="lex-item"><strong>FCM</strong><span>Fréquence Cardiaque Maximale</span></div>
+          <div class="lex-item"><strong>%VMA</strong><span>Pourcentage de la VMA</span></div>
+          <div class="lex-item"><strong>%FCM</strong><span>Pourcentage de la FCM</span></div>
           <div class="lex-item"><strong>D+</strong><span>Dénivelé positif</span></div>
+          <div class="lex-item"><strong>D-</strong><span>Dénivelé négatif</span></div>
         </div></div>
         <div class="lex-section"><h3>📍 Élancourt</h3><div class="lex-grid">
           <div class="lex-item"><strong>CH</strong><span>Cimetière Haut — 120m</span></div>
@@ -258,18 +265,18 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
           <div class="lex-item"><strong>RP</strong><span>Rhodon escalier — 170m</span></div>
           <div class="lex-item"><strong>REE</strong><span>Rhodon complet — 600m</span></div>
         </div></div>
-        <div class="lex-section"><h3>🏃 Gammes</h3><div class="lex-grid">
-          <div class="lex-item"><strong>1</strong><span>Footing 20'</span></div>
-          <div class="lex-item"><strong>2</strong><span>Étirements 2'</span></div>
-          <div class="lex-item"><strong>3</strong><span>Ouverture hanche 2×10</span></div>
-          <div class="lex-item"><strong>4</strong><span>Extension hanche 2×10</span></div>
-          <div class="lex-item"><strong>5</strong><span>Talon fesse 2×30m</span></div>
-          <div class="lex-item"><strong>6</strong><span>Jambes tendues griffées 2×30m</span></div>
-          <div class="lex-item"><strong>7</strong><span>Montées genoux 2×30m</span></div>
-          <div class="lex-item"><strong>8</strong><span>Foulées bondissantes 2×30m</span></div>
-          <div class="lex-item"><strong>9</strong><span>Pas chassés 2×30m</span></div>
-          <div class="lex-item"><strong>10</strong><span>Étirement dynamique 2×10</span></div>
-          <div class="lex-item"><strong>11</strong><span>Sprint souple 2×30m</span></div>
+        <div class="lex-section"><h3>🏃 Gammes — échauffement GGT (environ 10 minutes)</h3><div class="lex-grid">
+          <div class="lex-item"><strong>1 — Footing 20'</strong><span>Échauffement de base</span></div>
+          <div class="lex-item"><strong>2 — Étirements 2'</strong><span>Bras, Hanche, Jambes</span></div>
+          <div class="lex-item"><strong>3 — Ouverture hanche</strong><span>2×10</span></div>
+          <div class="lex-item"><strong>4 — Extension hanche</strong><span>2×10</span></div>
+          <div class="lex-item"><strong>5 — Talon fesse</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>6 — Jambes tendues griffées</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>7 — Montées genoux</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>8 — Foulées bondissantes</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>9 — Pas chassés</strong><span>2×30m</span></div>
+          <div class="lex-item"><strong>10 — Étirement dynamique</strong><span>2×10</span></div>
+          <div class="lex-item"><strong>11 — Sprint souple</strong><span>2×30m</span></div>
         </div></div>
       </div>
     </div>
@@ -433,6 +440,7 @@ function showToast(msg,err) {
   window.selectComp = async function(compId) {
     document.getElementById('view-list').style.display='none';
     document.getElementById('view-detail').style.display='block';
+    document.getElementById('btn-back-to-list').style.display='inline-block';
     document.getElementById('p-plan').innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
     const snap=await getDoc(doc(db,'race_plans',compId));
     currentComp={id:compId,...snap.data()};
@@ -455,6 +463,7 @@ function showToast(msg,err) {
   window.backToList = function() {
     document.getElementById('view-list').style.display='block';
     document.getElementById('view-detail').style.display='none';
+    document.getElementById('btn-back-to-list').style.display='none';
     currentComp=null;currentDist=null;
   };
 

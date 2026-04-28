@@ -5,7 +5,8 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GGT — Administration</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-styles.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -239,6 +240,7 @@ textarea::placeholder{color:var(--mut)}
       </div>
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏃 Activités suivi</div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:12px"><em>Ces codes sont utilisés dans le suivi hebdomadaire des adhérents pour enregistrer leurs activités et performances.</em></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px">
           <div style="padding:8px 12px;border-radius:8px;background:rgba(34,197,94,0.20)"><span>🏃</span> <strong>Course / Trail</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
           <div style="padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.20)"><span>🚴</span> <strong>Vélo</strong><div style="font-size:10px;color:var(--mut)">km + D+ affichés</div></div>
@@ -256,7 +258,34 @@ textarea::placeholder{color:var(--mut)}
         </div>
       </div>
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔐 Règles Firestore</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏗️ Architecture du site</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;font-size:12px">
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">Frontend</div><div style="color:var(--mut);font-size:11px;margin-top:4px">HTML5 / CSS3 / JavaScript ES6<br/>Responsive (mobile + tablette + desktop)</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">Backend</div><div style="color:var(--mut);font-size:11px;margin-top:4px">Firebase Authentication<br/>Firebase Firestore (base de données)</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">Hosting</div><div style="color:var(--mut);font-size:11px;margin-top:4px">GitHub Pages<br/>Déploiement automatique</div></div>
+        </div>
+      </div>
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🗄️ Collections Firestore</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:12px">
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">plannings</div><div style="color:var(--mut);font-size:11px">Planning hebdomadaire — 1 doc par semaine (lundi à dimanche)</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">users</div><div style="color:var(--mut);font-size:11px">Utilisateurs (adhérents + admin) — rôle, prénom, nom</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">vma_data</div><div style="color:var(--mut);font-size:11px">Données personnelles VMA/FCM de chaque adhérent</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">race_plans</div><div style="color:var(--mut);font-size:11px">Plans de compétition (Trail des Tours, Barjo, etc.)</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--acc);font-weight:600">connexions</div><div style="color:var(--mut);font-size:11px">Log des connexions adhérents — auto-suppression après 6 mois</div></div>
+        </div>
+      </div>
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔧 Maintenance — Checklist régulière</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--mut)">
+          <div>✓ Vérifier les connexions admin (page Connexions) — supprimer les vieilles</div>
+          <div>✓ Mettre à jour le planning chaque semaine (lundi idéalement)</div>
+          <div>✓ Vérifier les règles Firestore après chaque changement d'architecture</div>
+          <div>✓ Sauvegarder/exporter les données de compétition avant chaque édition</div>
+          <div>✓ Tester sur mobile régulièrement (responsive design)</div>
+          <div>✓ Vérifier qu'il n'y a pas d'erreurs console (F12)</div>
+        </div>
+      </div>
         <div style="font-size:11px;color:var(--mut);margin-bottom:10px">À copier-coller dans Firebase → Firestore → Règles</div>
         <pre style="background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:14px;font-size:11px;color:#a8b0c8;overflow-x:auto;line-height:1.7">rules_version = '2';
 service cloud.firestore {
@@ -299,11 +328,17 @@ service cloud.firestore {
       </div>
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🔗 URLs et références</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;font-size:12px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;font-size:12px;margin-bottom:14px">
           <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Site GGT</div><a href="https://genepigroupetrail.github.io/ggt-plan-entrainement/" target="_blank" style="color:var(--acc)">genepigroupetrail.github.io/ggt-plan-entrainement/</a></div>
           <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase</div><a href="https://console.firebase.google.com/project/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">console.firebase.google.com</a></div>
-          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">GitHub</div><a href="https://github.com/genepigroupetrail/ggt-plan-entrainement" target="_blank" style="color:var(--acc)">github.com/genepigroupetrail/ggt-plan-entrainement</a></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">GitHub Repo</div><a href="https://github.com/genepigroupetrail/genepigroupetrail.github.io" target="_blank" style="color:var(--acc)">github.com/genepigroupetrail</a></div>
           <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Firebase Project ID</div><code style="color:var(--txt)">ggt-plan-entrainement</code></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--txt)">Documentation</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px">
+          <div>📖 <strong>README_DEPLOIEMENT.md</strong> — Guide complet pour les utilisateurs</div>
+          <div>🏗️ <strong>ARCHITECTURE.md</strong> — Architecture technique et bugs fixés</div>
+          <div>📝 <strong>CHECKLIST.md</strong> — Étapes de déploiement pas à pas</div>
         </div>
       </div>
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">

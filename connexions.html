@@ -224,7 +224,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { firebaseConfig, formatDateTime, getTodayUTC, showToast, getUserDisplayName } from "./shared-app.js";
+    import { firebaseConfig, formatDateTime, getTodayUTC, showToast, getUserDisplayName, logUserConnection } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -379,6 +379,7 @@
           return;
         }
         document.getElementById('user-name').textContent = getUserDisplayName(snap.data(), user.email);
+        await logUserConnection(db, user.uid, getUserDisplayName(snap.data(), user.email), 'Connexions');
         loadConnexions();
       } catch (error) {
         console.error(error);

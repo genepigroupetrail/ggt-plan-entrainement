@@ -211,40 +211,6 @@ export function getUserDisplayName(userData, userEmail) {
  * Enregistre une connexion utilisateur dans Firestore
  * IMPORTANT: Déduplication intégrée (une seule connexion par heure par page)
  */
-export async function logUserConnection(db, uid, userName, pageName) {
-  try {
-    const { collection, getDocs, query, where, addDoc, serverTimestamp, Timestamp } = await import(
-      'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
-    );
-    
-    // Vérifier s'il existe une connexion dans la dernière heure
-    const oneHourAgo = new Date();
-    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
-    const cutoff = Timestamp.fromDate(oneHourAgo);
-    
-    const q = query(
-      collection(db, 'connexions'),
-      where('uid', '==', uid),
-      where('page', '==', pageName),
-      where('ts', '>=', cutoff)
-    );
-    
-    const existing = await getDocs(q);
-    
-    // Si aucune connexion récente, enregistrer
-    if (existing.empty) {
-      await addDoc(collection(db, 'connexions'), {
-        uid: uid,
-        nom: userName,
-        page: pageName,
-        ts: serverTimestamp()
-      });
-    }
-  } catch (error) {
-    console.warn('Erreur lors de l\'enregistrement de la connexion:', error);
-    // Silencieux - ne pas bloquer l'app si la connexion échoue
-  }
-}
 
 // ============================================================
 // CONSTANTES RÉUTILISABLES
@@ -270,4 +236,18 @@ export const TYPES_SEANCES = {
  */
 export function getTypeSeance(type = 'repos') {
   return TYPES_SEANCES[type] || TYPES_SEANCES.autre;
+}
+
+// ── Enregistrer une connexion utilisateur ──
+// Simple: juste uid, nom, et date/heure
+export async function logLogin(db, uid, userName) {
+  const { collection, addDoc, serverTimestamp } = await import(
+    'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
+  );
+  
+  await addDoc(collection(db, 'connexions'), {
+    uid: uid,
+    nom: userName,
+    ts: serverTimestamp()
+  });
 }

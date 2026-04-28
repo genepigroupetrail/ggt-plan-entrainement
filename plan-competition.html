@@ -41,6 +41,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .detail-date{font-size:13px;color:var(--ora)}
 .dist-chooser{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
 .dist-chooser label{font-size:13px;color:var(--mut)}
+#dist-buttons{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .dbtn{padding:8px 20px;border-radius:10px;border:.5px solid var(--brd);background:var(--surf);color:var(--mut);cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;transition:all .2s}
 .dbtn:hover{border-color:var(--acc);color:var(--txt)}
 .dbtn.on{background:rgba(79,142,247,.15);border-color:var(--acc);color:var(--acc)}
@@ -182,7 +183,6 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
   <!-- Détail d'une compétition -->
   <div id="view-detail" style="display:none">
     <div class="detail-header">
-      <button class="btn-h" onclick="backToList()">← Toutes les compétitions</button>
       <div>
         <div class="detail-name" id="detail-name"></div>
         <div class="detail-date" id="detail-date"></div>

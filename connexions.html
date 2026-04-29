@@ -83,6 +83,13 @@
       margin-left: auto;
     }
 
+    .table-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
     .table-header {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -202,12 +209,14 @@
       <span class="count-badge" id="count-badge"></span>
     </div>
 
-    <div class="table-wrap">
-      <div class="table-header">
-        <div>Adhérent</div>
-        <div>Date &amp; heure</div>
+    <div class="table-container">
+      <div class="table-wrap">
+        <div class="table-header">
+          <div>Adhérent</div>
+          <div>Date &amp; heure</div>
+        </div>
+        <div id="table-body"><div class="loading"><div class="spin"></div> Chargement...</div></div>
       </div>
-      <div id="table-body"><div class="loading"><div class="spin"></div> Chargement...</div></div>
     </div>
   </div>
 
@@ -294,6 +303,7 @@
           return tb - ta;
         });
 
+        // Garder TOUTES les connexions (pas de déduplication)
         allConnexions = connexions;
 
         // Stats avec getTodayUTC pour éviter les problèmes timezone

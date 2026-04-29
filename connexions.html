@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="shared-styles.css">
   <style>
     .main {
-      max-width: 900px;
+      max-width: 1300px;
       margin: 0 auto;
       padding: 24px;
     }
@@ -31,7 +31,6 @@
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 12px;
       margin-bottom: 24px;
-      max-width: 100%;
     }
 
     .stat-card {
@@ -54,39 +53,10 @@
       margin-top: 2px;
     }
 
-    .filter-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-      max-width: 100%;
-    }
-
-    .filter-bar select {
-      background: var(--surf2);
-      border: 0.5px solid var(--brd);
-      border-radius: 8px;
-      padding: 7px 12px;
-      color: var(--txt);
-      font-family: var(--font-family);
-      font-size: 13px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .filter-bar select:focus {
-      border-color: var(--acc);
-    }
-
     .count-badge {
       font-size: 12px;
       color: var(--mut);
-      margin-left: auto;
-    }
-
-    .table-container {
-      margin-top: 16px;
+      margin: 16px 0;
     }
 
     .table-wrap {
@@ -136,31 +106,6 @@
       color: var(--mut);
     }
 
-    .page-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: var(--font-weight-medium);
-    }
-
-    .page-planning {
-      background: rgba(79, 142, 247, 0.15);
-      color: var(--acc);
-    }
-
-    .page-competition {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--amb);
-    }
-
-    .page-vma {
-      background: rgba(34, 197, 94, 0.15);
-      color: var(--grn);
-    }
-
     .empty {
       text-align: center;
       padding: 60px 20px;
@@ -171,6 +116,28 @@
       font-size: 40px;
       margin-bottom: 12px;
     }
+
+    .loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--mut);
+      font-size: 13px;
+    }
+
+    .spin {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--brd);
+      border-top: 2px solid var(--acc);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -179,7 +146,7 @@
       <img src="logo-ggt.png" alt="GGT">
       <div><h1>GGT Admin</h1><p>CoachDav</p></div>
     </div>
-    <div style="display: flex; gap: 8px; align-items: center;">
+    <div class="header-right">
       <span id="user-name" class="user-badge">...</span>
       <a href="admin.html" class="btn-h">← Admin</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>
@@ -188,9 +155,10 @@
 
   <div class="main">
     <div class="page-title">👥 Connexions des adhérents</div>
-    <div class="page-sub" id="period-label">6 derniers mois</div>
+    <div class="page-sub">6 derniers mois</div>
 
-    <div class="stats-bar" id="stats-bar">
+    <!-- STATS -->
+    <div class="stats-bar">
       <div class="stat-card">
         <div class="stat-val" id="stat-total">—</div>
         <div class="stat-label">Connexions totales</div>
@@ -209,141 +177,148 @@
       </div>
     </div>
 
-    <div class="filter-bar">
-      <select id="filter-user" style="display:none">
-        <option value="">Tous les adhérents</option>
-      </select>
-      <span class="count-badge" id="count-badge"></span>
-    </div>
+    <!-- COMPTEUR -->
+    <div class="count-badge" id="count-badge">—</div>
 
-    <div class="table-container">
-      <div class="table-wrap">
-        <div class="table-header">
-          <div>Adhérent</div>
-          <div>Date &amp; heure</div>
+    <!-- TABLEAU -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div>Adhérent</div>
+        <div>Date &amp; heure</div>
+      </div>
+      <div id="table-body">
+        <div class="loading">
+          <div class="spin"></div>
+          Chargement...
         </div>
-        <div id="table-body"><div class="loading"><div class="spin"></div> Chargement...</div></div>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, getDocs, query, where, orderBy, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { firebaseConfig, formatDateTime, getTodayUTC, showToast, getUserDisplayName } from "./shared-app.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig, formatDateTime, getTodayUTC, getUserDisplayName } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let allConnexions = [];
-    let redirecting = false;
-
-    window.applyFilter = function() {
-      const filterUser = document.getElementById('filter-user').value;
-      const filtered = allConnexions.filter(function(c) {
-        const matchUser = !filterUser || c.nom === filterUser;
-        return matchUser;
-      });
-      renderTable(filtered);
-      document.getElementById('count-badge').textContent = filtered.length + ' connexion(s)';
-    };
-
-    // Dictionnaire email → nom (on va le remplir depuis la collection users)
-    let emailToName = {};
-
-    function renderTable(connexions) {
-      const body = document.getElementById('table-body');
-      if (!connexions.length) {
-        body.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>Aucune connexion trouvée.</p></div>';
-        return;
-      }
-
-      let html = '';
-      connexions.forEach(function(c) {
-        // Pour l'instant: afficher juste l'email (simple!)
-        const displayName = c.nom || '—';
-        const safeNom = displayName.replace(/[&<>"']/g, char => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;',
-          '"': '&quot;', "'": '&#039;'
-        }[char]));
-
-        html += `<div class="table-row">
-          <div class="name">${safeNom}</div>
-          <div class="date">${formatDateTime(c.ts)}</div>
-        </div>`;
-      });
-      });
-      });
-      body.innerHTML = html;
-    }
+    // ==================== FONCTIONS ====================
 
     async function loadConnexions() {
       try {
-        // Supprimer les connexions de plus de 6 mois
+        console.log('Chargement des connexions...');
+
+        // 1. Charger TOUS les documents de la collection connexions
+        const snap = await getDocs(collection(db, 'connexions'));
+        const allDocs = [];
+        const toDelete = [];
+
+        // 2. Filtrer: garder les moins de 6 mois, supprimer les autres
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
         const cutoff = Timestamp.fromDate(sixMonthsAgo);
 
-        const snap = await getDocs(collection(db, 'connexions'));
-        const toDelete = [];
-        const connexions = [];
-
         snap.forEach(function(d) {
           const data = d.data();
-          if (data.ts && data.ts.toMillis && data.ts.toMillis() < cutoff.toMillis()) {
+          const timestamp = data.ts;
+          
+          if (timestamp && timestamp.toMillis && timestamp.toMillis() < cutoff.toMillis()) {
+            // Trop vieux → supprimer en arrière-plan
             toDelete.push(d.id);
           } else {
-            connexions.push(Object.assign({ id: d.id }, data));
+            // Garder
+            allDocs.push({
+              id: d.id,
+              uid: data.uid || '',
+              nom: data.nom || '—',
+              ts: timestamp
+            });
           }
         });
 
-        // Supprimer les anciennes en arrière-plan
-        if (toDelete.length) {
-          Promise.all(toDelete.map(function(id) {
-            return deleteDoc(doc(db, 'connexions', id));
-          })).then(function() {
-            console.log('Supprimé ' + toDelete.length + ' connexion(s) ancienne(s)');
-          });
-        }
+        console.log('Documents chargés:', allDocs.length);
 
-        // Trier par date décroissante
-        connexions.sort(function(a, b) {
+        // 3. Trier par date décroissante (plus récent en premier)
+        allDocs.sort(function(a, b) {
           const ta = a.ts && a.ts.toMillis ? a.ts.toMillis() : 0;
           const tb = b.ts && b.ts.toMillis ? b.ts.toMillis() : 0;
           return tb - ta;
         });
 
-        // Garder TOUTES les connexions (pas de déduplication)
-        allConnexions = connexions;
+        // 4. Supprimer les vieux documents en arrière-plan (sans bloquer)
+        if (toDelete.length > 0) {
+          toDelete.forEach(function(id) {
+            deleteDoc(doc(db, 'connexions', id)).catch(function(e) {
+              console.warn('Erreur suppression:', e);
+            });
+          });
+        }
 
-        // Stats avec getTodayUTC pour éviter les problèmes timezone
+        // 5. Calculer les stats
         const today = getTodayUTC();
-        const weekAgo = new Date();
+        const weekAgo = new Date(today);
         weekAgo.setDate(weekAgo.getDate() - 7);
 
-        const uniqueUsers = new Set(connexions.map(function(c) { return c.uid; })).size;
-        const todayCount = connexions.filter(function(c) {
+        const uniqueUsers = new Set(allDocs.map(function(c) { return c.uid; })).size;
+        const todayCount = allDocs.filter(function(c) {
           return c.ts && c.ts.toDate && c.ts.toDate() >= today;
         }).length;
-        const weekCount = connexions.filter(function(c) {
+        const weekCount = allDocs.filter(function(c) {
           return c.ts && c.ts.toDate && c.ts.toDate() >= weekAgo;
         }).length;
 
-        document.getElementById('stat-total').textContent = connexions.length;
+        // 6. Afficher les stats
+        document.getElementById('stat-total').textContent = allDocs.length;
         document.getElementById('stat-users').textContent = uniqueUsers;
         document.getElementById('stat-today').textContent = todayCount;
         document.getElementById('stat-week').textContent = weekCount;
+        document.getElementById('count-badge').textContent = allDocs.length + ' connexion(s)';
 
-        document.getElementById('count-badge').textContent = connexions.length + ' connexion(s)';
-        renderTable(connexions);
+        // 7. Afficher le tableau
+        renderTable(allDocs);
 
       } catch (error) {
-        document.getElementById('table-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Erreur : ' + error.message + '</p></div>';
+        console.error('Erreur loadConnexions:', error);
+        document.getElementById('table-body').innerHTML = 
+          '<div class="empty"><div class="empty-icon">⚠️</div><p>Erreur: ' + error.message + '</p></div>';
       }
+    }
+
+    function renderTable(connexions) {
+      const body = document.getElementById('table-body');
+
+      if (!connexions || connexions.length === 0) {
+        body.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>Aucune connexion.</p></div>';
+        return;
+      }
+
+      let html = '';
+      connexions.forEach(function(c) {
+        // Échapper le nom pour éviter les injections XSS
+        const displayName = (c.nom || '—').replace(/[&<>"']/g, function(char) {
+          const escaped = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+          };
+          return escaped[char];
+        });
+
+        // Formater la date
+        const dateStr = c.ts ? formatDateTime(c.ts) : '—';
+
+        html += `<div class="table-row">
+          <div class="name">${displayName}</div>
+          <div class="date">${dateStr}</div>
+        </div>`;
+      });
+
+      body.innerHTML = html;
     }
 
     window.logout = function() {
@@ -352,25 +327,32 @@
       });
     };
 
+    // ==================== INIT ====================
+
     onAuthStateChanged(auth, async function(user) {
-      if (redirecting) return;
       if (!user) {
-        redirecting = true;
         window.location.href = 'index.html';
         return;
       }
 
       try {
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        if (!snap.exists() || snap.data().role !== 'admin') {
-          redirecting = true;
+        // Vérifier que c'est un admin
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        if (!userSnap.exists() || userSnap.data().role !== 'admin') {
           window.location.href = 'planning.html';
           return;
         }
-        document.getElementById('user-name').textContent = getUserDisplayName(snap.data(), user.email);
-        loadConnexions();
+
+        // Afficher le nom
+        document.getElementById('user-name').textContent = getUserDisplayName(userSnap.data(), user.email);
+
+        // Charger les connexions
+        await loadConnexions();
+
       } catch (error) {
-        console.error(error);
+        console.error('Erreur auth:', error);
+        document.getElementById('table-body').innerHTML = 
+          '<div class="empty"><div class="empty-icon">⚠️</div><p>Erreur: ' + error.message + '</p></div>';
       }
     });
   </script>

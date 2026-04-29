@@ -26,11 +26,14 @@
       margin-bottom: 24px;
     }
 
-    .stats-bar {
+    .content-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin-bottom: 24px;
+    }
+
+    .stats-bar {
+      display: contents;
     }
 
     .stat-card {
@@ -56,7 +59,7 @@
     .count-badge {
       font-size: 12px;
       color: var(--mut);
-      margin: 16px 0;
+      margin: 16px 0 0 0;
     }
 
     .table-wrap {
@@ -65,6 +68,7 @@
       border-radius: 12px;
       overflow-x: auto;
       margin-bottom: 20px;
+      grid-column: 1 / -1;
     }
 
     .table-header {
@@ -157,42 +161,44 @@
     <div class="page-title">👥 Connexions des adhérents</div>
     <div class="page-sub">6 derniers mois</div>
 
-    <!-- STATS -->
-    <div class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-val" id="stat-total">—</div>
-        <div class="stat-label">Connexions totales</div>
+    <div class="content-grid">
+      <!-- STATS -->
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="stat-val" id="stat-total">—</div>
+          <div class="stat-label">Connexions totales</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-users">—</div>
+          <div class="stat-label">Adhérents actifs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-today">—</div>
+          <div class="stat-label">Aujourd'hui</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-week">—</div>
+          <div class="stat-label">Cette semaine</div>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-val" id="stat-users">—</div>
-        <div class="stat-label">Adhérents actifs</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="stat-today">—</div>
-        <div class="stat-label">Aujourd'hui</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="stat-week">—</div>
-        <div class="stat-label">Cette semaine</div>
-      </div>
-    </div>
 
-    <!-- COMPTEUR -->
-    <div class="count-badge" id="count-badge">—</div>
-
-    <!-- TABLEAU -->
-    <div class="table-wrap">
-      <div class="table-header">
-        <div>Adhérent</div>
-        <div>Date &amp; heure</div>
-      </div>
-      <div id="table-body">
-        <div class="loading">
-          <div class="spin"></div>
-          Chargement...
+      <!-- TABLEAU (s'étend sur les 4 colonnes) -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <div>Adhérent</div>
+          <div>Date &amp; heure</div>
+        </div>
+        <div id="table-body">
+          <div class="loading">
+            <div class="spin"></div>
+            Chargement...
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- COMPTEUR (en dehors du grid) -->
+    <div class="count-badge" id="count-badge">—</div>
   </div>
 
   <script type="module">

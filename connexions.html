@@ -295,30 +295,69 @@
         return;
       }
 
-      let html = '';
-      connexions.forEach(function(c) {
-        // Échapper le nom pour éviter les injections XSS
-        const displayName = (c.nom || '—').replace(/[&<>"']/g, function(char) {
-          const escaped = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-          };
-          return escaped[char];
+      // Charger les noms des utilisateurs
+      getDocs(collection(db, 'users')).then(function(usersSnap) {
+        const emailToName = {};
+        usersSnap.forEach(function(d) {
+          const data = d.data();
+          const email = data.email || d.id;
+          const prenom = data.prenom || '';
+          const nom = data.nom || '';
+          const displayName = [prenom, nom].filter(Boolean).join(' ') || email;
+          emailToName[email] = displayName;
         });
 
-        // Formater la date
-        const dateStr = c.ts ? formatDateTime(c.ts) : '—';
+        // Maintenant afficher avec les noms
+        let html = '';
+        connexions.forEach(function(c) {
+          // Traduire email en nom
+          const displayName = emailToName[c.nom] || c.nom;
+          
+          // Échapper le nom pour éviter les injections XSS
+          const safeName = displayName.replace(/[&<>"']/g, function(char) {
+            const escaped = {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#039;'
+            };
+            return escaped[char];
+          });
 
-        html += `<div class="table-row">
-          <div class="name">${displayName}</div>
-          <div class="date">${dateStr}</div>
-        </div>`;
+          // Formater la date
+          const dateStr = c.ts ? formatDateTime(c.ts) : '—';
+
+          html += `<div class="table-row">
+            <div class="name">${safeName}</div>
+            <div class="date">${dateStr}</div>
+          </div>`;
+        });
+
+        body.innerHTML = html;
+      }).catch(function(error) {
+        console.error('Erreur chargement utilisateurs:', error);
+        // Afficher juste les emails si ça échoue
+        let html = '';
+        connexions.forEach(function(c) {
+          const safeName = (c.nom || '—').replace(/[&<>"']/g, function(char) {
+            const escaped = {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#039;'
+            };
+            return escaped[char];
+          });
+          const dateStr = c.ts ? formatDateTime(c.ts) : '—';
+          html += `<div class="table-row">
+            <div class="name">${safeName}</div>
+            <div class="date">${dateStr}</div>
+          </div>`;
+        });
+        body.innerHTML = html;
       });
-
-      body.innerHTML = html;
     }
 
     window.logout = function() {

@@ -210,7 +210,7 @@
     </div>
 
     <div class="filter-bar">
-      <select id="filter-user" onchange="applyFilter()">
+      <select id="filter-user" style="display:none">
         <option value="">Tous les adhérents</option>
       </select>
       <span class="count-badge" id="count-badge"></span>
@@ -337,16 +337,6 @@
         document.getElementById('stat-users').textContent = uniqueUsers;
         document.getElementById('stat-today').textContent = todayCount;
         document.getElementById('stat-week').textContent = weekCount;
-
-        // Remplir le filtre adhérents
-        const names = [...new Set(connexions.map(function(c) { return c.nom; }).filter(Boolean))].sort();
-        const sel = document.getElementById('filter-user');
-        names.forEach(function(n) {
-          const opt = document.createElement('option');
-          opt.value = n;
-          opt.textContent = n;
-          sel.appendChild(opt);
-        });
 
         document.getElementById('count-badge').textContent = connexions.length + ' connexion(s)';
         renderTable(connexions);

@@ -30,6 +30,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
+      margin-bottom: 24px;
     }
 
     .stats-bar {
@@ -68,7 +69,6 @@
       border-radius: 12px;
       overflow-x: auto;
       margin-bottom: 20px;
-      grid-column: 1 / -1;
     }
 
     .table-header {
@@ -162,7 +162,7 @@
     <div class="page-sub">6 derniers mois</div>
 
     <div class="content-grid">
-      <!-- STATS -->
+      <!-- STATS (4 colonnes) -->
       <div class="stats-bar">
         <div class="stat-card">
           <div class="stat-val" id="stat-total">—</div>
@@ -181,23 +181,23 @@
           <div class="stat-label">Cette semaine</div>
         </div>
       </div>
+    </div>
 
-      <!-- TABLEAU (s'étend sur les 4 colonnes) -->
-      <div class="table-wrap">
-        <div class="table-header">
-          <div>Adhérent</div>
-          <div>Date &amp; heure</div>
-        </div>
-        <div id="table-body">
-          <div class="loading">
-            <div class="spin"></div>
-            Chargement...
-          </div>
+    <!-- TABLEAU (EN DEHORS du grid, largeur max comme stats) -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div>Adhérent</div>
+        <div>Date &amp; heure</div>
+      </div>
+      <div id="table-body">
+        <div class="loading">
+          <div class="spin"></div>
+          Chargement...
         </div>
       </div>
     </div>
 
-    <!-- COMPTEUR (en dehors du grid) -->
+    <!-- COMPTEUR -->
     <div class="count-badge" id="count-badge">—</div>
   </div>
 

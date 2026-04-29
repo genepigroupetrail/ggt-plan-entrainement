@@ -264,9 +264,9 @@
 
       let html = '';
       connexions.forEach(function(c) {
-        // Traduire email en nom prénom
-        const displayName = emailToName[c.nom] || c.nom;
-        const safeNom = (displayName || '—').replace(/[&<>"']/g, char => ({
+        // Pour l'instant: afficher juste l'email (simple!)
+        const displayName = c.nom || '—';
+        const safeNom = displayName.replace(/[&<>"']/g, char => ({
           '&': '&amp;', '<': '&lt;', '>': '&gt;',
           '"': '&quot;', "'": '&#039;'
         }[char]));
@@ -277,23 +277,12 @@
         </div>`;
       });
       });
+      });
       body.innerHTML = html;
     }
 
     async function loadConnexions() {
       try {
-        // Charger les noms depuis collection users
-        const usersSnap = await getDocs(collection(db, 'users'));
-        emailToName = {};
-        usersSnap.forEach(function(d) {
-          const data = d.data();
-          const email = data.email || d.id;
-          const prenom = data.prenom || '';
-          const nom = data.nom || '';
-          const displayName = [prenom, nom].filter(Boolean).join(' ') || email;
-          emailToName[email] = displayName;
-        });
-
         // Supprimer les connexions de plus de 6 mois
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);

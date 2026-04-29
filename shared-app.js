@@ -241,13 +241,22 @@ export function getTypeSeance(type = 'repos') {
 // ── Enregistrer une connexion utilisateur ──
 // Simple: juste uid, nom, et date/heure
 export async function logLogin(db, uid, userName) {
-  const { collection, addDoc, serverTimestamp } = await import(
-    'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
-  );
-  
-  await addDoc(collection(db, 'connexions'), {
-    uid: uid,
-    nom: userName,
-    ts: serverTimestamp()
-  });
+  try {
+    const { collection, addDoc, serverTimestamp } = await import(
+      'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
+    );
+    
+    console.log('logLogin appelé:', uid, userName);
+    
+    const result = await addDoc(collection(db, 'connexions'), {
+      uid: uid,
+      nom: userName,
+      ts: serverTimestamp()
+    });
+    
+    console.log('Connexion enregistrée:', result.id);
+  } catch (error) {
+    console.error('Erreur logLogin:', error);
+    throw error;
+  }
 }

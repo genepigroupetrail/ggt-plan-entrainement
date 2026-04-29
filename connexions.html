@@ -199,12 +199,6 @@
       <select id="filter-user" onchange="applyFilter()">
         <option value="">Tous les adhérents</option>
       </select>
-      <select id="filter-page" onchange="applyFilter()">
-        <option value="">Toutes les pages</option>
-        <option value="Planning">Planning</option>
-        <option value="Plan compétition">Plan compétition</option>
-        <option value="VMA/FCM">VMA/FCM</option>
-      </select>
       <span class="count-badge" id="count-badge"></span>
     </div>
 
@@ -212,7 +206,6 @@
       <div class="table-header">
         <div>Adhérent</div>
         <div>Date &amp; heure</div>
-        <div>Page</div>
       </div>
       <div id="table-body"><div class="loading"><div class="spin"></div> Chargement...</div></div>
     </div>
@@ -233,22 +226,11 @@
     let allConnexions = [];
     let redirecting = false;
 
-    // Fonction pour déterminer le type de page et son style (traduction: determine page type and its style)
-    function getPageInfo(page) {
-      if (!page) return { badge: '', emoji: '📄' };
-      if (page.toLowerCase().includes('planning')) return { badge: 'page-planning', emoji: '📅' };
-      if (page.toLowerCase().includes('comp')) return { badge: 'page-competition', emoji: '🏅' };
-      if (page.toLowerCase().includes('vma')) return { badge: 'page-vma', emoji: '⚡' };
-      return { badge: '', emoji: '📄' };
-    }
-
     window.applyFilter = function() {
       const filterUser = document.getElementById('filter-user').value;
-      const filterPage = document.getElementById('filter-page').value;
       const filtered = allConnexions.filter(function(c) {
         const matchUser = !filterUser || c.nom === filterUser;
-        const matchPage = !filterPage || (c.page && c.page.includes(filterPage));
-        return matchUser && matchPage;
+        return matchUser;
       });
       renderTable(filtered);
       document.getElementById('count-badge').textContent = filtered.length + ' connexion(s)';
@@ -263,13 +245,7 @@
 
       let html = '';
       connexions.forEach(function(c) {
-        const pageInfo = getPageInfo(c.page);
-        const badgeClass = pageInfo.badge ? ` ${pageInfo.badge}` : '';
         const safeNom = (c.nom || '—').replace(/[&<>"']/g, char => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;',
-          '"': '&quot;', "'": '&#039;'
-        }[char]));
-        const safePage = (c.page || '—').replace(/[&<>"']/g, char => ({
           '&': '&amp;', '<': '&lt;', '>': '&gt;',
           '"': '&quot;', "'": '&#039;'
         }[char]));
@@ -277,7 +253,6 @@
         html += `<div class="table-row">
           <div class="name">${safeNom}</div>
           <div class="date">${formatDateTime(c.ts)}</div>
-          <div><span class="page-badge${badgeClass}">${pageInfo.emoji} ${safePage}</span></div>
         </div>`;
       });
       body.innerHTML = html;

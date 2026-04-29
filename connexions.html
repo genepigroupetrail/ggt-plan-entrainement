@@ -31,6 +31,7 @@
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 12px;
       margin-bottom: 24px;
+      max-width: 100%;
     }
 
     .stat-card {
@@ -59,6 +60,7 @@
       gap: 10px;
       margin-bottom: 16px;
       flex-wrap: wrap;
+      max-width: 100%;
     }
 
     .filter-bar select {
@@ -84,9 +86,6 @@
     }
 
     .table-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
       margin-top: 16px;
     }
 
@@ -96,7 +95,6 @@
       border-radius: 12px;
       overflow-x: auto;
       margin-bottom: 20px;
-      grid-column: 1 / -1;
     }
 
     .table-header {
@@ -254,6 +252,9 @@
       document.getElementById('count-badge').textContent = filtered.length + ' connexion(s)';
     };
 
+    // Dictionnaire email → nom (on va le remplir depuis la collection users)
+    let emailToName = {};
+
     function renderTable(connexions) {
       const body = document.getElementById('table-body');
       if (!connexions.length) {
@@ -263,7 +264,9 @@
 
       let html = '';
       connexions.forEach(function(c) {
-        const safeNom = (c.nom || '—').replace(/[&<>"']/g, char => ({
+        // Traduire email en nom prénom
+        const displayName = emailToName[c.nom] || c.nom;
+        const safeNom = (displayName || '—').replace(/[&<>"']/g, char => ({
           '&': '&amp;', '<': '&lt;', '>': '&gt;',
           '"': '&quot;', "'": '&#039;'
         }[char]));
@@ -273,11 +276,24 @@
           <div class="date">${formatDateTime(c.ts)}</div>
         </div>`;
       });
+      });
       body.innerHTML = html;
     }
 
     async function loadConnexions() {
       try {
+        // Charger les noms depuis collection users
+        const usersSnap = await getDocs(collection(db, 'users'));
+        emailToName = {};
+        usersSnap.forEach(function(d) {
+          const data = d.data();
+          const email = data.email || d.id;
+          const prenom = data.prenom || '';
+          const nom = data.nom || '';
+          const displayName = [prenom, nom].filter(Boolean).join(' ') || email;
+          emailToName[email] = displayName;
+        });
+
         // Supprimer les connexions de plus de 6 mois
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);

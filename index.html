@@ -185,7 +185,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, showError, hideError, logLogin } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
@@ -214,11 +214,21 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         
-        // Enregistrer la connexion avec l'email (simple!)
+        // Récupérer le nom prénom de l'utilisateur et enregistrer la connexion
         const user = auth.currentUser;
         if (user) {
           try {
-            await logLogin(db, user.uid, user.email);
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            let userName = user.email; // Défaut: email
+            if (userDoc.exists()) {
+              const data = userDoc.data();
+              const prenom = data.prenom || '';
+              const nom = data.nom || '';
+              if (prenom || nom) {
+                userName = [prenom, nom].filter(Boolean).join(' ');
+              }
+            }
+            await logLogin(db, user.uid, userName);
           } catch (logError) {
             console.error('Erreur logLogin:', logError);
           }

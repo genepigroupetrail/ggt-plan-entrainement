@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Gestion Adhérents</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .btn-create {
+      background: var(--ora);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-create:hover {
+      opacity: 0.9;
+    }
+
+    .search-bar {
+      margin-bottom: 16px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      max-width: 300px;
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--txt);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--acc);
+    }
+
+    .search-bar input::placeholder {
+      color: var(--mut);
+    }
+
+    .adherents-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .adherent-card {
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .adherent-card:hover {
+      border-color: var(--acc);
+    }
+
+    .adherent-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .adherent-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--txt);
+    }
+
+    .adherent-email {
+      font-size: 12px;
+      color: var(--mut);
+    }
+
+    .adherent-status {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      width: fit-content;
+      margin-top: 2px;
+    }
+
+    .status-actif {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--grn);
+    }
+
+    .status-suspendu {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--amb);
+    }
+
+    .adherent-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-modifier {
+      background: var(--acc);
+      color: #fff;
+    }
+
+    .btn-modifier:hover {
+      opacity: 0.9;
+    }
+
+    .btn-suspendre {
+      background: var(--amb);
+      color: #000;
+    }
+
+    .btn-suspendre:hover {
+      opacity: 0.9;
+    }
+
+    .btn-reactiver {
+      background: var(--grn);
+      color: #fff;
+    }
+
+    .btn-reactiver:hover {
+      opacity: 0.9;
+    }
+
+    .btn-supprimer {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-supprimer:hover {
+      opacity: 0.9;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--mut);
+    }
+
+    .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      color: var(--mut);
+      gap: 10px;
+    }
+
+    .spin {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--brd);
+      border-top-color: var(--acc);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surf2);
+      border: 0.5px solid rgba(34, 197, 94, 0.4);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: var(--grn);
+      transition: transform 0.3s;
+      z-index: 300;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      border-color: rgba(224, 0, 32, 0.4);
+      color: #ff6b6b;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surf);
+      border: 0.5px solid var(--brd);
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--mut);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: var(--surf2);
+      border: 0.5px solid var(--brd);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--txt);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--acc);
+    }
+
+    .form-group input::placeholder {
+      color: var(--mut);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .adherent-card {
+        grid-template-columns: 1fr;
+      }
+
+      .adherent-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: var(--surf2);
+      border: 0.5px solid var(--brd);
+      color: var(--txt);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .btn-cancel:hover {
+      border-color: var(--acc);
+    }
+
+    .btn-confirm {
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: var(--ora);
+      border: none;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-confirm:hover {
+      opacity: 0.9;
+    }
+
+    .btn-confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>GGT Admin</h1><p>CoachDav</p></div>
+    </div>
+    <div class="header-right">
+      <span id="user-name" class="user-badge">...</span>
+      <a href="admin.html" class="btn-h">← Admin</a>
+      <button class="btn-h" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="page-header">
+      <h1 class="page-title">👥 Gestion des adhérents</h1>
+      <button class="btn-create" onclick="openCreateModal()">+ Créer adhérent</button>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Rechercher par nom ou email..." onkeyup="filterAdherents()">
+    </div>
+
+    <div id="list-container">
+      <div class="loading">
+        <div class="spin"></div>
+        Chargement...
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Créer/Modifier -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModalIfOverlay(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2 class="modal-title" id="modal-title">Créer un adhérent</h2>
+
+      <div class="form-group">
+        <label>Prénom *</label>
+        <input type="text" id="field-prenom" placeholder="Jean">
+      </div>
+
+      <div class="form-group">
+        <label>Nom *</label>
+        <input type="text" id="field-nom" placeholder="Dupont">
+      </div>
+
+      <div class="form-group">
+        <label>Email (identifiant) *</label>
+        <input type="email" id="field-email" placeholder="jean.dupont@example.com">
+      </div>
+
+      <div class="form-group">
+        <label>Date de naissance</label>
+        <input type="date" id="field-dob">
+      </div>
+
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" id="field-tel" placeholder="06 12 34 56 78">
+      </div>
+
+      <div class="form-group">
+        <label>Adresse</label>
+        <input type="text" id="field-adresse" placeholder="123 rue de la Paix, 75000 Paris">
+      </div>
+
+      <div class="form-group">
+        <label>Rôle *</label>
+        <select id="field-role">
+          <option value="adhérent">Adhérent</option>
+          <option value="adhérentadmin">Adhérent Admin</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="pwd-group" style="display: none;">
+        <label>Mot de passe par défaut</label>
+        <input type="text" id="field-pwd" value="Génèpi" disabled>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+        <button class="btn-confirm" id="btn-confirm" onclick="saveAdherent()">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig, getUserDisplayName } from "./shared-app.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let allAdherents = [];
+    let currentEditId = null;
+
+    // ==================== AUTH ====================
+
+    onAuthStateChanged(auth, async function(user) {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      try {
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        if (!userSnap.exists()) {
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const data = userSnap.data();
+        if (!['admin', 'adhérentadmin'].includes(data.role)) {
+          window.location.href = 'planning.html';
+          return;
+        }
+
+        document.getElementById('user-name').textContent = getUserDisplayName(data, user.email);
+        await loadAdherents();
+
+      } catch (error) {
+        console.error('Erreur:', error);
+        showToast('Erreur de chargement', 'error');
+      }
+    });
+
+    // ==================== FONCTIONS ====================
+
+    window.logout = function() {
+      signOut(auth).then(() => {
+        window.location.href = 'index.html';
+      });
+    };
+
+    async function loadAdherents() {
+      try {
+        const snap = await getDocs(collection(db, 'users'));
+        allAdherents = [];
+        snap.forEach(d => {
+          allAdherents.push({
+            uid: d.id,
+            ...d.data()
+          });
+        });
+
+        // Trier par Nom
+        allAdherents.sort((a, b) => {
+          const nomA = (a.nom || '').toUpperCase();
+          const nomB = (b.nom || '').toUpperCase();
+          return nomA.localeCompare(nomB);
+        });
+
+        renderAdherents(allAdherents);
+      } catch (error) {
+        console.error('Erreur loadAdherents:', error);
+        showToast('Erreur de chargement', 'error');
+      }
+    }
+
+    function renderAdherents(adherents) {
+      const container = document.getElementById('list-container');
+
+      if (adherents.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div><p>Aucun adhérent</p></div>';
+        return;
+      }
+
+      let html = '<div class="adherents-list">';
+      adherents.forEach(a => {
+        const status = a.status === 'suspendu' ? 'Suspendu' : 'Actif';
+        const statusClass = a.status === 'suspendu' ? 'status-suspendu' : 'status-actif';
+        const btnSuspendre = a.status === 'actif'
+          ? `<button class="btn-action btn-suspendre" onclick="toggleSuspend('${a.uid}', 'suspendu')">⏸ Suspendre</button>`
+          : `<button class="btn-action btn-reactiver" onclick="toggleSuspend('${a.uid}', 'actif')">✓ Réactiver</button>`;
+
+        html += `
+          <div class="adherent-card">
+            <div class="adherent-info">
+              <div class="adherent-name">${(a.prenom || '')} ${(a.nom || '')}</div>
+              <div class="adherent-email">${a.email || '—'}</div>
+              <div class="adherent-status ${statusClass}">${status}</div>
+            </div>
+            <div class="adherent-actions">
+              <button class="btn-action btn-modifier" onclick="openEditModal('${a.uid}')">✏️ Modifier</button>
+              ${btnSuspendre}
+              <button class="btn-action btn-supprimer" onclick="confirmDelete('${a.uid}')">🗑️ Supprimer</button>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      container.innerHTML = html;
+    }
+
+    window.filterAdherents = function() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const filtered = allAdherents.filter(a => {
+        const nom = (a.nom || '').toLowerCase();
+        const prenom = (a.prenom || '').toLowerCase();
+        const email = (a.email || '').toLowerCase();
+        return nom.includes(query) || prenom.includes(query) || email.includes(query);
+      });
+      renderAdherents(filtered);
+    };
+
+    window.openCreateModal = function() {
+      currentEditId = null;
+      document.getElementById('modal-title').textContent = 'Créer un adhérent';
+      document.getElementById('field-prenom').value = '';
+      document.getElementById('field-nom').value = '';
+      document.getElementById('field-email').value = '';
+      document.getElementById('field-dob').value = '';
+      document.getElementById('field-tel').value = '';
+      document.getElementById('field-adresse').value = '';
+      document.getElementById('field-role').value = 'adhérent';
+      document.getElementById('pwd-group').style.display = 'block';
+      document.getElementById('btn-confirm').textContent = 'Créer';
+      document.getElementById('modal-overlay').classList.add('show');
+    };
+
+    window.openEditModal = async function(uid) {
+      try {
+        const snap = await getDoc(doc(db, 'users', uid));
+        if (!snap.exists()) return;
+
+        currentEditId = uid;
+        const data = snap.data();
+        document.getElementById('modal-title').textContent = 'Modifier adhérent';
+        document.getElementById('field-prenom').value = data.prenom || '';
+        document.getElementById('field-nom').value = data.nom || '';
+        document.getElementById('field-email').value = data.email || '';
+        document.getElementById('field-dob').value = data.dob || '';
+        document.getElementById('field-tel').value = data.tel || '';
+        document.getElementById('field-adresse').value = data.adresse || '';
+        document.getElementById('field-role').value = data.role || 'adhérent';
+        document.getElementById('pwd-group').style.display = 'none';
+        document.getElementById('btn-confirm').textContent = 'Modifier';
+        document.getElementById('modal-overlay').classList.add('show');
+      } catch (error) {
+        console.error('Erreur:', error);
+        showToast('Erreur de chargement', 'error');
+      }
+    };
+
+    window.closeModal = function() {
+      document.getElementById('modal-overlay').classList.remove('show');
+      currentEditId = null;
+    };
+
+    window.closeModalIfOverlay = function(event) {
+      if (event.target.id === 'modal-overlay') {
+        closeModal();
+      }
+    };
+
+    window.saveAdherent = async function() {
+      const prenom = document.getElementById('field-prenom').value.trim();
+      const nom = document.getElementById('field-nom').value.trim();
+      const email = document.getElementById('field-email').value.trim();
+      const dob = document.getElementById('field-dob').value;
+      const tel = document.getElementById('field-tel').value.trim();
+      const adresse = document.getElementById('field-adresse').value.trim();
+      const role = document.getElementById('field-role').value;
+
+      if (!prenom || !nom || !email) {
+        showToast('Veuillez remplir Prénom, Nom et Email', 'error');
+        return;
+      }
+
+      try {
+        if (currentEditId) {
+          // Modifier
+          await updateDoc(doc(db, 'users', currentEditId), {
+            prenom, nom, dob, tel, adresse, role
+          });
+          showToast('Adhérent modifié avec succès');
+        } else {
+          // Créer (TODO: appeler Cloud Function ou backend)
+          showToast('Création non implémentée pour l\'instant', 'error');
+          return;
+        }
+
+        closeModal();
+        await loadAdherents();
+      } catch (error) {
+        console.error('Erreur:', error);
+        showToast(error.message, 'error');
+      }
+    };
+
+    window.toggleSuspend = async function(uid, newStatus) {
+      try {
+        await updateDoc(doc(db, 'users', uid), { status: newStatus });
+        showToast(newStatus === 'suspendu' ? 'Adhérent suspendu' : 'Adhérent réactivé');
+        await loadAdherents();
+      } catch (error) {
+        console.error('Erreur:', error);
+        showToast('Erreur', 'error');
+      }
+    };
+
+    window.confirmDelete = function(uid) {
+      if (confirm('Êtes-vous sûr? Cette action est irréversible!')) {
+        deleteAdherent(uid);
+      }
+    };
+
+    async function deleteAdherent(uid) {
+      try {
+        await deleteDoc(doc(db, 'users', uid));
+        showToast('Adhérent supprimé');
+        await loadAdherents();
+      } catch (error) {
+        console.error('Erreur:', error);
+        showToast('Erreur', 'error');
+      }
+    }
+
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = `toast show ${type === 'error' ? 'error' : ''}`;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>

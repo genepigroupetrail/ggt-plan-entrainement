@@ -214,17 +214,19 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         
-        // Enregistrer la connexion (simple!)
+        // Enregistrer la connexion et ATTENDRE que ce soit fini
         const user = auth.currentUser;
         if (user) {
           try {
             await logLogin(db, user.uid, user.email);
+            console.log('Connexion enregistrée, redirection...');
           } catch (logError) {
             console.error('Erreur logLogin:', logError);
             // Ne pas bloquer la redirection même si logLogin échoue
           }
         }
         
+        // PUIS rediriger
         window.location.href = 'planning.html';
       } catch (error) {
         document.getElementById('loading').classList.remove('show');

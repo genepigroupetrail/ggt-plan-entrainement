@@ -214,26 +214,31 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         
-        // Enregistrer la connexion et VRAIMENT ATTENDRE
+        // Vérifier que db existe
+        console.log('db:', db);
+        
+        // Enregistrer la connexion
         const user = auth.currentUser;
-        if (user) {
+        console.log('user:', user?.email);
+        
+        if (user && db) {
           try {
             const { collection, addDoc, serverTimestamp } = await import(
               'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
             );
+            console.log('addDoc:', addDoc);
+            
             const result = await addDoc(collection(db, 'connexions'), {
               uid: user.uid,
               nom: user.email,
               ts: serverTimestamp()
             });
-            // Vérifier que c'est bien enregistré
-            console.log('✅ Connexion enregistrée avec ID:', result.id);
+            console.log('✅ ID:', result.id);
           } catch (e) {
-            console.error('❌ Erreur enregistrement:', e);
+            console.error('❌ ERREUR:', e.message, e);
           }
         }
         
-        // PUIS rediriger
         window.location.href = 'planning.html';
       } catch (error) {
         document.getElementById('loading').classList.remove('show');

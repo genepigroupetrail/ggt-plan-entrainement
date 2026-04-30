@@ -214,29 +214,19 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         
-        // Vérifier que db existe
-        console.log('db:', db);
-        
-        // Enregistrer la connexion
         const user = auth.currentUser;
-        console.log('user:', user?.email);
-        
         if (user && db) {
-          try {
-            const { collection, addDoc, serverTimestamp } = await import(
-              'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
-            );
-            console.log('addDoc:', addDoc);
-            
-            const result = await addDoc(collection(db, 'connexions'), {
-              uid: user.uid,
-              nom: user.email,
-              ts: serverTimestamp()
-            });
-            console.log('✅ ID:', result.id);
-          } catch (e) {
-            console.error('❌ ERREUR:', e.message, e);
-          }
+          const { collection, addDoc, serverTimestamp } = await import(
+            'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
+          );
+          
+          // PAS DE TRY/CATCH - voir l'erreur réelle!
+          const result = await addDoc(collection(db, 'connexions'), {
+            uid: user.uid,
+            nom: user.email,
+            ts: serverTimestamp()
+          });
+          console.log('✅ Connexion enregistrée! ID:', result.id);
         }
         
         window.location.href = 'planning.html';

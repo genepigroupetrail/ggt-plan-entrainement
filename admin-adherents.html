@@ -467,7 +467,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, getUserDisplayName } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
@@ -659,9 +659,40 @@
           });
           showToast('Adhérent modifié avec succès');
         } else {
-          // Créer (TODO: appeler Cloud Function ou backend)
-          showToast('Création non implémentée pour l\'instant', 'error');
-          return;
+          // Créer: appeler Firebase Auth API
+          const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + firebaseConfig.apiKey, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: email,
+              password: 'Génèpi',
+              returnSecureToken: true
+            })
+          });
+
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error?.message || 'Erreur création compte');
+          }
+
+          const authData = await res.json();
+          const uid = authData.localId;
+
+          // Créer document Firestore
+          await setDoc(doc(db, 'users', uid), {
+            uid: uid,
+            email: email,
+            prenom: prenom,
+            nom: nom,
+            dob: dob,
+            tel: tel,
+            adresse: adresse,
+            role: role,
+            status: 'actif',
+            createdAt: serverTimestamp()
+          });
+
+          showToast('Adhérent créé avec succès!');
         }
 
         closeModal();

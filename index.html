@@ -220,14 +220,20 @@
             'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
           );
           
-          // PAS DE TRY/CATCH - voir l'erreur réelle!
-          const result = await addDoc(collection(db, 'connexions'), {
-            uid: user.uid,
-            nom: user.email,
-            ts: serverTimestamp()
-          });
-          console.log('✅ Connexion enregistrée! ID:', result.id);
+          try {
+            const result = await addDoc(collection(db, 'connexions'), {
+              uid: user.uid,
+              nom: user.email,
+              ts: serverTimestamp()
+            });
+            console.log('✅ Enregistré:', result.id);
+          } catch (e) {
+            console.error('❌ Erreur:', e.message);
+          }
         }
+        
+        // ATTENDRE 2 secondes pour que Firebase finisse
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
         window.location.href = 'planning.html';
       } catch (error) {

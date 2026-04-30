@@ -183,10 +183,14 @@
   </div>
 
   <script type="module">
+    console.log('🔵 Script index.html démarré!');
+    
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, showError, hideError, logLogin } from "./shared-app.js";
+    
+    console.log('🟢 Imports OK!');
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -212,21 +216,26 @@
       document.getElementById('loading').classList.add('show');
 
       try {
+        console.log('🟡 Tentative de connexion...');
         await signInWithEmailAndPassword(auth, email, password);
+        console.log('🟢 Connexion réussie!');
         
         // Enregistrer la connexion et ATTENDRE que ce soit fini
         const user = auth.currentUser;
+        console.log('👤 User:', user?.email);
         if (user) {
           try {
+            console.log('📝 Appel logLogin...');
             await logLogin(db, user.uid, user.email);
-            console.log('Connexion enregistrée, redirection...');
+            console.log('✅ Connexion enregistrée!');
           } catch (logError) {
-            console.error('Erreur logLogin:', logError);
+            console.error('❌ Erreur logLogin:', logError);
             // Ne pas bloquer la redirection même si logLogin échoue
           }
         }
         
         // PUIS rediriger
+        console.log('🔄 Redirection vers planning.html...');
         window.location.href = 'planning.html';
       } catch (error) {
         document.getElementById('loading').classList.remove('show');

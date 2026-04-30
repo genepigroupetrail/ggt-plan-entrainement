@@ -116,6 +116,21 @@ textarea::placeholder{color:var(--mut)}
 .loading{display:flex;align-items:center;justify-content:center;min-height:120px;color:var(--mut);font-size:14px;gap:10px}
 .spin{width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.adh-card{background:var(--surf);border:.5px solid var(--brd);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;margin-bottom:10px;transition:border-color .2s}
+.adh-card:hover{border-color:var(--acc)}
+.adh-info{display:flex;flex-direction:column;gap:4px}
+.adh-name{font-size:14px;font-weight:600;color:var(--txt)}
+.adh-email{font-size:12px;color:var(--mut)}
+.adh-status{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;width:fit-content;margin-top:2px}
+.adh-status-actif{background:rgba(34,197,94,.15);color:var(--grn)}
+.adh-status-suspendu{background:rgba(245,158,11,.15);color:var(--amb)}
+.adh-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-adh{padding:6px 12px;border-radius:6px;border:none;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.btn-adh-edit{background:var(--acc);color:#fff}
+.btn-adh-suspend{background:var(--amb);color:#000}
+.btn-adh-reactivate{background:var(--grn);color:#fff}
+.btn-adh-delete{background:var(--red);color:#fff}
+
 </style>
 </head>
 <body>
@@ -136,6 +151,7 @@ textarea::placeholder{color:var(--mut)}
   <div class="main-tabs">
     <button class="main-tab on" id="tab-planning-btn" onclick="switchMain('planning')">📅 Planning hebdo</button>
     <button class="main-tab" id="tab-comp-btn" onclick="switchMain('comp')">🏅 Plans de compétition</button>
+    <button class="main-tab" id="tab-adherents-btn" onclick="switchMain('adherents')">👥 Adhérents</button>
     <button class="main-tab" id="tab-export-btn" onclick="switchMain('export')">📥 Export Excel</button>
     <button class="main-tab" id="tab-lexique-btn" onclick="switchMain('lexique')">📖 Lexique du site</button>
   </div>
@@ -194,6 +210,76 @@ textarea::placeholder{color:var(--mut)}
         <div class="upload-hint">ou clique pour sélectionner · Format GGT_Template_Plan_Course.xlsx</div>
       </div>
       <div id="preview-area" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ADHERENTS -->
+  <div class="tab-section" id="tab-adherents">
+    <div style="display:flex;border-bottom:.5px solid var(--brd);margin-bottom:16px;gap:10px;flex-wrap:wrap">
+      <button class="main-tab on" id="subt-adh-list-btn" onclick="switchSub('adh-list')">📋 Liste des adhérents</button>
+      <button class="main-tab" id="subt-adh-new-btn" onclick="switchSub('adh-new')">➕ Créer adhérent</button>
+    </div>
+
+    <!-- Sous-onglet: Liste -->
+    <div class="tab-section on" id="subt-adh-list">
+      <input type="text" id="adh-search" placeholder="Rechercher par nom ou email..." style="width:100%;max-width:300px;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none;margin-bottom:16px">
+      <div id="adh-list-container"><div class="loading"><div class="spin"></div> Chargement...</div></div>
+    </div>
+
+    <!-- Sous-onglet: Créer -->
+    <div class="tab-section" id="subt-adh-new">
+      <div style="max-width:600px">
+        <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px;margin-bottom:20px">
+          <div style="font-size:14px;font-weight:600;margin-bottom:16px">Créer un nouvel adhérent</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Prénom *</label>
+              <input type="text" id="new-adh-prenom" placeholder="Jean" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Nom *</label>
+              <input type="text" id="new-adh-nom" placeholder="Dupont" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Email (identifiant) *</label>
+            <input type="email" id="new-adh-email" placeholder="jean.dupont@example.com" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Date de naissance</label>
+              <input type="date" id="new-adh-dob" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Téléphone</label>
+              <input type="tel" id="new-adh-tel" placeholder="06 12 34 56 78" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Adresse</label>
+            <input type="text" id="new-adh-adresse" placeholder="123 rue de la Paix, 75000 Paris" style="width:100%;background:var(--surf2);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none">
+          </div>
+
+          <div style="margin-bottom:24px">
+            <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px">Rôle *</label>
+            <select id="new-adh-role" style="width:100%;background:var(--bg);border:.5px solid var(--brd);border-radius:8px;padding:9px 12px;color:var(--txt);font-family:'Outfit',sans-serif;font-size:13px;outline:none;cursor:pointer">
+              <option value="adhérent">Adhérent</option>
+              <option value="adhérentadmin">Adhérent Admin</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <div style="background:rgba(79,142,247,.08);border:.5px solid rgba(79,142,247,.2);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:12px;color:var(--acc)">
+            ℹ️ Mot de passe par défaut: <strong>Génèpi</strong>
+          </div>
+
+          <button onclick="createNewAdherent()" style="width:100%;padding:12px;border-radius:10px;border:none;background:var(--ora);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Créer l'adhérent</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1001,7 +1087,210 @@ function showToast(msg, type) {
       if (!snap.exists() || snap.data().role !== 'admin') { redirecting=true; window.location.href='planning.html'; return; }
       document.getElementById('user-name').textContent = [snap.data().prenom||'',snap.data().nom||''].filter(Boolean).join(' ') || user.email;
       renderWeek();
+      loadAdherents();
     } catch(e) { console.error('Erreur auth:', e); }
+  });
+
+  // ==================== ADHERENTS ====================
+
+  window.switchSub = function(name) {
+    ['list','new','adh-list','adh-new'].forEach(n => {
+      const section = document.getElementById('subt-'+n);
+      const btn = document.getElementById('subt-'+n+'-btn');
+      if (section) section.className = 'tab-section' + (n===name ? ' on' : '');
+      if (btn) btn.className = 'main-tab' + (n===name ? ' on' : '');
+    });
+  };
+
+  async function loadAdherents() {
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      window.allAdherents = [];
+      snap.forEach(d => {
+        window.allAdherents.push({ uid: d.id, ...d.data() });
+      });
+      
+      window.allAdherents.sort((a, b) => {
+        const nomA = (a.nom || '').toUpperCase();
+        const nomB = (b.nom || '').toUpperCase();
+        return nomA.localeCompare(nomB);
+      });
+      
+      renderAdherentsList(window.allAdherents);
+    } catch (e) {
+      console.error('Erreur loadAdherents:', e);
+      showAdminToast('Erreur de chargement', 'error');
+    }
+  }
+
+  function renderAdherentsList(adherents) {
+    const container = document.getElementById('adh-list-container');
+    if (!adherents || adherents.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut)"><div style="font-size:30px;margin-bottom:10px">👤</div>Aucun adhérent</div>';
+      return;
+    }
+
+    let html = '';
+    adherents.forEach(a => {
+      const status = a.status === 'suspendu' ? 'Suspendu' : 'Actif';
+      const statusClass = a.status === 'suspendu' ? 'adh-status-suspendu' : 'adh-status-actif';
+      const btnAction = a.status === 'actif'
+        ? `<button class="btn-adh btn-adh-suspend" onclick="toggleAdhStatus('${a.uid}','suspendu')">⏸ Suspendre</button>`
+        : `<button class="btn-adh btn-adh-reactivate" onclick="toggleAdhStatus('${a.uid}','actif')">✓ Réactiver</button>`;
+
+      html += `
+        <div class="adh-card">
+          <div class="adh-info">
+            <div class="adh-name">${(a.prenom || '')} ${(a.nom || '')}</div>
+            <div class="adh-email">${a.email || '—'}</div>
+            <div class="adh-status ${statusClass}">${status}</div>
+          </div>
+          <div class="adh-actions">
+            <button class="btn-adh btn-adh-edit" onclick="editAdherent('${a.uid}')">✏️ Modifier</button>
+            ${btnAction}
+            <button class="btn-adh btn-adh-delete" onclick="deleteAdhConfirm('${a.uid}')">🗑️ Supprimer</button>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  window.filterAdherents = function() {
+    const query = document.getElementById('adh-search')?.value?.toLowerCase() || '';
+    const filtered = window.allAdherents?.filter(a => {
+      const nom = (a.nom || '').toLowerCase();
+      const prenom = (a.prenom || '').toLowerCase();
+      const email = (a.email || '').toLowerCase();
+      return nom.includes(query) || prenom.includes(query) || email.includes(query);
+    }) || [];
+    renderAdherentsList(filtered);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('adh-search');
+    if (searchInput) searchInput.addEventListener('keyup', filterAdherents);
+  });
+
+  window.createNewAdherent = async function() {
+    const prenom = document.getElementById('new-adh-prenom')?.value?.trim();
+    const nom = document.getElementById('new-adh-nom')?.value?.trim();
+    const email = document.getElementById('new-adh-email')?.value?.trim();
+    const dob = document.getElementById('new-adh-dob')?.value || '';
+    const tel = document.getElementById('new-adh-tel')?.value?.trim() || '';
+    const adresse = document.getElementById('new-adh-adresse')?.value?.trim() || '';
+    const role = document.getElementById('new-adh-role')?.value || 'adhérent';
+
+    if (!prenom || !nom || !email) {
+      showAdminToast('Veuillez remplir Prénom, Nom et Email', 'error');
+      return;
+    }
+
+    try {
+      const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + firebaseConfig.apiKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          password: 'Génèpi',
+          returnSecureToken: true
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || 'Erreur Firebase');
+      }
+
+      const authData = await res.json();
+      const uid = authData.localId;
+
+      await setDoc(doc(db, 'users', uid), {
+        uid: uid,
+        email: email,
+        prenom: prenom,
+        nom: nom,
+        dob: dob,
+        tel: tel,
+        adresse: adresse,
+        role: role,
+        status: 'actif',
+        createdAt: serverTimestamp()
+      });
+
+      showAdminToast('Adhérent créé avec succès!');
+      document.getElementById('new-adh-prenom').value = '';
+      document.getElementById('new-adh-nom').value = '';
+      document.getElementById('new-adh-email').value = '';
+      document.getElementById('new-adh-dob').value = '';
+      document.getElementById('new-adh-tel').value = '';
+      document.getElementById('new-adh-adresse').value = '';
+      document.getElementById('new-adh-role').value = 'adhérent';
+
+      await loadAdherents();
+      switchSub('adh-list');
+    } catch (error) {
+      console.error('Erreur:', error);
+      showAdminToast(error.message || 'Erreur de création', 'error');
+    }
+  };
+
+  window.editAdherent = async function(uid) {
+    showAdminToast('À développer: modifier adhérent', 'warn');
+  };
+
+  window.toggleAdhStatus = async function(uid, newStatus) {
+    try {
+      await updateDoc(doc(db, 'users', uid), { status: newStatus });
+      showAdminToast(newStatus === 'suspendu' ? 'Adhérent suspendu' : 'Adhérent réactivé');
+      await loadAdherents();
+    } catch (e) {
+      console.error('Erreur:', e);
+      showAdminToast('Erreur', 'error');
+    }
+  };
+
+  window.deleteAdhConfirm = function(uid) {
+    if (confirm('Êtes-vous sûr? Cette action est irréversible!')) {
+      deleteAdherent(uid);
+    }
+  };
+
+  async function deleteAdherent(uid) {
+    try {
+      await deleteDoc(doc(db, 'users', uid));
+      showAdminToast('Adhérent supprimé');
+      await loadAdherents();
+    } catch (e) {
+      console.error('Erreur:', e);
+      showAdminToast('Erreur', 'error');
+    }
+  }
+
+  function showAdminToast(msg, type = 'success') {
+    let toast = document.getElementById('admin-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'admin-toast';
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surf2);border:.5px solid rgba(34,197,94,.4);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--grn);transition:transform .3s;z-index:300;white-space:nowrap';
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = msg;
+    toast.style.borderColor = 'rgba(34,197,94,.4)';
+    toast.style.color = 'var(--grn)';
+    if (type === 'error') {
+      toast.style.borderColor = 'rgba(224,0,32,.4)';
+      toast.style.color = '#ff6b6b';
+    }
+    if (type === 'warn') {
+      toast.style.borderColor = 'rgba(245,158,11,.4)';
+      toast.style.color = 'var(--amb)';
+    }
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(() => toast.style.transform = 'translateX(-50%) translateY(80px)', 3000);
+  }
+
   });
 </script>
 </body>

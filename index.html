@@ -183,14 +183,14 @@
   </div>
 
   <script type="module">
-    console.log('🔵 Script index.html démarré!');
+    console.error('🔵 Script index.html démarré!');
     
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, showError, hideError, logLogin } from "./shared-app.js";
     
-    console.log('🟢 Imports OK!');
+    console.error('🟢 Imports OK!');
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -216,18 +216,18 @@
       document.getElementById('loading').classList.add('show');
 
       try {
-        console.log('🟡 Tentative de connexion...');
+        console.error('🟡 Tentative de connexion...');
         await signInWithEmailAndPassword(auth, email, password);
-        console.log('🟢 Connexion réussie!');
+        console.error('🟢 Connexion réussie!');
         
         // Enregistrer la connexion et ATTENDRE que ce soit fini
         const user = auth.currentUser;
-        console.log('👤 User:', user?.email);
+        console.error('👤 User:', user?.email);
         if (user) {
           try {
-            console.log('📝 Appel logLogin...');
+            console.error('📝 Appel logLogin...');
             await logLogin(db, user.uid, user.email);
-            console.log('✅ Connexion enregistrée!');
+            console.error('✅ Connexion enregistrée!');
           } catch (logError) {
             console.error('❌ Erreur logLogin:', logError);
             // Ne pas bloquer la redirection même si logLogin échoue
@@ -235,7 +235,7 @@
         }
         
         // PUIS rediriger
-        console.log('🔄 Redirection vers planning.html...');
+        console.error('🔄 Redirection vers planning.html...');
         window.location.href = 'planning.html';
       } catch (error) {
         document.getElementById('loading').classList.remove('show');

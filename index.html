@@ -185,12 +185,10 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, showError, hideError } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
     // Si déjà connecté → rediriger directement
     onAuthStateChanged(auth, (user) => {
@@ -214,26 +212,22 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         
+        // Vérifier que l'adhérent n'est pas suspendu
         const user = auth.currentUser;
-        if (user && db) {
-          const { collection, addDoc, serverTimestamp } = await import(
-            'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js'
-          );
+        if (user) {
+          const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+          const db = getFirestore(app);
+          const userSnap = await getDoc(doc(db, 'users', user.uid));
           
-          try {
-            const result = await addDoc(collection(db, 'connexions'), {
-              uid: user.uid,
-              nom: user.email,
-              ts: serverTimestamp()
-            });
-            console.log('✅ Enregistré:', result.id);
-          } catch (e) {
-            console.error('❌ Erreur:', e.message);
+          if (userSnap.exists() && userSnap.data().status === 'suspendu') {
+            // Utilisateur suspendu - le déconnecter
+            await auth.signOut();
+            showError('error-msg', '⏸ Votre compte est actuellement suspendu. Contactez l\'administrateur.');
+            document.getElementById('loading').classList.remove('show');
+            btn.disabled = false;
+            return;
           }
         }
-        
-        // ATTENDRE 2 secondes pour que Firebase finisse
-        await new Promise(resolve => setTimeout(resolve, 2000));
         
         window.location.href = 'planning.html';
       } catch (error) {

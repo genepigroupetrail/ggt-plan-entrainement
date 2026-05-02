@@ -475,6 +475,7 @@
     const db = getFirestore(app);
 
     let allAdherents = [];
+    let currentUserRole = null;
     let currentEditId = null;
 
     // ==================== AUTH ====================
@@ -498,6 +499,7 @@
           return;
         }
 
+        currentUserRole = data.role;
         document.getElementById('user-name').textContent = getUserDisplayName(data, user.email);
         await loadAdherents();
 
@@ -606,6 +608,15 @@
       document.getElementById('field-tel').value = '';
       document.getElementById('field-adresse').value = '';
       document.getElementById('field-role').value = 'adhérent';
+      
+      // Si l'utilisateur est adhérentadmin, il ne peut pas modifier le rôle
+      if (currentUserRole === 'adhérentadmin') {
+        document.getElementById('field-role').disabled = true;
+        document.getElementById('field-role').title = 'Vous n\'avez pas la permission de modifier le rôle';
+      } else {
+        document.getElementById('field-role').disabled = false;
+      }
+      
       document.getElementById('pwd-group').style.display = 'block';
       document.getElementById('btn-confirm').textContent = 'Créer';
       document.getElementById('modal-overlay').classList.add('show');
@@ -626,6 +637,15 @@
         document.getElementById('field-tel').value = data.tel || '';
         document.getElementById('field-adresse').value = data.adresse || '';
         document.getElementById('field-role').value = data.role || 'adhérent';
+        
+        // Si l'utilisateur est adhérentadmin, il ne peut pas modifier le rôle
+        if (currentUserRole === 'adhérentadmin') {
+          document.getElementById('field-role').disabled = true;
+          document.getElementById('field-role').title = 'Vous n\'avez pas la permission de modifier le rôle';
+        } else {
+          document.getElementById('field-role').disabled = false;
+        }
+        
         document.getElementById('pwd-group').style.display = 'none';
         document.getElementById('btn-confirm').textContent = 'Modifier';
         document.getElementById('modal-overlay').classList.add('show');
@@ -653,19 +673,29 @@
       const dob = document.getElementById('field-dob').value;
       const tel = document.getElementById('field-tel').value.trim();
       const adresse = document.getElementById('field-adresse').value.trim();
-      const role = document.getElementById('field-role').value;
+      let role = document.getElementById('field-role').value;
 
       if (!prenom || !nom || !email) {
         showToast('Veuillez remplir Prénom, Nom et Email', 'error');
         return;
       }
 
+      // 🔒 Si adhérentadmin, forcer le rôle à 'adhérent'
+      if (currentUserRole === 'adhérentadmin') {
+        role = 'adhérent';
+      }
+
       try {
         if (currentEditId) {
           // Modifier
-          await updateDoc(doc(db, 'users', currentEditId), {
-            prenom, nom, dob, tel, adresse, role
-          });
+          const updateData = { prenom, nom, dob, tel, adresse };
+          
+          // Seulement les admins peuvent modifier le rôle
+          if (currentUserRole === 'admin') {
+            updateData.role = role;
+          }
+          
+          await updateDoc(doc(db, 'users', currentEditId), updateData);
           showToast('Adhérent modifié avec succès');
         } else {
           // Créer: appeler Firebase Auth API

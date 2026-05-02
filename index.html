@@ -230,31 +230,45 @@
         console.log('✅ Firebase OK');
         console.log('⏳ getDoc START...');
         
-        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        // Timeout de 5 secondes pour getDoc
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('getDoc timeout')), 5000)
+        );
         
-        console.log('✅ getDoc FINI');
-        console.log('📄 Exists:', userSnap.exists());
-        
-        if (!userSnap.exists()) {
-          console.log('⚠️ No doc');
+        try {
+          const userSnap = await Promise.race([
+            getDoc(doc(db, 'users', user.uid)),
+            timeoutPromise
+          ]);
+          
+          console.log('✅ getDoc FINI');
+          console.log('📄 Exists:', userSnap.exists());
+          
+          if (!userSnap.exists()) {
+            console.log('⚠️ No doc');
+            window.location.href = 'planning.html';
+            return;
+          }
+          
+          const userData = userSnap.data();
+          console.log('🔐 Status:', userData?.status);
+          
+          if (userData?.status === 'suspendu') {
+            console.log('🛑 SUSPENDU - BLOCAGE');
+            await auth.signOut();
+            showError('error-msg', '⏸ Compte suspendu');
+            document.getElementById('loading').classList.remove('show');
+            btn.disabled = false;
+            return;
+          }
+          
+          console.log('✅ GO');
           window.location.href = 'planning.html';
-          return;
+        } catch (timeoutError) {
+          console.warn('⚠️ getDoc timeout ou erreur:', timeoutError.message);
+          // Si getDoc échoue/timeout, on laisse passer quand même
+          window.location.href = 'planning.html';
         }
-        
-        const userData = userSnap.data();
-        console.log('🔐 Status:', userData?.status);
-        
-        if (userData?.status === 'suspendu') {
-          console.log('🛑 SUSPENDU - BLOCAGE');
-          await auth.signOut();
-          showError('error-msg', '⏸ Compte suspendu');
-          document.getElementById('loading').classList.remove('show');
-          btn.disabled = false;
-          return;
-        }
-        
-        console.log('✅ GO');
-        window.location.href = 'planning.html';
       } catch (error) {
         console.error('❌ Erreur:', error.message);
         document.getElementById('loading').classList.remove('show');

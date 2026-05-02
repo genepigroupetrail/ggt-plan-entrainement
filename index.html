@@ -212,6 +212,7 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = 'planning.html';
+      } catch (error) {
         document.getElementById('loading').classList.remove('show');
         btn.disabled = false;
 

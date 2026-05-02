@@ -526,8 +526,14 @@
           });
         });
 
-        // Trier par Nom
+        // Trier par: rôle (admin → adhérentadmin → adhérent) PUIS nom alphabétique
         allAdherents.sort((a, b) => {
+          const roleOrder = { 'admin': 0, 'adhérentadmin': 1, 'adhérent': 2 };
+          const roleA = roleOrder[a.role] !== undefined ? roleOrder[a.role] : 999;
+          const roleB = roleOrder[b.role] !== undefined ? roleOrder[b.role] : 999;
+          
+          if (roleA !== roleB) return roleA - roleB;
+          
           const nomA = (a.nom || '').toUpperCase();
           const nomB = (b.nom || '').toUpperCase();
           return nomA.localeCompare(nomB);
@@ -561,7 +567,10 @@
             <div class="adherent-info">
               <div class="adherent-name">${(a.prenom || '')} ${(a.nom || '')}</div>
               <div class="adherent-email">${a.email || '—'}</div>
-              <div class="adherent-status ${statusClass}">${status}</div>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <div class="adherent-status ${statusClass}">${status}</div>
+                <div class="adherent-status" style="background:rgba(79,142,247,.15);color:var(--acc)">${a.role || 'adhérent'}</div>
+              </div>
             </div>
             <div class="adherent-actions">
               <button class="btn-action btn-modifier" onclick="openEditModal('${a.uid}')">✏️ Modifier</button>
@@ -722,7 +731,21 @@
 
     async function deleteAdherent(uid) {
       try {
+        // Supprimer de Firestore
         await deleteDoc(doc(db, 'users', uid));
+        
+        // Supprimer de Firebase Auth (appeler API REST)
+        try {
+          await fetch('https://identitytoolkit.googleapis.com/v1/accounts:delete?key=' + firebaseConfig.apiKey, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken: await auth.currentUser.getIdToken() })
+          });
+        } catch (e) {
+          // Si ça échoue, c'est pas grave - il est déjà supprimé de Firestore
+          console.warn('Erreur suppression Auth:', e);
+        }
+        
         showToast('Adhérent supprimé');
         await loadAdherents();
       } catch (error) {

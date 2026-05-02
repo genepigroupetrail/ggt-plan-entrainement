@@ -640,6 +640,16 @@
       const snap = await getDoc(doc(db, 'users', user.uid));
       const data = snap.exists() ? snap.data() : {};
 
+      // 🔒 VÉRIFIER SUSPENSION
+      if (data.status === 'suspendu') {
+        console.log('🛑 Compte suspendu - Déconnexion');
+        redirecting = true;
+        await signOut(auth);
+        alert('⏸ Votre compte est suspendu.\nContactez l\'administrateur.');
+        window.location.href = 'index.html';
+        return;
+      }
+
       document.getElementById('user-name').textContent = getUserDisplayName(data, user.email);
 
       isAdmin = data.role === 'admin';

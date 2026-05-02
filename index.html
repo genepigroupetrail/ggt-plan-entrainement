@@ -219,7 +219,11 @@
           const db = getFirestore(app);
           const userSnap = await getDoc(doc(db, 'users', user.uid));
           
+          console.log('User data:', userSnap.data());
+          console.log('Status:', userSnap.data()?.status);
+          
           if (userSnap.exists() && userSnap.data().status === 'suspendu') {
+            console.log('🔴 SUSPENDU - Déconnexion!');
             // Utilisateur suspendu - le déconnecter
             await auth.signOut();
             showError('error-msg', '⏸ Votre compte est actuellement suspendu. Contactez l\'administrateur.');

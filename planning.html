@@ -643,7 +643,8 @@
       document.getElementById('user-name').textContent = getUserDisplayName(data, user.email);
 
       isAdmin = data.role === 'admin';
-      if (isAdmin) document.getElementById('btn-admin').style.display = 'inline-flex';
+      const isAdminUser = ['admin', 'adhérentadmin'].includes(data.role);
+      if (isAdminUser) document.getElementById('btn-admin').style.display = 'inline-flex';
 
       loadWeek();
     });

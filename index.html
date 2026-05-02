@@ -213,16 +213,15 @@
         await signInWithEmailAndPassword(auth, email, password);
         console.log('✅ signInWithEmailAndPassword OK');
         
-        // IMMÉDIATEMENT vérifier le statut AVANT de rediriger
+        // ATTENDRE la vérification complète
         const user = auth.currentUser;
         console.log('👤 User:', user?.email);
         
         if (!user) {
-          console.error('❌ Pas d\'utilisateur!');
-          throw new Error('Utilisateur non trouvé');
+          throw new Error('Utilisateur non trouvé après connexion');
         }
         
-        // Charger les données de l'utilisateur
+        // Charger les données
         const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
         const db = getFirestore(app);
         const userSnap = await getDoc(doc(db, 'users', user.uid));
@@ -230,27 +229,28 @@
         console.log('📋 Firestore doc exists:', userSnap.exists());
         
         if (!userSnap.exists()) {
-          console.warn('⚠️ Document Firestore non trouvé');
+          console.warn('Document Firestore manquant');
+          await new Promise(r => setTimeout(r, 500)); // Attendre 500ms
           window.location.href = 'planning.html';
           return;
         }
         
         const userData = userSnap.data();
-        console.log('📊 User data:', userData);
-        console.log('🔐 Status:', userData.status);
+        console.log('📊 Status:', userData.status);
         
-        // VÉRIFIER SUSPENSION
+        // VÉRIFIER SUSPENSION - C'EST CRUCIAL
         if (userData.status === 'suspendu') {
-          console.log('🛑 COMPTE SUSPENDU!');
+          console.log('🛑 SUSPENSION DÉTECTÉE');
           await auth.signOut();
-          showError('error-msg', '⏸ Votre compte est suspendu. Contactez l\'administrateur.');
+          showError('error-msg', '⏸ Votre compte est suspendu.');
           document.getElementById('loading').classList.remove('show');
           btn.disabled = false;
           return;
         }
         
-        console.log('✅ Tous les contrôles OK - Redirection...');
+        console.log('✅ OK - Redirection');
         window.location.href = 'planning.html';
+        
       } catch (error) {
         document.getElementById('loading').classList.remove('show');
         btn.disabled = false;

@@ -224,40 +224,47 @@
         }
         
         console.log('📦 Importation Firebase...');
-        const firebaseImports = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-        const getFirestore = firebaseImports.getFirestore;
-        const doc = firebaseImports.doc;
-        const getDoc = firebaseImports.getDoc;
-        
-        const db = getFirestore(app);
-        console.log('🔎 Recherche Firestore pour uid:', user.uid);
-        
-        const userSnap = await getDoc(doc(db, 'users', user.uid));
-        console.log('📄 Doc trouvé:', userSnap.exists());
-        
-        if (!userSnap.exists()) {
-          console.log('⚠️ DOC MANQUANT - redirection');
+        try {
+          const firebaseImports = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+          const getFirestore = firebaseImports.getFirestore;
+          const doc = firebaseImports.doc;
+          const getDoc = firebaseImports.getDoc;
+          
+          const db = getFirestore(app);
+          console.log('✅ Firebase importé et DB initialisée');
+          console.log('🔎 Recherche Firestore pour uid:', user.uid);
+          
+          const userSnap = await getDoc(doc(db, 'users', user.uid));
+          console.log('📄 Doc trouvé:', userSnap.exists());
+          
+          if (!userSnap.exists()) {
+            console.log('⚠️ DOC MANQUANT - redirection');
+            window.location.href = 'planning.html';
+            return;
+          }
+          
+          const userData = userSnap.data();
+          console.log('📋 DONNÉES complètes:', userData);
+          console.log('🔐 STATUS VALUE:', userData.status);
+          console.log('✅ STATUS === "suspendu"?', userData.status === 'suspendu');
+          
+          if (userData.status === 'suspendu') {
+            console.log('🛑🛑🛑 SUSPENSION DÉTECTÉE - BLOCAGE 🛑🛑🛑');
+            await auth.signOut();
+            console.log('✋ Utilisateur déconnecté');
+            showError('error-msg', '⏸ COMPTE SUSPENDU');
+            document.getElementById('loading').classList.remove('show');
+            btn.disabled = false;
+            return;
+          }
+          
+          console.log('✅✅✅ TOUS LES CONTRÔLES OK - REDIRECTION ✅✅✅');
           window.location.href = 'planning.html';
-          return;
+        } catch (importError) {
+          console.error('❌❌❌ ERREUR IMPORT:', importError);
+          console.error('Stack:', importError.stack);
+          window.location.href = 'planning.html';
         }
-        
-        const userData = userSnap.data();
-        console.log('📋 DONNÉES complètes:', userData);
-        console.log('🔐 STATUS VALUE:', userData.status);
-        console.log('✅ STATUS === "suspendu"?', userData.status === 'suspendu');
-        
-        if (userData.status === 'suspendu') {
-          console.log('🛑🛑🛑 SUSPENSION DÉTECTÉE - BLOCAGE 🛑🛑🛑');
-          await auth.signOut();
-          console.log('✋ Utilisateur déconnecté');
-          showError('error-msg', '⏸ COMPTE SUSPENDU');
-          document.getElementById('loading').classList.remove('show');
-          btn.disabled = false;
-          return;
-        }
-        
-        console.log('✅✅✅ TOUS LES CONTRÔLES OK - REDIRECTION ✅✅✅');
-        window.location.href = 'planning.html';
         
       } catch (error) {
         document.getElementById('loading').classList.remove('show');

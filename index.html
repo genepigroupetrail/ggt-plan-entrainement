@@ -214,22 +214,36 @@
         
         // Vérifier que l'adhérent n'est pas suspendu
         const user = auth.currentUser;
+        console.log('✅ Connexion réussie pour:', user.email);
+        
         if (user) {
-          const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-          const db = getFirestore(app);
-          const userSnap = await getDoc(doc(db, 'users', user.uid));
-          
-          console.log('User data:', userSnap.data());
-          console.log('Status:', userSnap.data()?.status);
-          
-          if (userSnap.exists() && userSnap.data().status === 'suspendu') {
-            console.log('🔴 SUSPENDU - Déconnexion!');
-            // Utilisateur suspendu - le déconnecter
-            await auth.signOut();
-            showError('error-msg', '⏸ Votre compte est actuellement suspendu. Contactez l\'administrateur.');
-            document.getElementById('loading').classList.remove('show');
-            btn.disabled = false;
-            return;
+          try {
+            const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+            const db = getFirestore(app);
+            const userSnap = await getDoc(doc(db, 'users', user.uid));
+            
+            if (!userSnap.exists()) {
+              console.log('⚠️ Document utilisateur non trouvé!');
+              window.location.href = 'planning.html';
+              return;
+            }
+            
+            const userData = userSnap.data();
+            console.log('📋 Status de l\'utilisateur:', userData.status);
+            
+            if (userData.status === 'suspendu') {
+              console.log('🔴 COMPTE SUSPENDU - Déconnexion!');
+              await auth.signOut();
+              showError('error-msg', '⏸ Votre compte est actuellement suspendu. Contactez l\'administrateur.');
+              document.getElementById('loading').classList.remove('show');
+              btn.disabled = false;
+              return;
+            }
+            
+            console.log('🟢 Compte actif - Redirection planning.html');
+          } catch (checkError) {
+            console.error('❌ Erreur vérification status:', checkError);
+            // En cas d'erreur, on laisse passer (mieux que bloquer l'accès)
           }
         }
         

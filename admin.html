@@ -1000,7 +1000,7 @@ function showToast(msg, type) {
     if (!user) { redirecting=true; window.location.href='index.html'; return; }
     try {
       var snap = await getDoc(doc(db,'users',user.uid));
-      if (!snap.exists() || snap.data().role !== 'admin') { redirecting=true; window.location.href='planning.html'; return; }
+      if (!snap.exists() || !['admin', 'adhérentadmin'].includes(snap.data().role)) { redirecting=true; window.location.href='planning.html'; return; }
       document.getElementById('user-name').textContent = [snap.data().prenom||'',snap.data().nom||''].filter(Boolean).join(' ') || user.email;
       renderWeek();
     } catch(e) { console.error('Erreur auth:', e); }

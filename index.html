@@ -210,45 +210,48 @@
       document.getElementById('loading').classList.add('show');
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
-        console.log('✅ signInWithEmailAndPassword OK');
+        console.log('🟡 DÉBUT - email:', email);
         
-        // ATTENDRE la vérification complète
+        await signInWithEmailAndPassword(auth, email, password);
+        console.log('🟢 AUTH OK');
+        
         const user = auth.currentUser;
-        console.log('👤 User:', user?.email);
+        console.log('👤 USER:', user?.email, user?.uid);
         
         if (!user) {
-          throw new Error('Utilisateur non trouvé après connexion');
+          console.log('❌ PAS DE USER - ARRÊT');
+          return;
         }
         
-        // Charger les données
+        console.log('📦 Importation Firebase...');
         const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
         const db = getFirestore(app);
-        const userSnap = await getDoc(doc(db, 'users', user.uid));
         
-        console.log('📋 Firestore doc exists:', userSnap.exists());
+        console.log('🔎 Recherche Firestore...');
+        const userSnap = await getDoc(doc(db, 'users', user.uid));
+        console.log('📄 Doc trouvé:', userSnap.exists());
         
         if (!userSnap.exists()) {
-          console.warn('Document Firestore manquant');
-          await new Promise(r => setTimeout(r, 500)); // Attendre 500ms
+          console.log('⚠️ DOC MANQUANT');
           window.location.href = 'planning.html';
           return;
         }
         
         const userData = userSnap.data();
-        console.log('📊 Status:', userData.status);
+        console.log('📋 DONNÉES:', JSON.stringify(userData));
+        console.log('🔐 STATUS VALUE:', userData.status);
+        console.log('✅ STATUS === "suspendu"?', userData.status === 'suspendu');
         
-        // VÉRIFIER SUSPENSION - C'EST CRUCIAL
         if (userData.status === 'suspendu') {
-          console.log('🛑 SUSPENSION DÉTECTÉE');
+          console.log('🛑🛑🛑 SUSPENSION BLOQUÉE 🛑🛑🛑');
           await auth.signOut();
-          showError('error-msg', '⏸ Votre compte est suspendu.');
+          showError('error-msg', '⏸ COMPTE SUSPENDU');
           document.getElementById('loading').classList.remove('show');
           btn.disabled = false;
           return;
         }
         
-        console.log('✅ OK - Redirection');
+        console.log('✅ REDIRECTION');
         window.location.href = 'planning.html';
         
       } catch (error) {

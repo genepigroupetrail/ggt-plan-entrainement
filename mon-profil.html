@@ -360,6 +360,10 @@
         const newPassword = document.getElementById('new-password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
 
+        console.log('🔐 Tentative changement mot de passe');
+        console.log('Email:', user.email);
+        console.log('Ancien mdp length:', oldPassword.length);
+
         if (!oldPassword || !newPassword || !confirmPassword) {
           showError('Tous les champs sont obligatoires');
           return;
@@ -380,12 +384,16 @@
           return;
         }
 
+        console.log('📝 Réauthentification en cours...');
         // Réauthentifier avec l'ancien mot de passe
         const credential = EmailAuthProvider.credential(user.email, oldPassword);
         await reauthenticateWithCredential(user, credential);
 
+        console.log('✅ Réauthentification OK - Changement mot de passe...');
         // Changer le mot de passe
         await updatePassword(user, newPassword);
+
+        console.log('✅ Mot de passe changé!');
 
         // Vider les champs
         document.getElementById('old-password').value = '';
@@ -394,10 +402,13 @@
 
         showSuccess('Mot de passe changé avec succès!');
       } catch (error) {
-        console.error('Erreur:', error);
+        console.error('❌ Erreur complète:', error);
+        console.error('Code erreur:', error.code);
         
         if (error.code === 'auth/wrong-password') {
           showError('Ancien mot de passe incorrect');
+        } else if (error.code === 'auth/invalid-credential') {
+          showError('⚠️ Ancien mot de passe incorrect (ou pas encore synchronisé)');
         } else if (error.code === 'auth/weak-password') {
           showError('Le mot de passe est trop faible');
         } else {

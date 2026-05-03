@@ -29,43 +29,6 @@
       color: var(--txt);
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--mut);
-      margin-bottom: 6px;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      background: var(--surf2);
-      border: .5px solid var(--brd);
-      border-radius: 8px;
-      padding: 9px 12px;
-      color: var(--txt);
-      font-family: 'Outfit', sans-serif;
-      font-size: 13px;
-      outline: none;
-    }
-
-    .form-group input:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--acc);
-    }
-
     .info-box {
       background: rgba(79,142,247,.08);
       border: .5px solid rgba(79,142,247,.2);
@@ -138,58 +101,17 @@
       font-size: 13px;
       display: none;
     }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--mut);
-    }
-
-    .loading::after {
-      content: '';
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      margin-left: 10px;
-      border: 2px solid var(--brd);
-      border-top-color: var(--acc);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 600px) {
-      .profil-container {
-        margin: 20px auto;
-      }
-
-      .profil-card {
-        padding: 20px;
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
-    }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-left">
-      <div class="logo">GGT</div>
-      <div class="logo-text">
-        <h1>Mon Profil</h1>
-        <p>Génépi Groupe Trail</p>
-      </div>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>Mon Profil</h1><p>Génépi Groupe Trail</p></div>
     </div>
     <div class="header-right">
+      <span class="user-badge" id="user-name">...</span>
+      <a href="planning.html" class="btn-comp">← Retour Planning</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>
     </div>
   </header>
@@ -301,6 +223,10 @@
         }
 
         currentUser = snap.data();
+        
+        // Afficher le nom dans le header
+        const displayName = (currentUser.prenom || '') + ' ' + (currentUser.nom || '');
+        document.getElementById('user-name').textContent = displayName.trim();
         
         // Remplir le formulaire
         document.getElementById('prenom').value = currentUser.prenom || '';

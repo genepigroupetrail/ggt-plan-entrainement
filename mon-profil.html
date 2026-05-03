@@ -8,6 +8,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared-styles.css">
   <style>
+    .btn-profil {
+      background: rgba(168, 116, 255, 0.12);
+      border: 0.5px solid rgba(168, 116, 255, 0.3);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: #a874ff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-profil:hover {
+      background: rgba(168, 116, 255, 0.2);
+      border-color: #a874ff;
+    }
+
     .profil-container {
       max-width: 600px;
       margin: 40px auto;
@@ -111,7 +133,7 @@
     </div>
     <div class="header-right">
       <span class="user-badge" id="user-name">...</span>
-      <a href="planning.html" class="btn-comp">← Retour Planning</a>
+      <a href="planning.html" class="btn-profil">← Retour Planning</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>
     </div>
   </header>

@@ -284,6 +284,28 @@
       border-color: var(--acc);
     }
 
+    .btn-profil {
+      background: rgba(168, 116, 255, 0.12);
+      border: 0.5px solid rgba(168, 116, 255, 0.3);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: #a874ff;
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-profil:hover {
+      background: rgba(168, 116, 255, 0.2);
+      border-color: #a874ff;
+    }
+
     .user-badge {
       font-size: 13px;
       color: var(--mut);
@@ -350,9 +372,9 @@
     </div>
     <div class="header-right">
       <span class="user-badge" id="user-name">...</span>
-      <a href="mon-profil.html" class="btn-comp">👤 Mon Profil</a>
       <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
       <a href="admin.html" class="btn-admin" id="btn-admin" style="display: none;">⚙️ Admin</a>
+      <a href="mon-profil.html" class="btn-profil">👤 Mon Profil</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>
     </div>
   </header>

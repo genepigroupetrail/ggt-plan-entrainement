@@ -382,6 +382,7 @@
     </div>
     <div class="header-right">
       <span id="user-name" class="user-badge">...</span>
+      <a href="admin-delete.html" style="display:inline-flex;align-items:center;gap:5px;padding:6px 14px;background:rgba(239,68,68,.12);border:.5px solid rgba(239,68,68,.3);border-radius:8px;color:#ff6b6b;text-decoration:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(239,68,68,.2)'" onmouseout="this.style.background='rgba(239,68,68,.12)'">🗑️ Supprimer</a>
       <a href="admin.html" class="btn-h">← Admin</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>
     </div>
@@ -578,7 +579,6 @@
               <button class="btn-action btn-modifier" onclick="openViewModal('${a.uid}')">👁️ Voir</button>
               <button class="btn-action btn-modifier" onclick="openEditModal('${a.uid}')">✏️ Modifier</button>
               ${btnSuspendre}
-              <button class="btn-action btn-supprimer" onclick="confirmDelete('${a.uid}')">🗑️ Supprimer</button>
             </div>
           </div>
         `;
@@ -804,38 +804,6 @@
         showToast('Erreur', 'error');
       }
     };
-
-    window.confirmDelete = function(uid) {
-      if (confirm('Êtes-vous sûr? Cette action est irréversible!')) {
-        deleteAdherent(uid);
-      }
-    };
-
-    async function deleteAdherent(uid) {
-      try {
-        const batch = writeBatch(db);
-        
-        // Supprimer l'utilisateur
-        batch.delete(doc(db, 'users', uid));
-        
-        // Supprimer ses données VMA
-        batch.delete(doc(db, 'vma_data', uid));
-        
-        // Supprimer ses suivis de course
-        const raceFollowQuery = query(collection(db, 'race_suivi'), where('uid', '==', uid));
-        const raceFollowSnap = await getDocs(raceFollowQuery);
-        raceFollowSnap.forEach(doc => batch.delete(doc.ref));
-        
-        // Exécuter le batch
-        await batch.commit();
-        
-        showToast('Adhérent supprimé');
-        await loadAdherents();
-      } catch (error) {
-        console.error('Erreur:', error);
-        showToast('Erreur', 'error');
-      }
-    }
 
     function showToast(msg, type = 'success') {
       const toast = document.getElementById('toast');

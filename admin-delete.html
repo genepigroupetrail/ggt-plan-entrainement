@@ -271,7 +271,7 @@
         // Exécuter le batch
         await batch.commit();
 
-        showSuccess('Adhérent supprimé de Firestore!');
+        showSuccess('Adhérent supprimé complètement de Firestore!');
         showInfo('⚠️ N\'oubliez pas: supprimez aussi de Firebase Auth → Authentication → Users');
         document.getElementById('email-input').value = '';
         

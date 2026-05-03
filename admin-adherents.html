@@ -575,6 +575,7 @@
               </div>
             </div>
             <div class="adherent-actions">
+              <button class="btn-action btn-modifier" onclick="openViewModal('${a.uid}')">👁️ Voir</button>
               <button class="btn-action btn-modifier" onclick="openEditModal('${a.uid}')">✏️ Modifier</button>
               ${btnSuspendre}
               <button class="btn-action btn-supprimer" onclick="confirmDelete('${a.uid}')">🗑️ Supprimer</button>
@@ -620,6 +621,91 @@
       document.getElementById('pwd-group').style.display = 'block';
       document.getElementById('btn-confirm').textContent = 'Créer';
       document.getElementById('modal-overlay').classList.add('show');
+    };
+
+    window.openViewModal = async function(uid) {
+      try {
+        const snap = await getDoc(doc(db, 'users', uid));
+        if (!snap.exists()) return;
+
+        const data = snap.data();
+        
+        // Charger la VMA
+        let vmaText = '—';
+        try {
+          const vmaSnap = await getDoc(doc(db, 'vma_data', uid));
+          if (vmaSnap.exists()) {
+            const vmaData = vmaSnap.data();
+            vmaText = vmaData.vma || '—';
+          }
+        } catch (e) {
+          console.warn('VMA non disponible');
+        }
+
+        // Afficher modal en lecture seule
+        const modal = document.getElementById('modal-overlay');
+        const title = document.getElementById('modal-title');
+        const content = document.getElementById('modal-content');
+        
+        title.textContent = `${data.prenom} ${data.nom}`;
+        
+        content.innerHTML = `
+          <div style="background:var(--surf);border-radius:10px;padding:20px;margin-bottom:20px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+              <div>
+                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Prénom</label>
+                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.prenom || '—'}</div>
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Nom</label>
+                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.nom || '—'}</div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom:16px">
+              <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Email</label>
+              <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.email || '—'}</div>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+              <div>
+                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Date de naissance</label>
+                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.dob || '—'}</div>
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Téléphone</label>
+                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.tel || '—'}</div>
+              </div>
+            </div>
+            
+            <div style="margin-bottom:16px">
+              <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Adresse</label>
+              <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.adresse || '—'}</div>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+              <div>
+                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Rôle</label>
+                <div style="font-size:14px;color:var(--acc);margin-top:4px;font-weight:600">${data.role || 'adhérent'}</div>
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Statut</label>
+                <div style="font-size:14px;color:${data.status === 'suspendu' ? 'var(--amb)' : 'var(--grn)'};margin-top:4px;font-weight:600">${data.status === 'suspendu' ? '⏸ Suspendu' : '✓ Actif'}</div>
+              </div>
+            </div>
+            
+            <div>
+              <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">VMA (km/h)</label>
+              <div style="font-size:14px;color:var(--acc);margin-top:4px;font-weight:600">${vmaText}</div>
+            </div>
+          </div>
+        `;
+        
+        modal.classList.add('show');
+      } catch (error) {
+        console.error('Erreur:', error);
+        showToast('Erreur de chargement', 'error');
+      }
     };
 
     window.openEditModal = async function(uid) {

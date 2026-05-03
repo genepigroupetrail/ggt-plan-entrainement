@@ -628,104 +628,48 @@
         console.log('👁️ openViewModal START pour uid:', uid);
         
         const snap = await getDoc(doc(db, 'users', uid));
-        console.log('📄 Snap existe:', snap.exists());
-        
         if (!snap.exists()) {
           console.log('❌ Document pas trouvé');
           return;
         }
 
         const data = snap.data();
-        console.log('📊 Données utilisateur chargées');
+        console.log('📊 Données chargées');
         
-        // Charger la VMA
-        let vmaText = '—';
-        try {
-          console.log('📈 Cherche VMA...');
-          const vmaSnap = await getDoc(doc(db, 'vma_data', uid));
-          console.log('VMA exists:', vmaSnap.exists());
-          
-          if (vmaSnap.exists()) {
-            const vmaData = vmaSnap.data();
-            vmaText = vmaData.vma || '—';
-            console.log('✅ VMA trouvée:', vmaText);
-          }
-        } catch (e) {
-          console.warn('⚠️ VMA erreur:', e.message);
-        }
-
-        console.log('🎨 Affiche modal...');
+        // Afficher modal en mode LECTURE SEULE
+        currentEditId = uid; // On a un UID donc mode modification
+        document.getElementById('modal-title').textContent = `${data.prenom} ${data.nom}`;
         
-        // Afficher modal en lecture seule
-        const modal = document.getElementById('modal-overlay');
-        const title = document.getElementById('modal-title');
-        const content = document.getElementById('modal-content');
+        // Remplir les champs
+        document.getElementById('field-prenom').value = data.prenom || '';
+        document.getElementById('field-nom').value = data.nom || '';
+        document.getElementById('field-email').value = data.email || '';
+        document.getElementById('field-dob').value = data.dob || '';
+        document.getElementById('field-tel').value = data.tel || '';
+        document.getElementById('field-adresse').value = data.adresse || '';
+        document.getElementById('field-role').value = data.role || 'adhérent';
         
-        if (!modal || !title || !content) {
-          console.error('❌ Éléments du modal manquants!');
-          showToast('Erreur: modal non trouvé', 'error');
-          return;
-        }
+        // DÉSACTIVER tous les champs
+        document.getElementById('field-prenom').disabled = true;
+        document.getElementById('field-nom').disabled = true;
+        document.getElementById('field-email').disabled = true;
+        document.getElementById('field-dob').disabled = true;
+        document.getElementById('field-tel').disabled = true;
+        document.getElementById('field-adresse').disabled = true;
+        document.getElementById('field-role').disabled = true;
         
-        title.textContent = `${data.prenom} ${data.nom}`;
+        // Cacher le groupe pwd
+        document.getElementById('pwd-group').style.display = 'none';
         
-        content.innerHTML = `
-          <div style="background:var(--surf);border-radius:10px;padding:20px;margin-bottom:20px">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-              <div>
-                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Prénom</label>
-                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.prenom || '—'}</div>
-              </div>
-              <div>
-                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Nom</label>
-                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.nom || '—'}</div>
-              </div>
-            </div>
-            
-            <div style="margin-bottom:16px">
-              <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Email</label>
-              <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.email || '—'}</div>
-            </div>
-            
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-              <div>
-                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Date de naissance</label>
-                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.dob || '—'}</div>
-              </div>
-              <div>
-                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Téléphone</label>
-                <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.tel || '—'}</div>
-              </div>
-            </div>
-            
-            <div style="margin-bottom:16px">
-              <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Adresse</label>
-              <div style="font-size:14px;color:var(--txt);margin-top:4px">${data.adresse || '—'}</div>
-            </div>
-            
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-              <div>
-                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Rôle</label>
-                <div style="font-size:14px;color:var(--acc);margin-top:4px;font-weight:600">${data.role || 'adhérent'}</div>
-              </div>
-              <div>
-                <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">Statut</label>
-                <div style="font-size:14px;color:${data.status === 'suspendu' ? 'var(--amb)' : 'var(--grn)'};margin-top:4px;font-weight:600">${data.status === 'suspendu' ? '⏸ Suspendu' : '✓ Actif'}</div>
-              </div>
-            </div>
-            
-            <div>
-              <label style="font-size:11px;color:var(--mut);text-transform:uppercase;font-weight:700">VMA (km/h)</label>
-              <div style="font-size:14px;color:var(--acc);margin-top:4px;font-weight:600">${vmaText}</div>
-            </div>
-          </div>
-        `;
+        // Modifier les boutons pour "Fermer" à la place de "Modifier"
+        document.getElementById('btn-confirm').textContent = 'Fermer';
+        document.getElementById('btn-confirm').onclick = function() { closeModal(); };
         
-        console.log('✅ Modal affiché');
-        modal.classList.add('show');
+        console.log('✅ Modal affiché en lecture seule');
+        document.getElementById('modal-overlay').classList.add('show');
+        
       } catch (error) {
-        console.error('❌ Erreur complète:', error);
-        console.error('Stack:', error.stack);
+        console.error('❌ Erreur:', error.message);
         showToast('Erreur: ' + error.message, 'error');
       }
     };

@@ -38,17 +38,58 @@
 
     .profil-card {
       background: var(--surf);
-      border: .5px solid var(--brd);
+      border: 0.5px solid var(--brd);
       border-radius: 14px;
-      padding: 30px;
+      padding: 20px 24px;
       margin-bottom: 20px;
     }
 
     .profil-card h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
       color: var(--txt);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--mut);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: var(--surf2);
+      border: 0.5px solid var(--brd);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--txt);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .form-group input:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--acc);
+    }
+
+    .form-group input::placeholder {
+      color: var(--mut);
     }
 
     .info-box {
@@ -56,50 +97,50 @@
       border: .5px solid rgba(79,142,247,.2);
       border-radius: 10px;
       padding: 12px 14px;
-      margin: 20px 0;
+      margin: 16px 0;
       font-size: 12px;
       color: var(--acc);
       line-height: 1.5;
     }
 
-    .actions {
+    .modal-actions {
       display: flex;
       gap: 10px;
       margin-top: 20px;
-      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    .btn {
-      flex: 1;
-      min-width: 120px;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
+    .btn-cancel {
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: var(--surf2);
+      border: 0.5px solid var(--brd);
+      color: var(--txt);
       font-family: 'Outfit', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .btn-cancel:hover {
+      border-color: var(--acc);
+    }
+
+    .btn-confirm {
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: var(--ora);
+      border: none;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity .2s;
+      transition: opacity 0.2s;
     }
 
-    .btn:hover {
+    .btn-confirm:hover {
       opacity: 0.9;
-    }
-
-    .btn-primary {
-      background: var(--acc);
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: var(--surf2);
-      color: var(--txt);
-      border: .5px solid var(--brd);
-    }
-
-    .btn-danger {
-      background: var(--ora);
-      color: #fff;
     }
 
     .success-msg {
@@ -122,6 +163,25 @@
       margin-bottom: 20px;
       font-size: 13px;
       display: none;
+    }
+
+    @media (max-width: 600px) {
+      .profil-container {
+        margin: 20px auto;
+      }
+
+      .profil-card {
+        padding: 16px;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+      }
+
+      .btn-cancel,
+      .btn-confirm {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -176,9 +236,9 @@
         <input type="text" id="adresse" placeholder="123 rue de la Paix, 75000 Paris">
       </div>
 
-      <div class="actions">
-        <button class="btn btn-primary" onclick="saveProfil()">💾 Enregistrer</button>
-        <button class="btn btn-secondary" onclick="window.location.href='planning.html'">← Retour</button>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="window.location.href='planning.html'">Annuler</button>
+        <button class="btn-confirm" onclick="saveProfil()">💾 Enregistrer</button>
       </div>
     </div>
 
@@ -205,8 +265,8 @@
         <input type="password" id="confirm-password" placeholder="••••••••">
       </div>
 
-      <div class="actions">
-        <button class="btn btn-danger" onclick="changePassword()">🔑 Changer le Mot de Passe</button>
+      <div class="modal-actions">
+        <button class="btn-confirm" style="background:var(--ora)" onclick="changePassword()">🔑 Changer le Mot de Passe</button>
       </div>
     </div>
   </div>

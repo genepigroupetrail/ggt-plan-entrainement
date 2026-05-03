@@ -625,27 +625,47 @@
 
     window.openViewModal = async function(uid) {
       try {
+        console.log('👁️ openViewModal START pour uid:', uid);
+        
         const snap = await getDoc(doc(db, 'users', uid));
-        if (!snap.exists()) return;
+        console.log('📄 Snap existe:', snap.exists());
+        
+        if (!snap.exists()) {
+          console.log('❌ Document pas trouvé');
+          return;
+        }
 
         const data = snap.data();
+        console.log('📊 Données utilisateur chargées');
         
         // Charger la VMA
         let vmaText = '—';
         try {
+          console.log('📈 Cherche VMA...');
           const vmaSnap = await getDoc(doc(db, 'vma_data', uid));
+          console.log('VMA exists:', vmaSnap.exists());
+          
           if (vmaSnap.exists()) {
             const vmaData = vmaSnap.data();
             vmaText = vmaData.vma || '—';
+            console.log('✅ VMA trouvée:', vmaText);
           }
         } catch (e) {
-          console.warn('VMA non disponible');
+          console.warn('⚠️ VMA erreur:', e.message);
         }
 
+        console.log('🎨 Affiche modal...');
+        
         // Afficher modal en lecture seule
         const modal = document.getElementById('modal-overlay');
         const title = document.getElementById('modal-title');
         const content = document.getElementById('modal-content');
+        
+        if (!modal || !title || !content) {
+          console.error('❌ Éléments du modal manquants!');
+          showToast('Erreur: modal non trouvé', 'error');
+          return;
+        }
         
         title.textContent = `${data.prenom} ${data.nom}`;
         
@@ -701,10 +721,12 @@
           </div>
         `;
         
+        console.log('✅ Modal affiché');
         modal.classList.add('show');
       } catch (error) {
-        console.error('Erreur:', error);
-        showToast('Erreur de chargement', 'error');
+        console.error('❌ Erreur complète:', error);
+        console.error('Stack:', error.stack);
+        showToast('Erreur: ' + error.message, 'error');
       }
     };
 

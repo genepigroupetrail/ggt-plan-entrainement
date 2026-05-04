@@ -188,7 +188,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, deleteDoc, collection, query, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
@@ -202,7 +201,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const functions = getFunctions(app);
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -256,26 +254,22 @@
 
         const uid = snapshot.docs[0].id;
 
-        // Utiliser batch pour supprimer users et vma_data
-        const batch = writeBatch(db);
-        
         // Supprimer users
-        batch.delete(doc(db, 'users', uid));
+        await deleteDoc(doc(db, 'users', uid));
         
         // Supprimer vma_data
-        batch.delete(doc(db, 'vma_data', uid));
+        await deleteDoc(doc(db, 'vma_data', uid));
         
-        // Exécuter le batch
-        await batch.commit();
-
-        // Appeler Cloud Function pour supprimer race_suivi
-        try {
-          const deleteRaceSuiviFunc = httpsCallable(functions, 'deleteRaceSuivi');
-          const result = await deleteRaceSuiviFunc({ uid: uid });
-          console.log('Race suivi supprimé:', result.data);
-        } catch (funcError) {
-          console.warn('Erreur Cloud Function (mais données principales supprimées):', funcError);
-        }
+        // Supprimer race_suivi: récupérer TOUS, filtrer en JS, supprimer
+        const allRaceSuivi = await getDocs(collection(db, 'race_suivi'));
+        const toDelete = [];
+        allRaceSuivi.forEach(d => {
+          if (d.id.startsWith(uid + '_')) {
+            toDelete.push(d.id);
+          }
+        });
+        
+        await Promise.all(toDelete.map(sid => deleteDoc(doc(db, 'race_suivi', sid))));
 
         showSuccess('Adhérent supprimé complètement!');
         document.getElementById('email-input').value = '';

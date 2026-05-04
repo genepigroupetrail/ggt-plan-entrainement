@@ -240,17 +240,15 @@
 
         snap.forEach(function(d) {
           const data = d.data();
-          const timestamp = data.ts;
+          const timestamp = data.date;
           
           if (timestamp && timestamp.toMillis && timestamp.toMillis() < cutoff.toMillis()) {
-            // Trop vieux → supprimer en arrière-plan
             toDelete.push(d.id);
           } else {
-            // Garder
             allDocs.push({
               id: d.id,
               uid: data.uid || '',
-              nom: data.nom || '—',
+              nom: data.email || '—',
               ts: timestamp
             });
           }

@@ -254,24 +254,29 @@
 
         const uid = snapshot.docs[0].id;
 
+        // Utiliser batch pour supprimer
+        const batch = writeBatch(db);
+        
         // Supprimer users
-        await deleteDoc(doc(db, 'users', uid));
+        batch.delete(doc(db, 'users', uid));
         
         // Supprimer vma_data
-        await deleteDoc(doc(db, 'vma_data', uid));
+        batch.delete(doc(db, 'vma_data', uid));
         
-        // Supprimer race_suivi: récupérer TOUS, filtrer en JS, supprimer
+        // Supprimer race_suivi: récupérer TOUS, filtrer en JS, ajouter au batch
         const allRaceSuivi = await getDocs(collection(db, 'race_suivi'));
-        const toDelete = [];
+        let countRaceSuivi = 0;
         allRaceSuivi.forEach(d => {
           if (d.id.startsWith(uid + '_')) {
-            toDelete.push(d.id);
+            batch.delete(d.ref);
+            countRaceSuivi++;
           }
         });
         
-        await Promise.all(toDelete.map(sid => deleteDoc(doc(db, 'race_suivi', sid))));
+        // Exécuter le batch
+        await batch.commit();
 
-        showSuccess('Adhérent supprimé complètement!');
+        showSuccess(`Adhérent supprimé complètement! (${countRaceSuivi} suivi(s) effacé(s))`);
         document.getElementById('email-input').value = '';
         
         setTimeout(() => window.location.href = 'admin-adherents.html', 2000);

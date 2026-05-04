@@ -192,11 +192,10 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Si déjà connecté → rediriger directement
+    // Si déjà connecté → rediriger directement (pas pendant un login en cours)
+    let isLoggingIn = false;
     onAuthStateChanged(auth, (user) => {
-      if (user && window.location.pathname.includes('index.html')) {
-        window.location.href = 'planning.html';
-      }
+      if (user && !isLoggingIn) window.location.href = 'planning.html';
     });
 
     window.doLogin = async function() {
@@ -211,6 +210,7 @@
 
       hideError('error-msg');
       btn.disabled = true;
+      isLoggingIn = true;
       document.getElementById('loading').classList.add('show');
 
       try {
@@ -223,6 +223,7 @@
             email: email,
             date: serverTimestamp()
           });
+          console.log('✅ Connexion enregistrée!');
         } catch(e) {
           console.warn('Erreur enregistrement connexion:', e);
         }

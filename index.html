@@ -185,10 +185,12 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, showError, hideError } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     // Si déjà connecté → rediriger directement
     onAuthStateChanged(auth, (user) => {
@@ -210,7 +212,19 @@
       document.getElementById('loading').classList.add('show');
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // Enregistrer la connexion dans Firestore
+        try {
+          await setDoc(doc(db, 'connexions', userCredential.user.uid + '_' + Date.now()), {
+            uid: userCredential.user.uid,
+            email: email,
+            date: serverTimestamp()
+          });
+        } catch(e) {
+          console.warn('Erreur enregistrement connexion:', e);
+        }
+
         window.location.href = 'planning.html';
       } catch (error) {
         document.getElementById('loading').classList.remove('show');

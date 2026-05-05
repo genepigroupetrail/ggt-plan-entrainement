@@ -523,7 +523,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { firebaseConfig, getWeekNumber, getMondayOfWeek, getWeekKey, formatDate, getUserDisplayName } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
@@ -652,6 +652,45 @@
     window.logout = () => signOut(auth).then(() => window.location.href = 'index.html');
 
     let redirecting = false;
+    // ==================== ANNIVERSAIRES ====================
+    async function checkAnniversaires() {
+      try {
+        const today = new Date();
+        const todayDay   = today.getDate();
+        const todayMonth = today.getMonth() + 1; // 1-12
+
+        const usersSnap = await getDocs(collection(db, 'users'));
+        const anniversaires = [];
+
+        usersSnap.forEach(d => {
+          const data = d.data();
+          if (!data.dob) return;
+
+          // dob format: YYYY-MM-DD
+          const parts = data.dob.split('-');
+          if (parts.length < 3) return;
+
+          const dobMonth = parseInt(parts[1], 10);
+          const dobDay   = parseInt(parts[2], 10);
+
+          if (dobDay === todayDay && dobMonth === todayMonth) {
+            const nom = [data.prenom, data.nom].filter(Boolean).join(' ') || data.email;
+            anniversaires.push(nom);
+          }
+        });
+
+        if (anniversaires.length > 0) {
+          const namesHtml = anniversaires.map(n =>
+            `<div style="font-size:16px;font-weight:600;color:var(--acc);padding:4px 0;">🎉 ${n}</div>`
+          ).join('');
+          document.getElementById('birthday-names').innerHTML = namesHtml;
+          document.getElementById('birthday-overlay').style.display = 'flex';
+        }
+      } catch(e) {
+        console.warn('Erreur anniversaires:', e);
+      }
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (redirecting) return;
       if (!user) {
@@ -680,7 +719,26 @@
       if (isAdminUser) document.getElementById('btn-admin').style.display = 'inline-flex';
 
       loadWeek();
+      checkAnniversaires();
     });
   </script>
+  <!-- POPUP ANNIVERSAIRE -->
+  <div id="birthday-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:20px;padding:32px 40px;max-width:400px;width:90%;text-align:center;animation:popIn .3s ease;">
+      <div style="font-size:52px;margin-bottom:12px;">🎂</div>
+      <div style="font-size:20px;font-weight:700;color:var(--txt);margin-bottom:8px;">Joyeux Anniversaire !</div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:20px;">Aujourd'hui c'est l'anniversaire de :</div>
+      <div id="birthday-names" style="margin-bottom:24px;"></div>
+      <button onclick="document.getElementById('birthday-overlay').style.display='none'" style="background:var(--acc);border:none;border-radius:10px;padding:10px 28px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">🎉 Super !</button>
+    </div>
+  </div>
+
+  <style>
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+  </style>
+
 </body>
 </html>

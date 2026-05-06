@@ -228,6 +228,26 @@ textarea::placeholder{color:var(--mut)}
   <div class="tab-section" id="tab-lexique">
     <div style="display:flex;flex-direction:column;gap:16px">
 
+      <!-- ACTIVITÉS SUIVI -->
+      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏃 Activités suivi</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px">
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(34,197,94,0.20)"><span>🏃</span> <strong>Course / Trail</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.20)"><span>🚴</span> <strong>Vélo</strong><div style="font-size:10px;color:var(--mut)">km + D+ affichés</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(180,140,80,0.20)"><span>🚶</span> <strong>Marche</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(79,142,247,0.20)"><span>🏊</span> <strong>Natation</strong><div style="font-size:10px;color:var(--mut)">km affiché</div></div>
+          <div style="padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.20)"><span>🏋️</span> <strong>Renforcement</strong><div style="font-size:10px;color:var(--mut)">Sans mesure</div></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Sensations :</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(34,197,94,0.22);font-size:13px">😊 Très facile</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(134,239,172,0.22);font-size:13px">🙂 Facile</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(251,191,36,0.22);font-size:13px">😐 Normal</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(252,165,165,0.22);font-size:13px">😓 Difficile</div>
+          <div style="padding:6px 14px;border-radius:20px;background:rgba(239,68,68,0.22);font-size:13px">😰 Très difficile</div>
+        </div>
+      </div>
+
       <!-- COULEURS SÉANCES -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
         <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🎨 Couleurs des types de séance</div>
@@ -256,6 +276,14 @@ textarea::placeholder{color:var(--mut)}
           <div style="padding:10px 14px;background:var(--surf2);border-radius:8px;border:.5px solid rgba(79,142,247,.2)"><div style="color:var(--acc);font-weight:600">admin-adherents.html</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Gestion adhérents — Créer, Voir, Modifier, Suspendre/Réactiver — Accès admin + adhérentadmin</div></div>
           <div style="padding:10px 14px;background:var(--surf2);border-radius:8px;border:.5px solid rgba(79,142,247,.2)"><div style="color:var(--acc);font-weight:600">admin-delete.html</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Suppression complète d'un adhérent — Supprime users + vma_data + race_suivi — Accès admin + adhérentadmin</div></div>
           <div style="padding:10px 14px;background:var(--surf2);border-radius:8px;border:.5px solid rgba(79,142,247,.2)"><div style="color:var(--acc);font-weight:600">connexions.html</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Historique connexions adhérents — Stats + tableau — Auto-suppression après 6 mois</div></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-top:16px;margin-bottom:10px;color:var(--txt)">📦 Fichiers partagés</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:#f59e0b;font-weight:600">shared-styles.css</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Styles communs — Dark mode, variables CSS, header, boutons, badges, responsive</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:#f59e0b;font-weight:600">shared-app.js</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Fonctions communes — firebaseConfig, formatDateTime, getUserDisplayName, getTodayUTC</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:#f59e0b;font-weight:600">logo-ggt.png</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Logo GGT — Affiché dans le header de toutes les pages</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:#f59e0b;font-weight:600">favicon.png</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Icône onglet navigateur</div></div>
+          <div style="padding:10px 14px;background:var(--surf2);border-radius:8px"><div style="color:#f59e0b;font-weight:600">GGT_Template_Plan_Course.xlsx</div><div style="color:var(--mut);font-size:11px;margin-top:2px">Template Excel — Utilisé dans Admin → Plans compétition pour créer un nouveau plan</div></div>
         </div>
       </div>
 
@@ -357,26 +385,6 @@ service cloud.firestore {
     }
   }
 }</pre>
-      </div>
-
-      <!-- ACTIVITÉS SUIVI -->
-      <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--acc)">🏃 Activités suivi</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:16px">
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(34,197,94,0.20)"><span>🏃</span> <strong>Course / Trail</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(255,192,0,0.20)"><span>🚴</span> <strong>Vélo</strong><div style="font-size:10px;color:var(--mut)">km + D+ affichés</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(180,140,80,0.20)"><span>🚶</span> <strong>Marche</strong><div style="font-size:10px;color:var(--mut)">Cumul km + D+</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(79,142,247,0.20)"><span>🏊</span> <strong>Natation</strong><div style="font-size:10px;color:var(--mut)">km affiché</div></div>
-          <div style="padding:8px 12px;border-radius:8px;background:rgba(168,116,255,0.20)"><span>🏋️</span> <strong>Renforcement</strong><div style="font-size:10px;color:var(--mut)">Sans mesure</div></div>
-        </div>
-        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Sensations :</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(34,197,94,0.22);font-size:13px">😊 Très facile</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(134,239,172,0.22);font-size:13px">🙂 Facile</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(251,191,36,0.22);font-size:13px">😐 Normal</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(252,165,165,0.22);font-size:13px">😓 Difficile</div>
-          <div style="padding:6px 14px;border-radius:20px;background:rgba(239,68,68,0.22);font-size:13px">😰 Très difficile</div>
-        </div>
       </div>
 
       <!-- MAINTENANCE -->

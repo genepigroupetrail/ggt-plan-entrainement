@@ -201,6 +201,10 @@
       if (user && !isLoggingIn) window.location.href = 'planning.html';
     });
 
+    // Recharger l'email de la dernière connexion
+    const lastEmail = localStorage.getItem('ggt_last_email');
+    if (lastEmail) document.getElementById('email').value = lastEmail;
+
     window.doLogin = async function() {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
@@ -218,6 +222,9 @@
 
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // Sauvegarder l'email pour la prochaine fois
+        localStorage.setItem('ggt_last_email', email);
         
         // Enregistrer la connexion dans Firestore
         try {

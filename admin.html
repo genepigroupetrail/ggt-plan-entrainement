@@ -861,19 +861,18 @@ function showToast(msg, type) {
 
   function normDate(d) {
     if (d instanceof Date) {
-      // SheetJS crée des dates UTC → ajouter le décalage timezone pour obtenir la bonne date locale
-      var local = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
-      return String(local.getDate()).padStart(2,'0')+'/'+String(local.getMonth()+1).padStart(2,'0')+'/'+local.getFullYear();
+      console.log('🗓️ normDate - Date reçue:', d.toString(), '| getDate:', d.getDate(), '| getUTCDate:', d.getUTCDate(), '| toISO:', d.toISOString(), '| TimezoneOffset:', d.getTimezoneOffset());
+      return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
     }
+    console.log('🗓️ normDate - NON-Date reçu:', d, typeof d);
     return String(d||'');
   }
   function isoDate(d) {
     if (d instanceof Date) {
-      // SheetJS crée des dates UTC → ajouter le décalage timezone pour obtenir la bonne date locale
-      var local = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
-      return local.getFullYear() + '-' +
-             String(local.getMonth()+1).padStart(2,'0') + '-' +
-             String(local.getDate()).padStart(2,'0');
+      console.log('🗓️ isoDate - Date reçue:', d.toString(), '| getDate:', d.getDate(), '| getUTCDate:', d.getUTCDate(), '| toISO:', d.toISOString());
+      return d.getFullYear() + '-' +
+             String(d.getMonth()+1).padStart(2,'0') + '-' +
+             String(d.getDate()).padStart(2,'0');
     }
     var p = String(d||'').split('/');
     if (p.length===3) return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');

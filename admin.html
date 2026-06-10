@@ -515,6 +515,7 @@ function showToast(msg, type) {
     '77B5FE': 'rgba(119,181,254,0.26)',
     '8FBA3A': 'rgba(120,170,60,0.26)',
     '8FA8BF': 'rgba(143,168,191,0.26)',
+    '8FA8B7': 'rgba(143,168,191,0.26)',  // variante Footing
     'F59E0B': 'rgba(245,158,11,0.26)',
     'B08FFF': 'rgba(168,116,255,0.26)',
     'C8B870': 'rgba(200,185,130,0.22)',
@@ -863,7 +864,12 @@ function showToast(msg, type) {
     return String(d||'');
   }
   function isoDate(d) {
-    if (d instanceof Date) return d.toISOString().split('T')[0];
+    if (d instanceof Date) {
+      // Utiliser la date LOCALE (pas UTC) pour éviter le décalage de -1 jour
+      return d.getFullYear() + '-' +
+             String(d.getMonth()+1).padStart(2,'0') + '-' +
+             String(d.getDate()).padStart(2,'0');
+    }
     var p = String(d||'').split('/');
     if (p.length===3) return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');
     return '';

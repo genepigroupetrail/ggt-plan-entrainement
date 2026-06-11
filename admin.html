@@ -430,9 +430,23 @@ service cloud.firestore {
 
       <!-- TEMPLATE EXCEL -->
       <div style="background:var(--surf);border:.5px solid var(--brd);border-radius:14px;padding:20px 24px">
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--acc)">📂 Template Excel</div>
-        <div style="font-size:12px;color:var(--mut);margin-bottom:14px">Fichier template pour créer un plan de compétition.</div>
-        <a href="GGT_Template_Plan_Course.xlsx" download class="btn-publish" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;flex:unset;padding:10px 20px;font-size:13px;border-radius:10px">📥 Télécharger le template Excel</a>
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px;color:var(--acc)">📂 Fichiers téléchargeables</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surf2);border-radius:10px;border:.5px solid var(--brd)">
+            <div>
+              <div style="font-size:13px;font-weight:600">📊 Template Excel — Plan de compétition</div>
+              <div style="font-size:11px;color:var(--mut);margin-top:2px">Utilisé dans Admin → Plans compétition pour créer un nouveau plan</div>
+            </div>
+            <a href="GGT_Template_Plan_Course.xlsx" download class="btn-publish" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;flex:unset;padding:8px 16px;font-size:12px;border-radius:8px;white-space:nowrap">📥 Télécharger</a>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surf2);border-radius:10px;border:.5px solid var(--brd)">
+            <div>
+              <div style="font-size:13px;font-weight:600">📖 Guide de bienvenue — Nouvel adhérent</div>
+              <div style="font-size:11px;color:var(--mut);margin-top:2px">À envoyer par mail aux nouveaux adhérents avec leurs identifiants</div>
+            </div>
+            <a href="guide-adherent.pdf" download class="btn-publish" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;flex:unset;padding:8px 16px;font-size:12px;border-radius:8px;white-space:nowrap">📥 Télécharger</a>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -861,18 +875,19 @@ function showToast(msg, type) {
 
   function normDate(d) {
     if (d instanceof Date) {
-      console.log('🗓️ normDate - Date reçue:', d.toString(), '| getDate:', d.getDate(), '| getUTCDate:', d.getUTCDate(), '| toISO:', d.toISOString(), '| TimezoneOffset:', d.getTimezoneOffset());
-      return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+      // SheetJS crée des dates à 23:59:39 → arrondir au jour correct en ajoutant 30 min
+      var fixed = new Date(d.getTime() + 30 * 60 * 1000);
+      return String(fixed.getDate()).padStart(2,'0')+'/'+String(fixed.getMonth()+1).padStart(2,'0')+'/'+fixed.getFullYear();
     }
-    console.log('🗓️ normDate - NON-Date reçu:', d, typeof d);
     return String(d||'');
   }
   function isoDate(d) {
     if (d instanceof Date) {
-      console.log('🗓️ isoDate - Date reçue:', d.toString(), '| getDate:', d.getDate(), '| getUTCDate:', d.getUTCDate(), '| toISO:', d.toISOString());
-      return d.getFullYear() + '-' +
-             String(d.getMonth()+1).padStart(2,'0') + '-' +
-             String(d.getDate()).padStart(2,'0');
+      // SheetJS crée des dates à 23:59:39 → arrondir au jour correct en ajoutant 30 min
+      var fixed = new Date(d.getTime() + 30 * 60 * 1000);
+      return fixed.getFullYear() + '-' +
+             String(fixed.getMonth()+1).padStart(2,'0') + '-' +
+             String(fixed.getDate()).padStart(2,'0');
     }
     var p = String(d||'').split('/');
     if (p.length===3) return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');

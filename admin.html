@@ -161,6 +161,7 @@ textarea::placeholder{color:var(--mut)}
     </div>
     <div class="days-list" id="days-list"><div class="loading"><div class="spin"></div> Chargement...</div></div>
     <div class="actions">
+      <button class="btn-save" onclick="copyPrevWeek()" title="Copie le planning de la semaine précédente sur cette semaine">📋 Copier sem. précédente</button>
       <button class="btn-save" onclick="saveDraft()">💾 Brouillon</button>
       <button class="btn-publish" id="btn-pub" onclick="publish()">📤 Publier la semaine</button>
       <button class="btn-unpublish" id="btn-unpub" onclick="unpublish()" style="display:none">🔒 Dépublier</button>
@@ -755,6 +756,22 @@ function showToast(msg, type) {
     document.getElementById('days-list').innerHTML = html;
   }
 
+  function renderDays(jours) {
+    var monday = getMondayOfWeek(currentWeekOffset);
+    var normalizedJours = jours.map(function(j) {
+      if (!j) return { plans: [{type:'repos', contenu:'', location:''}] };
+      if (!j.plans) return { plans: [{type: j.type||'repos', contenu: j.contenu||'', location:''}] };
+      return j;
+    });
+    weekData.jours = normalizedJours;
+    var html = '';
+    for (var i = 0; i < 7; i++) {
+      var date = new Date(monday); date.setDate(monday.getDate()+i);
+      html += renderDay(i, date, normalizedJours[i].plans);
+    }
+    document.getElementById('days-list').innerHTML = html;
+  }
+
   window.updatePlanField = function(di, pi, field, value) {
     if (weekData.jours) weekData.jours[di].plans[pi][field] = value;
   };
@@ -799,6 +816,30 @@ function showToast(msg, type) {
     btn.disabled = false; btn.textContent = '📤 Publier la semaine';
   };
   window.unpublish  = async function() { if (await save(false)) { showToast('🔒 Planning dépublié','warn'); renderWeek(); } };
+  window.copyPrevWeek = async function() {
+    if (!confirm('Copier le planning de la semaine précédente sur cette semaine?\n\n⚠️ Le contenu actuel sera remplacé!')) return;
+    try {
+      // Charger la semaine précédente
+      var prevKey = getWeekKey(getMondayOfWeek(currentWeekOffset - 1));
+      var prevSnap = await getDoc(doc(db, 'plannings', prevKey));
+      if (!prevSnap.exists() || !prevSnap.data().jours) {
+        showToast('❌ Aucun planning la semaine précédente', 'err');
+        return;
+      }
+      // Copier les jours (deep copy) dans weekData
+      weekData.jours = JSON.parse(JSON.stringify(prevSnap.data().jours));
+      // Copier aussi le message si présent
+      var prevMessage = prevSnap.data().message || '';
+      document.getElementById('message-semaine').value = prevMessage;
+      // Afficher les jours copiés SANS recharger depuis Firestore
+      renderDays(weekData.jours);
+      showToast('✅ Planning copié! Modifie puis publie.');
+    } catch(e) {
+      console.error('Erreur copie:', e);
+      showToast('❌ Erreur lors de la copie', 'err');
+    }
+  };
+
   window.changeWeek = function(dir) { currentWeekOffset += dir; renderWeek(); };
 
   window.loadCompList = async function() {

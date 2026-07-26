@@ -731,6 +731,21 @@ function showToast(msg,err) {
     document.getElementById('user-name').textContent=[data.prenom||'',data.nom||''].filter(Boolean).join(' ')||user.email;
     isAdmin=data.role==='admin';
     if(isAdmin)document.getElementById('btn-admin').style.display='inline-flex';
+
+    // Enregistrer la connexion si pas encore fait dans cette session
+    const sessionKey = 'ggt_logged_' + user.uid;
+    if (!sessionStorage.getItem(sessionKey)) {
+      try {
+        await setDoc(doc(db, 'connexions', user.uid + '_' + Date.now()), {
+          uid: user.uid,
+          email: user.email,
+          date: serverTimestamp()
+        });
+        sessionStorage.setItem(sessionKey, '1');
+      } catch(e) {
+        console.warn('Erreur enregistrement connexion:', e);
+      }
+    }
     // Restaurer le plan si on revient depuis VMA
     const savedCompId = sessionStorage.getItem('ggt_comp_id');
     const savedDist = sessionStorage.getItem('ggt_comp_dist');

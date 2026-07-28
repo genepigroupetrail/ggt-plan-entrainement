@@ -233,6 +233,8 @@
             email: email,
             date: serverTimestamp()
           });
+          // Marquer la session pour éviter double enregistrement dans planning.html
+          sessionStorage.setItem('ggt_logged_' + userCredential.user.uid, '1');
           console.log('✅ Connexion enregistrée!');
         } catch(e) {
           console.warn('Erreur enregistrement connexion:', e);

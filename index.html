@@ -8,6 +8,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared-styles.css">
   <style>
+    /* ARRIÈRE-PLAN VIDÉO */
+    .bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    /* Calque sombre pour garantir la lisibilité du formulaire */
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: -1;
+      pointer-events: none;
+    }
+
     /* Styles spécifiques à la page de connexion */
     html, body {
       min-height: 100%;
@@ -19,19 +42,20 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background-image: 
-        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(79, 142, 247, 0.08), transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(252, 76, 2, 0.06), transparent 60%);
+      background: transparent;
     }
 
     .card {
-      background: var(--surf);
+      background: rgba(18, 20, 26, 0.85); /* Légère transparence pour fondre avec la vidéo */
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 0.5px solid var(--brd);
       border-radius: 20px;
       padding: 40px;
       width: 100%;
       max-width: 400px;
       margin: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
 
     .logo-wrap {
@@ -149,6 +173,13 @@
   </style>
 </head>
 <body>
+
+  <!-- VIDÉO D'ARRIÈRE-PLAN -->
+  <video class="bg-video" autoplay loop muted playsinline>
+    <source src="descente_web.mp4" type="video/mp4">
+  </video>
+  <div class="bg-overlay"></div>
+
   <div class="card">
     <div class="logo-wrap">
       <img class="logo-img" src="logo-ggt.png" alt="GGT">
@@ -233,8 +264,6 @@
             email: email,
             date: serverTimestamp()
           });
-          // Marquer la session pour éviter double enregistrement dans planning.html
-          sessionStorage.setItem('ggt_logged_' + userCredential.user.uid, '1');
           console.log('✅ Connexion enregistrée!');
         } catch(e) {
           console.warn('Erreur enregistrement connexion:', e);

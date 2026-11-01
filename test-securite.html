@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Test de sécurité</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .wrap { max-width: 640px; margin: 32px auto; padding: 0 20px; }
+    .card { background: var(--surf); border: 0.5px solid var(--brd); border-radius: 14px; padding: 22px 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+    .card p { font-size: 13px; line-height: 1.6; color: var(--mut); margin-bottom: 10px; }
+    .kv { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; font-size: 13px; margin-top: 8px; }
+    .kv .k { color: var(--mut); }
+    .kv .v { color: var(--txt); word-break: break-all; }
+    .btn-go { margin-top: 14px; padding: 12px 22px; border-radius: 10px; border: none; background: var(--ora); color: #fff; font-family: var(--font-family); font-size: 14px; font-weight: 700; cursor: pointer; }
+    .btn-go:disabled { opacity: .45; cursor: not-allowed; }
+    .res { display: none; border-radius: 14px; padding: 22px 24px; margin-bottom: 20px; border: 1px solid; }
+    .res.show { display: block; }
+    .res .titre { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .res .detail { font-size: 13px; line-height: 1.6; }
+    .res.mauvais { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.5); color: #ff8a8a; }
+    .res.bon { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.5); color: #6ee79b; }
+    .res.neutre { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.5); color: var(--amb); }
+    .res .titre, .res .detail { color: inherit; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>Test de sécurité</h1><p>Site de test uniquement</p></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <a href="planning.html" class="btn-h">← Planning</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="card" id="carte-info">
+      <h2>Un adhérent peut-il se donner le rôle « admin » ?</h2>
+      <p id="intro">Vérification de la connexion…</p>
+      <div class="kv" id="kv" style="display:none">
+        <div class="k">Projet Firebase</div><div class="v" id="v-projet">—</div>
+        <div class="k">Compte connecté</div><div class="v" id="v-email">—</div>
+        <div class="k">UID</div><div class="v" id="v-uid">—</div>
+        <div class="k">Rôle actuel</div><div class="v" id="v-role">—</div>
+      </div>
+      <button class="btn-go" id="btn-test" style="display:none" onclick="lancerTest()">Lancer le test</button>
+    </div>
+
+    <div class="res" id="resultat">
+      <div class="titre" id="res-titre"></div>
+      <div class="detail" id="res-detail"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig } from "./shared-app.js";
+
+    // Garde-fou : cette page ne fonctionne QUE sur le projet de test.
+    const PROJET_TEST = "ggt-planning-45e9e";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let roleOriginal;          // rôle d'origine du compte testé (peut être undefined)
+    let roleExiste = false;
+
+    const $ = (id) => document.getElementById(id);
+
+    function afficherResultat(type, titre, detail) {
+      const r = $('resultat');
+      r.className = 'res show ' + type;
+      $('res-titre').textContent = titre;
+      $('res-detail').textContent = detail;
+    }
+
+    function texteRole(r) {
+      return r === undefined ? '(aucun champ « role »)' : '« ' + r + ' »';
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      $('v-projet').textContent = firebaseConfig.projectId;
+
+      if (firebaseConfig.projectId !== PROJET_TEST) {
+        $('intro').textContent = "STOP : cette page est réservée au projet de test (" + PROJET_TEST + "). Elle refuse de s'exécuter ici.";
+        afficherResultat('mauvais', 'Test refusé', "Le projet configuré est « " + firebaseConfig.projectId + " ». Rien n'a été envoyé.");
+        return;
+      }
+
+      if (!user) {
+        $('intro').textContent = "Tu n'es pas connecté dans cet onglet. Va sur la page de connexion, connecte-toi avec ton ADHÉRENT DE TEST, puis, dans le MÊME onglet, remplace « planning.html » par « test-securite.html » dans la barre d'adresse.";
+        afficherResultat('neutre', 'Non connecté', "La connexion est propre à chaque onglet : ne rouvre pas cette page dans un nouvel onglet.");
+        return;
+      }
+
+      currentUser = user;
+      $('v-email').textContent = user.email || '—';
+      $('v-uid').textContent = user.uid;
+      $('kv').style.display = 'grid';
+
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (!snap.exists()) {
+          $('v-role').textContent = '(document introuvable)';
+          $('intro').textContent = "Ce compte n'a pas de document dans la collection « users ». Test impossible.";
+          return;
+        }
+        const data = snap.data();
+        roleExiste = Object.prototype.hasOwnProperty.call(data, 'role');
+        roleOriginal = roleExiste ? data.role : undefined;
+        $('v-role').textContent = texteRole(roleOriginal);
+
+        if (roleOriginal === 'admin' || roleOriginal === 'adhérentadmin') {
+          $('intro').textContent = "Ce compte est déjà administrateur : le test ne prouverait rien. Connecte-toi avec un adhérent NORMAL (rôle « adhérent »).";
+          afficherResultat('neutre', 'Test non lancé', "Aucune écriture n'a été faite. Utilise un compte dont le rôle est « adhérent ».");
+          return;
+        }
+
+        $('intro').textContent = "Le test essaie de changer le rôle de CE compte en « admin », puis le remet tout de suite comme avant s'il a réussi. Il n'écrit que dans le projet de test.";
+        $('btn-test').style.display = 'inline-block';
+      } catch (e) {
+        console.error(e);
+        $('intro').textContent = "Impossible de lire le profil : " + (e.code || e.message);
+      }
+    });
+
+    window.lancerTest = async function () {
+      if (!currentUser || firebaseConfig.projectId !== PROJET_TEST) return;
+      const btn = $('btn-test');
+      btn.disabled = true;
+      $('resultat').className = 'res';
+
+      const ref = doc(db, 'users', currentUser.uid);
+
+      // 1) Tentative d'auto-promotion
+      try {
+        await updateDoc(ref, { role: 'admin' });
+      } catch (e) {
+        if (e && e.code === 'permission-denied') {
+          let verif = '';
+          try {
+            const s = await getDoc(ref);
+            verif = " Rôle relu dans la base : " + texteRole(s.data().role) + ".";
+          } catch (e2) { /* sans importance */ }
+          afficherResultat('bon', 'PROTÉGÉ ✅', "La base a refusé la modification (permission-denied). Un adhérent ne peut pas se donner le rôle admin." + verif);
+        } else {
+          console.error(e);
+          afficherResultat('neutre', 'Résultat indéterminé', "Erreur inattendue : " + (e.code || e.message) + ". Ce n'est ni un refus de règle ni une réussite. Envoie-moi ce message.");
+        }
+        btn.disabled = false;
+        return;
+      }
+
+      // 2) La modification a réussi => faille. On remet le rôle d'origine.
+      let restaure = false;
+      try {
+        await updateDoc(ref, { role: roleOriginal === undefined ? deleteField() : roleOriginal });
+        restaure = true;
+      } catch (e) {
+        console.error('Restauration impossible :', e);
+      }
+
+      let roleFinal = '(relecture impossible)';
+      try {
+        const s = await getDoc(ref);
+        roleFinal = texteRole(s.data().role);
+      } catch (e) { /* sans importance */ }
+
+      $('v-role').textContent = roleFinal;
+
+      if (restaure) {
+        afficherResultat('mauvais', 'FAILLE PRÉSENTE ⚠️',
+          "L'adhérent a réussi à se donner le rôle admin. Le rôle a été remis automatiquement comme avant. Rôle actuel dans la base : " + roleFinal + ".");
+      } else {
+        afficherResultat('mauvais', 'FAILLE PRÉSENTE ⚠️ — rôle à remettre à la main',
+          "La modification a réussi, mais le rôle n'a pas pu être remis automatiquement. Dans la console Firebase (projet " + PROJET_TEST + ") : Firestore → users → " + currentUser.uid + " → remets le champ role à " + texteRole(roleOriginal) + ". Rôle actuel : " + roleFinal + ".");
+      }
+      btn.disabled = false;
+    };
+  </script>
+</body>
+</html>

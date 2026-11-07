@@ -255,6 +255,9 @@
         
         // Supprimer vma_data
         batch.delete(doc(db, 'vma_data', uid));
+
+        // Supprimer la mini-fiche publique (anniversaires, suivi du groupe)
+        batch.delete(doc(db, 'profils_publics', uid));
         
         // Supprimer race_suivi: récupérer TOUS, filtrer en JS, ajouter au batch
         const allRaceSuivi = await getDocs(collection(db, 'race_suivi'));

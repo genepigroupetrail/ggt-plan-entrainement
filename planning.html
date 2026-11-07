@@ -524,7 +524,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, collection, getDocs, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { firebaseConfig, getWeekNumber, getMondayOfWeek, getWeekKey, formatDate, getUserDisplayName } from "./shared-app.js";
+    import { firebaseConfig, getWeekNumber, getMondayOfWeek, getWeekKey, formatDate, getUserDisplayName, escapeHtml } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -659,29 +659,26 @@
         const todayDay   = today.getDate();
         const todayMonth = today.getMonth() + 1; // 1-12
 
-        const usersSnap = await getDocs(collection(db, 'users'));
+        const usersSnap = await getDocs(collection(db, 'profils_publics'));
         const anniversaires = [];
 
         usersSnap.forEach(d => {
           const data = d.data();
-          if (!data.dob) return;
+          // Mini-fiche publique : jour et mois de naissance seulement
+          if (!data.jour || !data.mois) return;
 
-          // dob format: YYYY-MM-DD
-          const parts = data.dob.split('-');
-          if (parts.length < 3) return;
-
-          const dobMonth = parseInt(parts[1], 10);
-          const dobDay   = parseInt(parts[2], 10);
+          const dobMonth = data.mois;
+          const dobDay   = data.jour;
 
           if (dobDay === todayDay && dobMonth === todayMonth) {
-            const nom = [data.prenom, data.nom].filter(Boolean).join(' ') || data.email;
-            anniversaires.push(nom);
+            const nom = [data.prenom, data.nom].filter(Boolean).join(' ');
+            if (nom) anniversaires.push(nom);
           }
         });
 
         if (anniversaires.length > 0) {
           const namesHtml = anniversaires.map(n =>
-            `<div style="font-size:16px;font-weight:600;color:var(--acc);padding:4px 0;">🎉 ${n}</div>`
+            `<div style="font-size:16px;font-weight:600;color:var(--acc);padding:4px 0;">🎉 ${escapeHtml(n)}</div>`
           ).join('');
           document.getElementById('birthday-names').innerHTML = namesHtml;
           document.getElementById('birthday-overlay').style.display = 'flex';

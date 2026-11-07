@@ -52,6 +52,7 @@ export const MDP_PROVISOIRE = "genepi";   // comparé sans tenir compte des maju
 const CLE_DEBUT = "ggt_session_debut";
 const CLE_PROVISOIRE = "ggt_mdp_provisoire";
 const CLE_EXPIREE = "ggt_session_expiree";
+const CLE_SYNC = "ggt_profil_public_sync";
 const URL_FIREBASE = "https://www.gstatic.com/firebasejs/10.12.0/";
 const PAGES_LIBRES = ["index.html", "mon-profil.html", "guide.html"];
 const PAGE = (typeof location !== "undefined" ? location.pathname.split("/").pop() : "") || "index.html";
@@ -70,6 +71,7 @@ export function marquerConnexion(motDePasseSaisi) {
   try {
     sessionStorage.setItem(CLE_DEBUT, String(Date.now()));
     sessionStorage.removeItem(CLE_EXPIREE);
+    sessionStorage.removeItem(CLE_SYNC);
     if (provisoire) sessionStorage.setItem(CLE_PROVISOIRE, "1");
     else sessionStorage.removeItem(CLE_PROVISOIRE);
   } catch (e) { /* stockage indisponible */ }
@@ -123,6 +125,77 @@ export function erreurNouveauMotDePasse(mdp) {
   return "";
 }
 
+/**
+ * Mini-fiche publique : seulement prénom, nom, jour et mois de naissance.
+ * Elle sert aux anniversaires et au suivi du groupe, sans exposer téléphone, adresse ni année de naissance.
+ * Retourne null s'il n'y a ni prénom ni nom.
+ */
+export function profilPublic(d) {
+  d = d || {};
+  const prenom = String(d.prenom == null ? "" : d.prenom).trim();
+  const nom = String(d.nom == null ? "" : d.nom).trim();
+  if (!prenom && !nom) return null;
+  const pub = { prenom: prenom, nom: nom };
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d.dob == null ? "" : d.dob).trim());
+  if (m) {
+    const mois = parseInt(m[2], 10);
+    const jour = parseInt(m[3], 10);
+    if (mois >= 1 && mois <= 12 && jour >= 1 && jour <= 31) {
+      pub.jour = jour;
+      pub.mois = mois;
+    }
+  }
+  return pub;
+}
+
+function memesProfilsPublics(a, b) {
+  if (!a || !b) return false;
+  return ["prenom", "nom", "jour", "mois"].every(function (k) { return a[k] === b[k]; });
+}
+
+/**
+ * Une fois par connexion :
+ *  - chaque adhérent met à jour sa propre mini-fiche ;
+ *  - l'administrateur remet à niveau celles de tout le monde (création, mise à jour, suppression des orphelines).
+ */
+async function synchroniserProfilsPublics(mFs, app, user) {
+  const db = mFs.getFirestore(app);
+  const snap = await mFs.getDoc(mFs.doc(db, "users", user.uid));
+  if (!snap.exists()) return;
+  const d = snap.data();
+
+  const pub = profilPublic(d);
+  if (pub) await mFs.setDoc(mFs.doc(db, "profils_publics", user.uid), pub);
+  if (d.role !== "admin") return;
+
+  const lectures = await Promise.all([
+    mFs.getDocs(mFs.collection(db, "users")),
+    mFs.getDocs(mFs.collection(db, "profils_publics"))
+  ]);
+  const existants = {};
+  lectures[1].forEach(function (x) { existants[x.id] = x.data(); });
+
+  const operations = [];
+  lectures[0].forEach(function (u) {
+    const attendu = profilPublic(u.data());
+    const present = existants[u.id];
+    delete existants[u.id];
+    if (attendu && !memesProfilsPublics(attendu, present)) operations.push({ type: "set", id: u.id, data: attendu });
+    else if (!attendu && present) operations.push({ type: "delete", id: u.id });
+  });
+  Object.keys(existants).forEach(function (id) { operations.push({ type: "delete", id: id }); });
+
+  for (let i = 0; i < operations.length; i += 400) {
+    const lot = mFs.writeBatch(db);
+    operations.slice(i, i + 400).forEach(function (op) {
+      const ref = mFs.doc(db, "profils_publics", op.id);
+      if (op.type === "set") lot.set(ref, op.data);
+      else lot.delete(ref);
+    });
+    await lot.commit();
+  }
+}
+
 // ---- Gardes automatiques sur toutes les pages sauf la page de connexion ----
 if (typeof window !== "undefined" && typeof sessionStorage !== "undefined" && PAGE !== "index.html") {
   if (mdpProvisoireEnAttente() && !PAGES_LIBRES.includes(PAGE)) {
@@ -147,6 +220,7 @@ async function demarrerGardes() {
   let minuteur = null;
   let pastille = null;
   let profilVerifie = false;
+  let syncLancee = false;
   let enCours = false;
 
   const afficher = function (restantMs) {
@@ -190,6 +264,13 @@ async function demarrerGardes() {
         return;
       }
       afficher(restant);
+
+      // Mini-fiches publiques (anniversaires, suivi du groupe) : une fois par connexion, sans bloquer la page
+      if (!syncLancee && sessionStorage.getItem(CLE_SYNC) !== "1") {
+        syncLancee = true;
+        sessionStorage.setItem(CLE_SYNC, "1");
+        synchroniserProfilsPublics(mFs, app, user).catch(function (e) { console.warn("Mini-fiches publiques :", e); });
+      }
 
       // Profil obligatoire : toutes les informations doivent être renseignées
       if (!profilVerifie && !PAGES_LIBRES.includes(PAGE)) {

@@ -277,9 +277,9 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    import { firebaseConfig, profilManquants, erreurNouveauMotDePasse, mdpProvisoireEnAttente, mdpProvisoireResolu } from "./shared-app.js";
+    import { firebaseConfig, profilPublic, profilManquants, erreurNouveauMotDePasse, mdpProvisoireEnAttente, mdpProvisoireResolu } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -373,6 +373,14 @@
         await updateDoc(doc(db, 'users', user.uid), {
           prenom, nom, dob, tel, adresse
         });
+
+        // Mini-fiche publique (anniversaires, suivi du groupe) : prénom, nom, jour et mois seulement
+        try {
+          const pub = profilPublic({ prenom, nom, dob });
+          if (pub) await setDoc(doc(db, 'profils_publics', user.uid), pub);
+        } catch (e) {
+          console.warn('Mini-fiche publique non mise à jour :', e);
+        }
 
         showSuccess('Profil mis à jour avec succès');
         currentUser = Object.assign({}, currentUser, { prenom, nom, dob, tel, adresse });

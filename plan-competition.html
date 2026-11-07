@@ -353,7 +353,7 @@ function showToast(msg,err) {
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  import { firebaseConfig } from "./shared-app.js";
+  import { firebaseConfig, escapeHtml } from "./shared-app.js";
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db   = getFirestore(app);
@@ -636,7 +636,7 @@ function showToast(msg,err) {
     if(!div)return;
     div.innerHTML='<div class="loading"><div class="spin"></div> Chargement...</div>';
     try{
-      const usersSnap=await getDocs(collection(db,'users'));
+      const usersSnap=await getDocs(collection(db,'profils_publics'));
       const allUsers=[];
       usersSnap.forEach(d=>allUsers.push({uid:d.id,prenom:d.data().prenom||'',nom:d.data().nom||''}));
       const users=[],suivis={};
@@ -674,7 +674,7 @@ function showToast(msg,err) {
         users.forEach(u=>{
           const sd=suivis[u.uid]||{};
           const dc=u.dist!==null?DIST_COLORS[u.dist]:'var(--mut)';
-          html+=`<tr><td class="tdn">${u.prenom} ${u.nom}</td><td style="color:${dc};font-weight:600;font-size:11px">${u.distLabel}</td>`;
+          html+=`<tr><td class="tdn">${escapeHtml(u.prenom)} ${escapeHtml(u.nom)}</td><td style="color:${dc};font-weight:600;font-size:11px">${u.distLabel}</td>`;
           for(let i=0;i<7;i++){
             const sport=sd[wk+'_sport'+i]||'';
             const sens=sd[wk+'_sens'+i]||'';
@@ -701,7 +701,7 @@ function showToast(msg,err) {
         let tkm=0,tdp=0;
         Object.keys(sd).forEach(k=>{if(k.endsWith('_cumkm'))tkm+=parseFloat(sd[k]||0);if(k.endsWith('_cumdp'))tdp+=parseFloat(sd[k]||0);});
         const dc=u.dist!==null?DIST_COLORS[u.dist]:'var(--mut)';
-        html+=`<tr><td class="tdn">${u.prenom} ${u.nom}</td><td style="color:${dc};font-weight:600;font-size:11px">${u.distLabel}</td><td style="color:var(--acc);font-weight:700;font-size:14px">${tkm.toFixed(1)} km</td><td style="color:var(--grn);font-weight:700;font-size:14px">${Math.round(tdp)} m</td></tr>`;
+        html+=`<tr><td class="tdn">${escapeHtml(u.prenom)} ${escapeHtml(u.nom)}</td><td style="color:${dc};font-weight:600;font-size:11px">${u.distLabel}</td><td style="color:var(--acc);font-weight:700;font-size:14px">${tkm.toFixed(1)} km</td><td style="color:var(--grn);font-weight:700;font-size:14px">${Math.round(tdp)} m</td></tr>`;
       });
       html+=`</tbody></table></div>`;
       div.innerHTML=html;

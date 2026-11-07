@@ -265,6 +265,7 @@
             date: serverTimestamp()
           });
           console.log('✅ Connexion enregistrée!');
+          sessionStorage.setItem('ggt_logged_' + userCredential.user.uid, '1');
         } catch(e) {
           console.warn('Erreur enregistrement connexion:', e);
         }

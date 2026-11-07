@@ -217,7 +217,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, browserSessionPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { firebaseConfig, showError, hideError } from "./shared-app.js";
+    import { firebaseConfig, showError, hideError, marquerConnexion, sessionExpireeSignalee } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -236,6 +236,11 @@
     const lastEmail = localStorage.getItem('ggt_last_email');
     if (lastEmail) document.getElementById('email').value = lastEmail;
 
+    // Session d'1 heure terminée : on prévient l'adhérent
+    if (sessionExpireeSignalee()) {
+      showError('error-msg', "Ta session d'1 heure est terminée. Reconnecte-toi.");
+    }
+
     window.doLogin = async function() {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
@@ -253,6 +258,8 @@
 
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        // Démarre le compte à rebours de 1 h et détecte le mot de passe provisoire
+        const provisoire = marquerConnexion(password);
         
         // Sauvegarder l'email pour la prochaine fois
         localStorage.setItem('ggt_last_email', email);
@@ -270,7 +277,7 @@
           console.warn('Erreur enregistrement connexion:', e);
         }
 
-        window.location.href = 'planning.html';
+        window.location.href = provisoire ? 'mon-profil.html' : 'planning.html';
       } catch (error) {
         document.getElementById('loading').classList.remove('show');
         btn.disabled = false;

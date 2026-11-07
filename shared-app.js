@@ -14,6 +14,203 @@ export const firebaseConfig = {
 };
 
 // ============================================================
+// MODE TEST - repère visuel du site de test
+// true  = site de TEST : bandeau orange + "[TEST]" dans le titre de l'onglet
+// false = site OFFICIEL : rien n'est affiché
+// (seule ligne à changer, avec firebaseConfig, pour passer sur l'officiel)
+// ============================================================
+export const MODE_TEST = false;
+
+if (MODE_TEST && typeof document !== "undefined") {
+  const afficherBandeauTest = function () {
+    if (document.getElementById("ggt-mode-test")) return;
+    if (!document.title.startsWith("[TEST]")) document.title = "[TEST] " + document.title;
+
+    const barre = document.createElement("div");
+    barre.id = "ggt-mode-test";
+    barre.style.cssText = "position:fixed;top:0;left:0;right:0;height:4px;background:#fc4c02;z-index:99999;pointer-events:none";
+
+    const pastille = document.createElement("div");
+    pastille.textContent = "🧪 SITE DE TEST";
+    pastille.style.cssText = "position:fixed;left:10px;bottom:10px;background:#fc4c02;color:#fff;font:700 11px/1 Outfit,sans-serif;letter-spacing:.06em;padding:6px 10px;border-radius:999px;z-index:99999;pointer-events:none;opacity:.92";
+
+    barre.appendChild(pastille);
+    document.body.appendChild(barre);
+  };
+  if (document.body) afficherBandeauTest();
+  else document.addEventListener("DOMContentLoaded", afficherBandeauTest);
+}
+
+// ============================================================
+// SESSION LIMITÉE À 1 H, MOT DE PASSE PROVISOIRE, PROFIL OBLIGATOIRE
+// Tout est centralisé ici : les pages n'ont presque rien à gérer.
+// ============================================================
+export const SESSION_MINUTES = 60;        // durée maximale d'une connexion
+export const AVERTISSEMENT_MINUTES = 5;   // le compte à rebours passe en orange à ce moment-là
+export const MDP_PROVISOIRE = "genepi";   // comparé sans tenir compte des majuscules
+
+const CLE_DEBUT = "ggt_session_debut";
+const CLE_PROVISOIRE = "ggt_mdp_provisoire";
+const CLE_EXPIREE = "ggt_session_expiree";
+const URL_FIREBASE = "https://www.gstatic.com/firebasejs/10.12.0/";
+const PAGES_LIBRES = ["index.html", "mon-profil.html", "guide.html"];
+const PAGE = (typeof location !== "undefined" ? location.pathname.split("/").pop() : "") || "index.html";
+
+export function motDePasseEstProvisoire(mdp) {
+  return String(mdp == null ? "" : mdp).trim().toLowerCase() === MDP_PROVISOIRE;
+}
+
+/**
+ * À appeler juste après une connexion réussie (index.html).
+ * Démarre le compte à rebours et note si le mot de passe saisi est le provisoire.
+ * Retourne true si c'est le mot de passe provisoire.
+ */
+export function marquerConnexion(motDePasseSaisi) {
+  const provisoire = motDePasseEstProvisoire(motDePasseSaisi);
+  try {
+    sessionStorage.setItem(CLE_DEBUT, String(Date.now()));
+    sessionStorage.removeItem(CLE_EXPIREE);
+    if (provisoire) sessionStorage.setItem(CLE_PROVISOIRE, "1");
+    else sessionStorage.removeItem(CLE_PROVISOIRE);
+  } catch (e) { /* stockage indisponible */ }
+  return provisoire;
+}
+
+export function mdpProvisoireEnAttente() {
+  try { return sessionStorage.getItem(CLE_PROVISOIRE) === "1"; } catch (e) { return false; }
+}
+
+export function mdpProvisoireResolu() {
+  try { sessionStorage.removeItem(CLE_PROVISOIRE); } catch (e) { /* rien */ }
+}
+
+/** true (une seule fois) si la session vient d'expirer ; sert à afficher un message sur index.html */
+export function sessionExpireeSignalee() {
+  try {
+    const v = sessionStorage.getItem(CLE_EXPIREE) === "1";
+    sessionStorage.removeItem(CLE_EXPIREE);
+    return v;
+  } catch (e) { return false; }
+}
+
+/**
+ * Liste des informations de profil manquantes ou invalides (tableau vide = profil complet)
+ */
+export function profilManquants(d) {
+  d = d || {};
+  const txt = function (v) { return String(v == null ? "" : v).trim(); };
+  const manque = [];
+  if (!txt(d.prenom)) manque.push("Prénom");
+  if (!txt(d.nom)) manque.push("Nom");
+  const dob = txt(d.dob);
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  const dobOk = /^\d{4}-\d{2}-\d{2}$/.test(dob) && !isNaN(Date.parse(dob)) && dob >= "1900-01-01" && dob <= aujourdhui;
+  if (!dobOk) manque.push("Date de naissance");
+  if (txt(d.tel).replace(/\D/g, "").length < 10) manque.push("Téléphone (10 chiffres minimum)");
+  if (txt(d.adresse).length < 5) manque.push("Adresse");
+  return manque;
+}
+
+/**
+ * Règles du nouveau mot de passe. Retourne un message d'erreur, ou "" si le mot de passe est valide.
+ */
+export function erreurNouveauMotDePasse(mdp) {
+  mdp = String(mdp == null ? "" : mdp);
+  if (motDePasseEstProvisoire(mdp)) return "Ce mot de passe est le mot de passe provisoire : choisis-en un autre.";
+  if (mdp.length < 8) return "Le mot de passe doit contenir au moins 8 caractères.";
+  if (!/[A-Z]/.test(mdp)) return "Le mot de passe doit contenir au moins une majuscule.";
+  if (!/[0-9]/.test(mdp)) return "Le mot de passe doit contenir au moins un chiffre.";
+  return "";
+}
+
+// ---- Gardes automatiques sur toutes les pages sauf la page de connexion ----
+if (typeof window !== "undefined" && typeof sessionStorage !== "undefined" && PAGE !== "index.html") {
+  if (mdpProvisoireEnAttente() && !PAGES_LIBRES.includes(PAGE)) {
+    // Mot de passe provisoire : on ne peut rien faire d'autre que changer le mot de passe
+    location.replace("mon-profil.html");
+  } else {
+    demarrerGardes();
+  }
+}
+
+async function demarrerGardes() {
+  let mApp, mAuth, mFs;
+  try {
+    mApp = await import(URL_FIREBASE + "firebase-app.js");
+    mAuth = await import(URL_FIREBASE + "firebase-auth.js");
+    mFs = await import(URL_FIREBASE + "firebase-firestore.js");
+  } catch (e) {
+    console.warn("Gardes de session indisponibles :", e);
+    return;
+  }
+
+  let minuteur = null;
+  let pastille = null;
+  let profilVerifie = false;
+  let enCours = false;
+
+  const afficher = function (restantMs) {
+    if (!document.body) return;
+    if (!pastille) {
+      pastille = document.createElement("div");
+      pastille.id = "ggt-compte-a-rebours";
+      pastille.style.cssText = "position:fixed;right:10px;bottom:10px;font:600 11px/1 Outfit,sans-serif;padding:6px 10px;border-radius:999px;z-index:99998;pointer-events:none;border:0.5px solid rgba(255,255,255,.12)";
+      document.body.appendChild(pastille);
+    }
+    const s = Math.max(0, Math.ceil(restantMs / 1000));
+    const urgent = restantMs <= AVERTISSEMENT_MINUTES * 60000;
+    pastille.textContent = "⏱ " + Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") + (urgent ? " — enregistre ton travail" : "");
+    pastille.style.background = urgent ? "#fc4c02" : "rgba(30,35,48,.92)";
+    pastille.style.color = urgent ? "#fff" : "#9aa3bd";
+  };
+
+  const verifier = async function () {
+    if (enCours) return;
+    enCours = true;
+    try {
+      const app = mApp.getApps()[0];
+      if (!app) return;
+      const auth = mAuth.getAuth(app);
+      const user = auth.currentUser;
+      if (!user) return;
+
+      // Compte à rebours de la session
+      let debut = Number(sessionStorage.getItem(CLE_DEBUT));
+      if (!debut) {
+        debut = Date.now();
+        sessionStorage.setItem(CLE_DEBUT, String(debut));
+      }
+      const restant = SESSION_MINUTES * 60000 - (Date.now() - debut);
+      if (restant <= 0) {
+        clearInterval(minuteur);
+        sessionStorage.setItem(CLE_EXPIREE, "1");
+        sessionStorage.removeItem(CLE_DEBUT);
+        try { await mAuth.signOut(auth); } catch (e) { /* on redirige quand même */ }
+        location.replace("index.html");
+        return;
+      }
+      afficher(restant);
+
+      // Profil obligatoire : toutes les informations doivent être renseignées
+      if (!profilVerifie && !PAGES_LIBRES.includes(PAGE)) {
+        profilVerifie = true;
+        const snap = await mFs.getDoc(mFs.doc(mFs.getFirestore(app), "users", user.uid));
+        if (snap.exists() && profilManquants(snap.data()).length > 0) {
+          location.replace("mon-profil.html");
+        }
+      }
+    } catch (e) {
+      console.warn("Garde de session :", e);
+    } finally {
+      enCours = false;
+    }
+  };
+
+  minuteur = setInterval(verifier, 1000);
+  verifier();
+}
+
+// ============================================================
 // UTILITAIRES DE GESTION DES DATES - CORRECTIONS UTC
 // ============================================================
 

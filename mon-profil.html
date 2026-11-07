@@ -200,20 +200,22 @@
   </header>
 
   <div class="profil-container">
+    <div id="alerte-obligatoire" class="info-box" style="display:none;white-space:pre-line;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.4);color:var(--amb);font-size:13px"></div>
     <div id="success-msg" class="success-msg">✅ Enregistré avec succès</div>
     <div id="error-msg" class="error-msg"></div>
 
     <!-- Infos Personnelles -->
     <div class="profil-card">
       <h2>👤 Informations Personnelles</h2>
+      <p style="font-size:12px;color:var(--mut);margin:-8px 0 14px">* Tous les champs sont obligatoires.</p>
 
       <div class="form-group">
-        <label>Prénom</label>
+        <label>Prénom *</label>
         <input type="text" id="prenom" placeholder="Jean">
       </div>
 
       <div class="form-group">
-        <label>Nom</label>
+        <label>Nom *</label>
         <input type="text" id="nom" placeholder="Dupont">
       </div>
 
@@ -223,17 +225,17 @@
       </div>
 
       <div class="form-group">
-        <label>Date de naissance</label>
+        <label>Date de naissance *</label>
         <input type="date" id="dob">
       </div>
 
       <div class="form-group">
-        <label>Téléphone</label>
+        <label>Téléphone *</label>
         <input type="tel" id="tel" placeholder="06 12 34 56 78">
       </div>
 
       <div class="form-group">
-        <label>Adresse</label>
+        <label>Adresse *</label>
         <input type="text" id="adresse" placeholder="123 rue de la Paix, 75000 Paris">
       </div>
 
@@ -257,7 +259,7 @@
       </div>
 
       <div class="form-group">
-        <label>Nouveau Mot de Passe</label>
+        <label>Nouveau Mot de Passe (8 caractères min., 1 majuscule, 1 chiffre)</label>
         <input type="password" id="new-password" placeholder="••••••••">
       </div>
 
@@ -277,20 +279,41 @@
     import { getAuth, onAuthStateChanged, signOut, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBfyEpytc8VEJ1sdJeCY2Imx5WAu-YazYI",
-      authDomain: "ggt-plan-entrainement.firebaseapp.com",
-      projectId: "ggt-plan-entrainement",
-      storageBucket: "ggt-plan-entrainement.appspot.com",
-      messagingSenderId: "1084549573822",
-      appId: "1:1084549573822:web:7f4fc2bb84d1c987e6c9f7"
-    };
+    import { firebaseConfig, profilManquants, erreurNouveauMotDePasse, mdpProvisoireEnAttente, mdpProvisoireResolu } from "./shared-app.js";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     let currentUser = null;
+
+    // ---- Obligations : mot de passe provisoire à changer, profil à compléter ----
+    let obligatoireAuChargement = false;
+    let profilCompletSauvegarde = true;
+
+    function afficherAlerte() {
+      const el = document.getElementById('alerte-obligatoire');
+      const lignes = [];
+      if (mdpProvisoireEnAttente()) {
+        lignes.push("🔑 Première connexion : tu es entré avec le mot de passe provisoire. Change-le dans la section « Changer le Mot de Passe » (ancien mot de passe : celui que tu viens de taper).");
+      }
+      if (!profilCompletSauvegarde) {
+        lignes.push("📝 Complète toutes tes informations personnelles (prénom, nom, date de naissance, téléphone, adresse) puis clique sur « Enregistrer ».");
+      }
+      el.textContent = lignes.join("\n\n");
+      el.style.display = lignes.length ? 'block' : 'none';
+      // Tant que ce n'est pas réglé, on masque les sorties vers le planning
+      document.querySelectorAll('a[href="planning.html"], .btn-cancel').forEach(function (e) {
+        e.style.display = lignes.length ? 'none' : '';
+      });
+    }
+
+    function continuerSiTermine() {
+      if (obligatoireAuChargement && !mdpProvisoireEnAttente() && profilCompletSauvegarde) {
+        showSuccess('Tout est en ordre, redirection vers le planning…');
+        setTimeout(function () { window.location.href = 'planning.html'; }, 1500);
+      }
+    }
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -319,6 +342,11 @@
         document.getElementById('tel').value = currentUser.tel || '';
         document.getElementById('adresse').value = currentUser.adresse || '';
 
+        // Obligations (mot de passe provisoire, profil incomplet)
+        profilCompletSauvegarde = profilManquants(currentUser).length === 0;
+        obligatoireAuChargement = mdpProvisoireEnAttente() || !profilCompletSauvegarde;
+        afficherAlerte();
+
       } catch (error) {
         console.error('Erreur:', error);
         showError('Erreur de chargement');
@@ -336,8 +364,9 @@
         const tel = document.getElementById('tel').value.trim();
         const adresse = document.getElementById('adresse').value.trim();
 
-        if (!prenom || !nom) {
-          showError('Prénom et Nom sont obligatoires');
+        const manque = profilManquants({ prenom, nom, dob, tel, adresse });
+        if (manque.length > 0) {
+          showError('Champs obligatoires à compléter : ' + manque.join(', '));
           return;
         }
 
@@ -346,6 +375,10 @@
         });
 
         showSuccess('Profil mis à jour avec succès');
+        currentUser = Object.assign({}, currentUser, { prenom, nom, dob, tel, adresse });
+        profilCompletSauvegarde = true;
+        afficherAlerte();
+        continuerSiTermine();
       } catch (error) {
         console.error('Erreur:', error);
         showError('Erreur: ' + error.message);
@@ -375,8 +408,9 @@
           return;
         }
 
-        if (newPassword.length < 6) {
-          showError('Le mot de passe doit contenir au moins 6 caractères');
+        const erreurMdp = erreurNouveauMotDePasse(newPassword);
+        if (erreurMdp) {
+          showError(erreurMdp);
           return;
         }
 
@@ -402,6 +436,9 @@
         document.getElementById('confirm-password').value = '';
 
         showSuccess('Mot de passe changé avec succès!');
+        mdpProvisoireResolu();
+        afficherAlerte();
+        continuerSiTermine();
       } catch (error) {
         console.error('❌ Erreur complète:', error);
         console.error('Code erreur:', error.code);

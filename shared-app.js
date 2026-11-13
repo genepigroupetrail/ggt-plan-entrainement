@@ -126,6 +126,78 @@ export function erreurNouveauMotDePasse(mdp) {
 }
 
 /**
+ * Analyse un lien Google Drive / Docs / Sheets / Slides / YouTube collé par l'administrateur.
+ * Retourne { type, embed } où embed est l'adresse d'intégration (liste blanche stricte),
+ * ou null si le lien n'est pas pris en charge. Rien d'autre que ces adresses ne peut être affiché.
+ * type : "video" | "fichier" | "document" | "tableur" | "diaporama" | "dossier"
+ */
+export function analyserLienRessource(lien) {
+  let u;
+  try { u = new URL(String(lien == null ? "" : lien).trim()); } catch (e) { return null; }
+  if (u.protocol !== "https:") return null;
+  const hote = u.hostname.toLowerCase().replace(/^www\./, "").replace(/^m\./, "");
+  const chemin = u.pathname;
+  const idGoogle = function (id) { return typeof id === "string" && /^[A-Za-z0-9_-]{10,200}$/.test(id); };
+  let m;
+
+  if (hote === "drive.google.com") {
+    m = chemin.match(/\/file\/d\/([^/]+)/);
+    if (m && idGoogle(m[1])) return { type: "fichier", embed: "https://drive.google.com/file/d/" + m[1] + "/preview" };
+    m = chemin.match(/\/folders\/([^/?]+)/);
+    if (m && idGoogle(m[1])) return { type: "dossier", embed: "https://drive.google.com/embeddedfolderview?id=" + m[1] + "#grid" };
+    const id = u.searchParams.get("id");
+    if ((chemin === "/open" || chemin === "/uc") && idGoogle(id)) {
+      return { type: "fichier", embed: "https://drive.google.com/file/d/" + id + "/preview" };
+    }
+    return null;
+  }
+
+  if (hote === "docs.google.com") {
+    m = chemin.match(/^\/(document|spreadsheets|presentation)\/d\/([^/]+)/);
+    if (m && idGoogle(m[2])) {
+      const types = { document: "document", spreadsheets: "tableur", presentation: "diaporama" };
+      return { type: types[m[1]], embed: "https://docs.google.com/" + m[1] + "/d/" + m[2] + "/preview" };
+    }
+    return null;
+  }
+
+  let v = null;
+  if (hote === "youtu.be") {
+    v = chemin.split("/")[1];
+  } else if (hote === "youtube.com" || hote === "youtube-nocookie.com") {
+    if (chemin === "/watch") {
+      v = u.searchParams.get("v");
+    } else {
+      m = chemin.match(/^\/(shorts|embed|live|v)\/([^/?]+)/);
+      if (m && m[2] !== "videoseries") v = m[2];
+    }
+    const liste = u.searchParams.get("list");
+    if (!v && liste && /^[A-Za-z0-9_-]{10,100}$/.test(liste) && (chemin === "/playlist" || chemin === "/embed/videoseries")) {
+      return { type: "video", embed: "https://www.youtube-nocookie.com/embed/videoseries?list=" + liste };
+    }
+  }
+  if (typeof v === "string" && /^[A-Za-z0-9_-]{11}$/.test(v)) {
+    return { type: "video", embed: "https://www.youtube-nocookie.com/embed/" + v };
+  }
+  return null;
+}
+
+/** Tri des ressources : sans catégorie d'abord, puis par catégorie, par ordre, par titre. */
+export function comparerRessources(a, b) {
+  const ca = String(a.categorie || "").trim().toLowerCase();
+  const cb = String(b.categorie || "").trim().toLowerCase();
+  if (ca !== cb) {
+    if (!ca) return -1;
+    if (!cb) return 1;
+    return ca.localeCompare(cb, "fr");
+  }
+  const oa = typeof a.ordre === "number" ? a.ordre : 9999;
+  const ob = typeof b.ordre === "number" ? b.ordre : 9999;
+  if (oa !== ob) return oa - ob;
+  return String(a.titre || "").localeCompare(String(b.titre || ""), "fr");
+}
+
+/**
  * Mini-fiche publique : seulement prénom, nom, jour et mois de naissance.
  * Elle sert aux anniversaires et au suivi du groupe, sans exposer téléphone, adresse ni année de naissance.
  * Retourne null s'il n'y a ni prénom ni nom.

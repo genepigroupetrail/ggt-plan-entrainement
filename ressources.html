@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Ressources</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px 70px; }
+    .intro { font-size: 13px; color: var(--mut); margin-bottom: 18px; line-height: 1.6; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+    .tab {
+      background: var(--surf); border: 0.5px solid var(--brd); border-radius: 10px;
+      padding: 9px 18px; color: var(--mut); font-family: var(--font-family); font-size: 14px;
+      font-weight: var(--font-weight-medium); cursor: pointer; transition: all .2s;
+    }
+    .tab:hover { border-color: var(--acc); color: var(--txt); }
+    .tab.actif { background: var(--acc); border-color: var(--acc); color: #fff; }
+
+    .categorie {
+      font-size: 11px; font-weight: var(--font-weight-bold); letter-spacing: .08em;
+      text-transform: uppercase; color: var(--ora); margin: 22px 0 10px;
+    }
+    .categorie:first-child { margin-top: 0; }
+    .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+
+    .carte {
+      background: var(--surf); border: 0.5px solid var(--brd); border-radius: 14px; padding: 14px 16px;
+      display: flex; flex-direction: column; gap: 6px; text-align: left; cursor: pointer;
+      font-family: var(--font-family); color: var(--txt); transition: border-color .2s, transform .1s;
+    }
+    .carte:hover { border-color: var(--acc); }
+    .carte:active { transform: scale(.99); }
+    .carte[disabled] { opacity: .5; cursor: not-allowed; }
+    .carte .haut { display: flex; align-items: center; gap: 10px; }
+    .carte .icone { font-size: 22px; }
+    .carte .titre { font-size: 14px; font-weight: var(--font-weight-medium); line-height: 1.35; }
+    .carte .desc { font-size: 12px; color: var(--mut); line-height: 1.5; }
+    .carte .ouvrir { font-size: 12px; color: var(--acc); margin-top: 2px; }
+
+    .vide, .message { text-align: center; padding: 50px 20px; color: var(--mut); font-size: 14px; }
+    .message.erreur { color: #ff6b6b; }
+
+    /* Lecteur plein écran */
+    .viewer { position: fixed; inset: 0; background: rgba(8, 10, 14, .92); z-index: 200; display: none; padding: 12px; }
+    .viewer.ouvert { display: flex; }
+    .viewer-panel {
+      margin: auto; width: 100%; max-width: 1100px; height: 100%; max-height: 94vh;
+      background: var(--surf); border: 0.5px solid var(--brd); border-radius: 14px;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .viewer-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 0.5px solid var(--brd); flex-wrap: wrap; }
+    .viewer-title { flex: 1; min-width: 140px; font-size: 14px; font-weight: var(--font-weight-medium); }
+    .viewer-body { flex: 1; background: #000; position: relative; }
+    .viewer-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .viewer-note { font-size: 11px; color: var(--mut); padding: 7px 14px; border-top: 0.5px solid var(--brd); }
+
+    @media (max-width: 600px) {
+      .wrap { padding: 16px 14px 60px; }
+      .viewer { padding: 0; }
+      .viewer-panel { max-height: 100vh; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>Ressources</h1><p>Génépi Groupe Trail</p></div>
+    </div>
+    <div class="header-right" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="user-badge" id="user-name">...</span>
+      <a href="admin-ressources.html" class="btn-h" id="btn-gerer" style="display:none">⚙️ Gérer</a>
+      <a href="planning.html" class="btn-h">← Planning</a>
+      <button class="btn-h" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <p class="intro">Consultation en ligne : les documents et vidéos s'ouvrent dans cette page.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab actif" id="tab-documents" role="tab" data-rubrique="documents">📄 Documents</button>
+      <button class="tab" id="tab-renforcement" role="tab" data-rubrique="renforcement">💪 Renforcement</button>
+    </div>
+
+    <div id="liste"><div class="loading"><div class="spin"></div> Chargement…</div></div>
+  </div>
+
+  <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="viewer-title">
+    <div class="viewer-panel">
+      <div class="viewer-head">
+        <div class="viewer-title" id="viewer-title"></div>
+        <button class="btn-h" id="viewer-close">✕ Fermer</button>
+      </div>
+      <div class="viewer-body" id="viewer-body"></div>
+      <div class="viewer-note" id="viewer-note">Document réservé aux adhérents du Génépi Groupe Trail. Merci de ne pas le diffuser.</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig, getUserDisplayName, analyserLienRessource, comparerRessources } from "./shared-app.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const ICONES = { video: "🎬", fichier: "📄", document: "📝", tableur: "📊", diaporama: "🖼️", dossier: "📁" };
+    const RUBRIQUES = ["documents", "renforcement"];
+
+    let items = [];
+    let rubriqueActive = RUBRIQUES.includes(location.hash.slice(1)) ? location.hash.slice(1) : "documents";
+
+    const $ = (id) => document.getElementById(id);
+
+    function creer(tag, classe, texte) {
+      const e = document.createElement(tag);
+      if (classe) e.className = classe;
+      if (texte !== undefined && texte !== null) e.textContent = texte;
+      return e;
+    }
+
+    // ---------- Affichage de la liste ----------
+    function afficherOnglets() {
+      RUBRIQUES.forEach(function (r) {
+        const n = items.filter(function (i) { return i.rubrique === r; }).length;
+        const bouton = $("tab-" + r);
+        bouton.classList.toggle("actif", r === rubriqueActive);
+        bouton.setAttribute("aria-selected", r === rubriqueActive ? "true" : "false");
+        bouton.textContent = (r === "documents" ? "📄 Documents" : "💪 Renforcement") + " (" + n + ")";
+      });
+    }
+
+    function afficherListe() {
+      afficherOnglets();
+      const zone = $("liste");
+      zone.textContent = "";
+      const liste = items.filter(function (i) { return i.rubrique === rubriqueActive; }).sort(comparerRessources);
+
+      if (liste.length === 0) {
+        zone.appendChild(creer("div", "vide", "Rien pour le moment dans cette rubrique."));
+        return;
+      }
+
+      let categorieCourante = null;
+      let grille = null;
+      liste.forEach(function (item) {
+        const cat = String(item.categorie || "").trim();
+        if (grille === null || cat !== categorieCourante) {
+          categorieCourante = cat;
+          if (cat) zone.appendChild(creer("div", "categorie", cat));
+          grille = creer("div", "grille");
+          zone.appendChild(grille);
+        }
+        grille.appendChild(creerCarte(item));
+      });
+    }
+
+    function creerCarte(item) {
+      const info = analyserLienRessource(item.lien);
+      const carte = creer("button", "carte");
+      carte.type = "button";
+
+      const haut = creer("div", "haut");
+      haut.appendChild(creer("span", "icone", info ? (ICONES[info.type] || "📄") : "⚠️"));
+      haut.appendChild(creer("span", "titre", item.titre || "(sans titre)"));
+      carte.appendChild(haut);
+
+      if (item.description) carte.appendChild(creer("div", "desc", item.description));
+
+      if (info) {
+        carte.appendChild(creer("div", "ouvrir", info.type === "video" ? "▶ Regarder" : "Ouvrir ›"));
+        carte.addEventListener("click", function () { ouvrir(item, info); });
+      } else {
+        carte.disabled = true;
+        carte.appendChild(creer("div", "desc", "Lien non pris en charge. Signale-le à l'administrateur."));
+      }
+      return carte;
+    }
+
+    // ---------- Lecteur ----------
+    function ouvrir(item, info) {
+      $("viewer-title").textContent = item.titre || "";
+
+      const corps = $("viewer-body");
+      corps.textContent = "";
+      const cadre = document.createElement("iframe");
+      cadre.src = info.embed; // adresse reconstruite à partir d'identifiants validés (liste blanche)
+      cadre.title = item.titre || "Ressource";
+      // Pas de "allow-downloads" : le cadre ne peut pas lancer de téléchargement.
+      // Dossier Drive : on autorise l'ouverture des éléments (photos, sous-dossiers) dans un nouvel onglet.
+      cadre.setAttribute("sandbox", info.type === "dossier"
+        ? "allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
+        : "allow-scripts allow-same-origin allow-presentation");
+      $("viewer-note").textContent = info.type === "dossier"
+        ? "Dossier : un clic sur une photo ou un sous-dossier l'ouvre dans un nouvel onglet. Document réservé aux adhérents, merci de ne pas le diffuser."
+        : "Document réservé aux adhérents du Génépi Groupe Trail. Merci de ne pas le diffuser.";
+      cadre.setAttribute("allow", "fullscreen; autoplay; encrypted-media; picture-in-picture");
+      cadre.setAttribute("allowfullscreen", "");
+      corps.appendChild(cadre);
+
+      $("viewer").classList.add("ouvert");
+      document.body.style.overflow = "hidden";
+    }
+
+    function fermer() {
+      $("viewer").classList.remove("ouvert");
+      $("viewer-body").textContent = ""; // arrête la vidéo
+      document.body.style.overflow = "";
+    }
+
+    $("viewer-close").addEventListener("click", fermer);
+    $("viewer").addEventListener("click", function (e) { if (e.target === $("viewer")) fermer(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") fermer(); });
+
+    document.querySelectorAll(".tab").forEach(function (b) {
+      b.addEventListener("click", function () {
+        rubriqueActive = b.getAttribute("data-rubrique");
+        history.replaceState(null, "", "#" + rubriqueActive);
+        afficherListe();
+      });
+    });
+
+    window.logout = async function () {
+      await signOut(auth);
+      window.location.href = "index.html";
+    };
+
+    // ---------- Démarrage ----------
+    onAuthStateChanged(auth, async function (user) {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        const data = snap.exists() ? snap.data() : {};
+        $("user-name").textContent = getUserDisplayName(data, user.email);
+        if (data.role === "admin") $("btn-gerer").style.display = "inline-flex";
+
+        const res = await getDocs(collection(db, "ressources"));
+        items = [];
+        res.forEach(function (d) { items.push(Object.assign({ id: d.id }, d.data())); });
+        afficherListe();
+      } catch (e) {
+        console.error(e);
+        const zone = $("liste");
+        zone.textContent = "";
+        zone.appendChild(creer("div", "message erreur", "Impossible de charger les ressources (" + (e.code || e.message) + ")."));
+      }
+    });
+  </script>
+</body>
+</html>

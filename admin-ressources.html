@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGT — Gérer les ressources</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared-styles.css">
+  <style>
+    .wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px 70px; }
+    .carte-form, .carte-liste { background: var(--surf); border: 0.5px solid var(--brd); border-radius: 14px; padding: 20px 22px; margin-bottom: 22px; }
+    h2 { font-size: 15px; font-weight: var(--font-weight-bold); margin-bottom: 14px; }
+    .aide { font-size: 12px; color: var(--mut); line-height: 1.6; margin-bottom: 14px; }
+
+    .grille-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+    .grille-form .large { grid-column: 1 / -1; }
+    .champ label { display: block; font-size: 11px; font-weight: var(--font-weight-bold); letter-spacing: .06em; text-transform: uppercase; color: var(--mut); margin-bottom: 5px; }
+    .champ input, .champ select, .champ textarea {
+      width: 100%; background: var(--surf2); border: 0.5px solid var(--brd); border-radius: 8px;
+      padding: 9px 12px; color: var(--txt); font-family: var(--font-family); font-size: 13px; outline: none;
+    }
+    .champ textarea { min-height: 60px; resize: vertical; }
+    .champ input:focus, .champ select:focus, .champ textarea:focus { border-color: var(--acc); }
+    .champ .astuce { font-size: 11px; color: var(--mut); margin-top: 4px; }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn { padding: 9px 18px; border-radius: 9px; border: none; font-family: var(--font-family); font-size: 13px; font-weight: var(--font-weight-medium); cursor: pointer; }
+    .btn.principal { background: var(--acc); color: #fff; }
+    .btn.secondaire { background: var(--surf2); color: var(--txt); border: 0.5px solid var(--brd); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .msg { display: none; border-radius: 8px; padding: 11px 14px; font-size: 13px; margin-bottom: 16px; }
+    .msg.ok { background: rgba(34,197,94,.15); border: .5px solid rgba(34,197,94,.4); color: var(--grn); }
+    .msg.ko { background: rgba(224,0,32,.15); border: .5px solid rgba(224,0,32,.4); color: #ff6b6b; }
+    .msg.visible { display: block; }
+
+    .apercu { display: none; margin-top: 16px; }
+    .apercu.visible { display: block; }
+    .apercu .cadre { position: relative; width: 100%; height: 360px; background: #000; border-radius: 10px; overflow: hidden; }
+    .apercu iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .apercu .legende { font-size: 12px; color: var(--mut); margin-bottom: 6px; }
+
+    .rubrique-titre { font-size: 13px; font-weight: var(--font-weight-bold); margin: 6px 0 10px; }
+    .ligne { display: grid; grid-template-columns: 46px 1fr auto; gap: 10px; align-items: center; padding: 9px 4px; border-top: 0.5px solid var(--brd); font-size: 13px; }
+    .ligne .ordre { color: var(--mut); text-align: center; }
+    .ligne .titre { font-weight: var(--font-weight-medium); }
+    .ligne .meta { font-size: 11px; color: var(--mut); margin-top: 2px; }
+    .ligne .boutons { display: flex; gap: 6px; }
+    .mini { background: var(--surf2); border: 0.5px solid var(--brd); border-radius: 7px; padding: 5px 10px; color: var(--txt); font-family: var(--font-family); font-size: 12px; cursor: pointer; }
+    .mini:hover { border-color: var(--acc); }
+    .mini.danger:hover { border-color: var(--red); color: var(--red); }
+    .vide { color: var(--mut); font-size: 13px; padding: 10px 4px; }
+
+    @media (max-width: 640px) {
+      .grille-form { grid-template-columns: 1fr; }
+      .wrap { padding: 16px 14px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo-ggt.png" alt="GGT">
+      <div><h1>Gérer les ressources</h1><p>Documents et renforcement</p></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="user-badge" id="user-name">...</span>
+      <a href="ressources.html" class="btn-h">👁 Voir comme adhérent</a>
+      <a href="admin.html" class="btn-h">← Admin</a>
+      <button class="btn-h" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="msg ok" id="msg-ok"></div>
+    <div class="msg ko" id="msg-ko"></div>
+
+    <div class="carte-form">
+      <h2 id="titre-form">➕ Ajouter une ressource</h2>
+      <p class="aide">
+        Colle un lien <strong>Google Drive</strong> (fichier ou dossier), <strong>Google Docs / Sheets / Slides</strong> ou <strong>YouTube</strong>.
+        Dans Drive, pense à désactiver le téléchargement, l'impression et la copie pour les lecteurs, et à partager en « toute personne disposant du lien ».
+      </p>
+
+      <div class="grille-form">
+        <div class="champ">
+          <label for="f-rubrique">Rubrique</label>
+          <select id="f-rubrique">
+            <option value="documents">📄 Documents</option>
+            <option value="renforcement">💪 Renforcement</option>
+          </select>
+        </div>
+        <div class="champ">
+          <label for="f-categorie">Catégorie (facultatif)</label>
+          <input type="text" id="f-categorie" list="liste-categories" maxlength="60" placeholder="Ex : Plans d'entraînement, Gainage…">
+          <datalist id="liste-categories"></datalist>
+        </div>
+        <div class="champ large">
+          <label for="f-titre">Titre</label>
+          <input type="text" id="f-titre" maxlength="150" placeholder="Ex : Plan 10 km — 8 semaines">
+        </div>
+        <div class="champ large">
+          <label for="f-description">Description (facultatif)</label>
+          <textarea id="f-description" maxlength="400" placeholder="Une ou deux lignes pour expliquer de quoi il s'agit"></textarea>
+        </div>
+        <div class="champ large">
+          <label for="f-lien">Lien</label>
+          <input type="url" id="f-lien" maxlength="600" placeholder="https://drive.google.com/file/d/…  ou  https://youtu.be/…">
+        </div>
+        <div class="champ">
+          <label for="f-ordre">Ordre d'affichage</label>
+          <input type="number" id="f-ordre" min="0" max="9999" step="1" placeholder="Automatique (à la fin)">
+          <div class="astuce">Petit nombre = affiché en premier, dans sa catégorie.</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn secondaire" id="b-tester" type="button">🔍 Tester le lien</button>
+        <button class="btn principal" id="b-enregistrer" type="button">💾 Enregistrer</button>
+        <button class="btn secondaire" id="b-annuler" type="button" style="display:none">Annuler la modification</button>
+      </div>
+
+      <div class="apercu" id="apercu">
+        <div class="legende" id="apercu-legende"></div>
+        <div class="cadre" id="apercu-cadre"></div>
+      </div>
+    </div>
+
+    <div class="carte-liste">
+      <h2>📋 Ressources en ligne</h2>
+      <div id="liste"><div class="loading"><div class="spin"></div> Chargement…</div></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, addDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { firebaseConfig, getUserDisplayName, analyserLienRessource, comparerRessources } from "./shared-app.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const LIBELLE_TYPE = { video: "Vidéo", fichier: "Fichier Drive", document: "Google Docs", tableur: "Google Sheets", diaporama: "Google Slides", dossier: "Dossier Drive" };
+    const RUBRIQUES = [["documents", "📄 Documents"], ["renforcement", "💪 Renforcement"]];
+
+    let items = [];
+    let idEnEdition = null;
+
+    const $ = (id) => document.getElementById(id);
+    function creer(tag, classe, texte) {
+      const e = document.createElement(tag);
+      if (classe) e.className = classe;
+      if (texte !== undefined && texte !== null) e.textContent = texte;
+      return e;
+    }
+
+    // ---------- Messages ----------
+    function montrer(type, texte) {
+      $("msg-ok").classList.remove("visible");
+      $("msg-ko").classList.remove("visible");
+      const el = $(type === "ok" ? "msg-ok" : "msg-ko");
+      el.textContent = (type === "ok" ? "✅ " : "❌ ") + texte;
+      el.classList.add("visible");
+      if (type === "ok") setTimeout(function () { el.classList.remove("visible"); }, 4000);
+    }
+
+    // ---------- Aperçu du lien ----------
+    function afficherApercu(info, titre) {
+      const cadre = $("apercu-cadre");
+      cadre.textContent = "";
+      const f = document.createElement("iframe");
+      f.src = info.embed;
+      f.title = "Aperçu";
+      f.setAttribute("sandbox", info.type === "dossier"
+        ? "allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
+        : "allow-scripts allow-same-origin allow-presentation");
+      f.setAttribute("allow", "fullscreen; autoplay; encrypted-media; picture-in-picture");
+      f.setAttribute("allowfullscreen", "");
+      cadre.appendChild(f);
+      $("apercu-legende").textContent = "Aperçu : " + (LIBELLE_TYPE[info.type] || info.type) + (titre ? " — " + titre : "");
+      $("apercu").classList.add("visible");
+    }
+
+    function masquerApercu() {
+      $("apercu-cadre").textContent = "";
+      $("apercu").classList.remove("visible");
+    }
+
+    function tester() {
+      const info = analyserLienRessource($("f-lien").value);
+      if (!info) {
+        masquerApercu();
+        montrer("ko", "Lien non pris en charge. Colle un lien Google Drive, Docs, Sheets, Slides ou YouTube (en https).");
+        return null;
+      }
+      afficherApercu(info, $("f-titre").value.trim());
+      return info;
+    }
+
+    // ---------- Formulaire ----------
+    function vider() {
+      idEnEdition = null;
+      ["f-categorie", "f-titre", "f-description", "f-lien", "f-ordre"].forEach(function (id) { $(id).value = ""; });
+      $("titre-form").textContent = "➕ Ajouter une ressource";
+      $("b-enregistrer").textContent = "💾 Enregistrer";
+      $("b-annuler").style.display = "none";
+      masquerApercu();
+    }
+
+    function modifier(item) {
+      idEnEdition = item.id;
+      $("f-rubrique").value = item.rubrique;
+      $("f-categorie").value = item.categorie || "";
+      $("f-titre").value = item.titre || "";
+      $("f-description").value = item.description || "";
+      $("f-lien").value = item.lien || "";
+      $("f-ordre").value = typeof item.ordre === "number" ? String(item.ordre) : "";
+      $("titre-form").textContent = "✏️ Modifier la ressource";
+      $("b-enregistrer").textContent = "💾 Enregistrer les modifications";
+      $("b-annuler").style.display = "inline-block";
+      masquerApercu();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function prochainOrdre(rubrique) {
+      const ordres = items.filter(function (i) { return i.rubrique === rubrique && typeof i.ordre === "number"; }).map(function (i) { return i.ordre; });
+      return ordres.length ? Math.max.apply(null, ordres) + 1 : 1;
+    }
+
+    async function enregistrer() {
+      const rubrique = $("f-rubrique").value;
+      const titre = $("f-titre").value.trim();
+      const lien = $("f-lien").value.trim();
+
+      if (!titre) { montrer("ko", "Le titre est obligatoire."); return; }
+      if (!lien) { montrer("ko", "Le lien est obligatoire."); return; }
+      if (!analyserLienRessource(lien)) {
+        montrer("ko", "Lien non pris en charge. Colle un lien Google Drive, Docs, Sheets, Slides ou YouTube (en https).");
+        return;
+      }
+      const brut = $("f-ordre").value.trim();
+      let ordre = brut === "" ? prochainOrdre(rubrique) : Number(brut);
+      if (!Number.isFinite(ordre) || ordre < 0 || ordre > 9999) { montrer("ko", "L'ordre doit être un nombre entre 0 et 9999."); return; }
+      ordre = Math.round(ordre);
+
+      const data = {
+        rubrique: rubrique,
+        categorie: $("f-categorie").value.trim(),
+        titre: titre,
+        description: $("f-description").value.trim(),
+        lien: lien,
+        ordre: ordre
+      };
+
+      const bouton = $("b-enregistrer");
+      bouton.disabled = true;
+      try {
+        if (idEnEdition) await setDoc(doc(db, "ressources", idEnEdition), data);
+        else await addDoc(collection(db, "ressources"), data);
+        montrer("ok", idEnEdition ? "Ressource modifiée." : "Ressource ajoutée.");
+        vider();
+        await charger();
+      } catch (e) {
+        console.error(e);
+        montrer("ko", "Enregistrement impossible : " + (e.code || e.message));
+      }
+      bouton.disabled = false;
+    }
+
+    async function supprimer(item) {
+      if (!confirm("Supprimer « " + (item.titre || "") + " » ?\n\nLe document lui-même reste dans ton Drive, seul le lien disparaît du site.")) return;
+      try {
+        await deleteDoc(doc(db, "ressources", item.id));
+        if (idEnEdition === item.id) vider();
+        montrer("ok", "Ressource supprimée.");
+        await charger();
+      } catch (e) {
+        console.error(e);
+        montrer("ko", "Suppression impossible : " + (e.code || e.message));
+      }
+    }
+
+    // ---------- Liste ----------
+    function afficherListe() {
+      const zone = $("liste");
+      zone.textContent = "";
+
+      RUBRIQUES.forEach(function (r) {
+        const liste = items.filter(function (i) { return i.rubrique === r[0]; }).sort(comparerRessources);
+        zone.appendChild(creer("div", "rubrique-titre", r[1] + " (" + liste.length + ")"));
+        if (liste.length === 0) { zone.appendChild(creer("div", "vide", "Aucune ressource.")); return; }
+
+        liste.forEach(function (item) {
+          const info = analyserLienRessource(item.lien);
+          const ligne = creer("div", "ligne");
+          ligne.appendChild(creer("div", "ordre", typeof item.ordre === "number" ? String(item.ordre) : "—"));
+
+          const centre = creer("div");
+          centre.appendChild(creer("div", "titre", item.titre || "(sans titre)"));
+          const meta = [];
+          if (item.categorie) meta.push(item.categorie);
+          meta.push(info ? (LIBELLE_TYPE[info.type] || info.type) : "⚠️ lien non pris en charge");
+          centre.appendChild(creer("div", "meta", meta.join(" · ")));
+          ligne.appendChild(centre);
+
+          const boutons = creer("div", "boutons");
+          const bMod = creer("button", "mini", "✏️ Modifier");
+          bMod.type = "button";
+          bMod.addEventListener("click", function () { modifier(item); });
+          const bSup = creer("button", "mini danger", "🗑 Supprimer");
+          bSup.type = "button";
+          bSup.addEventListener("click", function () { supprimer(item); });
+          boutons.appendChild(bMod);
+          boutons.appendChild(bSup);
+          ligne.appendChild(boutons);
+
+          zone.appendChild(ligne);
+        });
+      });
+
+      // Suggestions de catégories déjà utilisées
+      const dl = $("liste-categories");
+      dl.textContent = "";
+      const vues = {};
+      items.forEach(function (i) {
+        const c = String(i.categorie || "").trim();
+        if (c && !vues[c]) { vues[c] = true; const o = document.createElement("option"); o.value = c; dl.appendChild(o); }
+      });
+    }
+
+    async function charger() {
+      const res = await getDocs(collection(db, "ressources"));
+      items = [];
+      res.forEach(function (d) { items.push(Object.assign({ id: d.id }, d.data())); });
+      afficherListe();
+    }
+
+    $("b-tester").addEventListener("click", tester);
+    $("b-enregistrer").addEventListener("click", enregistrer);
+    $("b-annuler").addEventListener("click", vider);
+
+    window.logout = async function () {
+      await signOut(auth);
+      window.location.href = "index.html";
+    };
+
+    // ---------- Démarrage : réservé aux administrateurs ----------
+    onAuthStateChanged(auth, async function (user) {
+      if (!user) { window.location.href = "index.html"; return; }
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        const data = snap.exists() ? snap.data() : {};
+        if (data.role !== "admin") { window.location.href = "planning.html"; return; }
+        $("user-name").textContent = getUserDisplayName(data, user.email);
+        await charger();
+      } catch (e) {
+        console.error(e);
+        $("liste").textContent = "";
+        $("liste").appendChild(creer("div", "vide", "Erreur de chargement : " + (e.code || e.message)));
+      }
+    });
+  </script>
+</body>
+</html>

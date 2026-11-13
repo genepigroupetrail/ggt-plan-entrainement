@@ -262,6 +262,28 @@
       border-color: var(--ora);
     }
 
+    .btn-ressources {
+      background: rgba(34, 197, 94, 0.12);
+      border: 0.5px solid rgba(34, 197, 94, 0.3);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: var(--grn);
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-ressources:hover {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: var(--grn);
+    }
+
     .btn-admin {
       background: rgba(79, 142, 247, 0.12);
       border: 0.5px solid rgba(79, 142, 247, 0.3);
@@ -373,6 +395,7 @@
     <div class="header-right">
       <span class="user-badge" id="user-name">...</span>
       <a href="plan-competition.html" class="btn-comp">🏅 Plans de compétition</a>
+      <a href="ressources.html" class="btn-ressources">📚 Ressources</a>
       <a href="admin.html" class="btn-admin" id="btn-admin" style="display: none;">⚙️ Admin</a>
       <a href="mon-profil.html" class="btn-profil">👤 Mon Profil</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>

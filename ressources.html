@@ -242,7 +242,7 @@
         const snap = await getDoc(doc(db, "users", user.uid));
         const data = snap.exists() ? snap.data() : {};
         $("user-name").textContent = getUserDisplayName(data, user.email);
-        if (data.role === "admin") $("btn-gerer").style.display = "inline-flex";
+        if (data.role === "admin" || data.role === "renfo") $("btn-gerer").style.display = "inline-flex";
 
         const res = await getDocs(collection(db, "ressources"));
         items = [];

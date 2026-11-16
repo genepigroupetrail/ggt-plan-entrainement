@@ -446,6 +446,7 @@
         <select id="field-role">
           <option value="adhérent">Adhérent</option>
           <option value="adhérentadmin">Adhérent Admin</option>
+          <option value="renfo">Coach renfo</option>
           <option value="admin">Admin</option>
         </select>
       </div>
@@ -531,7 +532,7 @@
 
         // Trier par: rôle (admin → adhérentadmin → adhérent) PUIS nom alphabétique
         allAdherents.sort((a, b) => {
-          const roleOrder = { 'admin': 0, 'adhérentadmin': 1, 'adhérent': 2 };
+          const roleOrder = { 'admin': 0, 'adhérentadmin': 1, 'renfo': 2, 'adhérent': 3 };
           const roleA = roleOrder[a.role] !== undefined ? roleOrder[a.role] : 999;
           const roleB = roleOrder[b.role] !== undefined ? roleOrder[b.role] : 999;
           

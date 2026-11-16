@@ -51,6 +51,7 @@
     .mini:hover { border-color: var(--acc); }
     .mini.danger:hover { border-color: var(--red); color: var(--red); }
     .vide { color: var(--mut); font-size: 13px; padding: 10px 4px; }
+    .mode-renfo #champ-rubrique { display: none; }
 
     @media (max-width: 640px) {
       .grille-form { grid-template-columns: 1fr; }
@@ -62,12 +63,12 @@
   <header>
     <div class="logo">
       <img src="logo-ggt.png" alt="GGT">
-      <div><h1>Gérer les ressources</h1><p>Documents et renforcement</p></div>
+      <div><h1 id="titre-page">Gérer les ressources</h1><p id="sous-titre-page">Documents et renforcement</p></div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <span class="user-badge" id="user-name">...</span>
       <a href="ressources.html" class="btn-h">👁 Voir comme adhérent</a>
-      <a href="admin.html" class="btn-h">← Admin</a>
+      <a href="admin.html" class="btn-h" id="lien-retour">← Admin</a>
       <button class="btn-h" onclick="logout()">Déconnexion</button>
     </div>
   </header>
@@ -84,7 +85,7 @@
       </p>
 
       <div class="grille-form">
-        <div class="champ">
+        <div class="champ" id="champ-rubrique">
           <label for="f-rubrique">Rubrique</label>
           <select id="f-rubrique">
             <option value="documents">📄 Documents</option>
@@ -148,6 +149,7 @@
 
     let items = [];
     let idEnEdition = null;
+    let roleCourant = "admin"; // "admin" ou "renfo" (le coach renfo ne gère que le Renforcement)
 
     const $ = (id) => document.getElementById(id);
     function creer(tag, classe, texte) {
@@ -231,7 +233,7 @@
     }
 
     async function enregistrer() {
-      const rubrique = $("f-rubrique").value;
+      const rubrique = roleCourant === "renfo" ? "renforcement" : $("f-rubrique").value;
       const titre = $("f-titre").value.trim();
       const lien = $("f-lien").value.trim();
 
@@ -288,7 +290,7 @@
       const zone = $("liste");
       zone.textContent = "";
 
-      RUBRIQUES.forEach(function (r) {
+      RUBRIQUES.filter(function (r) { return roleCourant !== "renfo" || r[0] === "renforcement"; }).forEach(function (r) {
         const liste = items.filter(function (i) { return i.rubrique === r[0]; }).sort(comparerRessources);
         zone.appendChild(creer("div", "rubrique-titre", r[1] + " (" + liste.length + ")"));
         if (liste.length === 0) { zone.appendChild(creer("div", "vide", "Aucune ressource.")); return; }
@@ -353,7 +355,16 @@
       try {
         const snap = await getDoc(doc(db, "users", user.uid));
         const data = snap.exists() ? snap.data() : {};
-        if (data.role !== "admin") { window.location.href = "planning.html"; return; }
+        if (data.role !== "admin" && data.role !== "renfo") { window.location.href = "planning.html"; return; }
+        roleCourant = data.role;
+        if (roleCourant === "renfo") {
+          document.body.classList.add("mode-renfo");
+          $("f-rubrique").value = "renforcement";
+          $("titre-page").textContent = "Gérer le renforcement";
+          $("sous-titre-page").textContent = "Exercices et vidéos";
+          $("lien-retour").href = "planning.html";
+          $("lien-retour").textContent = "← Planning";
+        }
         $("user-name").textContent = getUserDisplayName(data, user.email);
         await charger();
       } catch (e) {
